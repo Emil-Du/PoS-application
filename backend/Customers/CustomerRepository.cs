@@ -43,7 +43,7 @@ namespace backend.Customers
 
             return customer;
         }
-        public async Task<bool> UpdateCustomerAsync(int customerId, CustomerDTO customerDTO)
+        public async Task<bool> UpdateCustomerByIdAsync(int customerId, CustomerDTO customerDTO)
         {
             var customer = await _context.Customers.FindAsync(customerId);
             if (customer == null)

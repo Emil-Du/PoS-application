@@ -6,20 +6,19 @@ namespace backend.Customers
     [Route("api/[controller]")]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerRepository _repository;
+        private readonly ICustomerService _service;
         private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(ICustomerRepository repository, ILogger<CustomerController> logger)
+        public CustomerController(ICustomerService service, ILogger<CustomerController> logger)
         {
-            _repository = repository;
+            _service = service;
             _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCustomers([FromQuery] int page = 0, [FromQuery] int pageSize = 10)
         {
-            var response = await _repository.GetCustomersAsync(page, pageSize);
-            _logger.LogInformation($"Fetched {pageSize} entries, from page {page}");
+            var response = await _service.GetCustomersAsync(page, pageSize);
 
             return Ok(response);
         }
@@ -27,14 +26,13 @@ namespace backend.Customers
         [HttpGet("{customerId}")]
         public async Task<ActionResult<Customer>> GetCustomerById([FromRoute] int customerId)
         {
-            var response = await _repository.GetCustomerByIdAsync(customerId);
+            var response = await _service.GetCustomerByIdAsync(customerId);
             if (response == null)
             {
                 _logger.LogWarning($"Customer with ID {customerId} not found.");
                 return NotFound();
             }
 
-            _logger.LogInformation($"Fetched customer with ID {customerId}");
             return Ok(response);
         }
 
@@ -47,9 +45,7 @@ namespace backend.Customers
                 return BadRequest();
             }
 
-            var createdCustomer = await _repository.CreateCustomerAsync(customerDTO);
-
-            _logger.LogInformation($"Created new customer with ID {createdCustomer.CustomerId}");
+            var createdCustomer = await _service.CreateCustomerAsync(customerDTO);
 
             return CreatedAtAction(
                 nameof(GetCustomerById),
@@ -59,7 +55,7 @@ namespace backend.Customers
         }
 
         [HttpPatch("{customerId}")]
-        public async Task<IActionResult> UpdateCustomer([FromRoute] int customerId, [FromBody] CustomerDTO customerDTO)
+        public async Task<IActionResult> UpdateCustomerById([FromRoute] int customerId, [FromBody] CustomerDTO customerDTO)
         {
             if (customerDTO == null)
             {
@@ -67,27 +63,25 @@ namespace backend.Customers
                 return BadRequest();
             }
 
-            var updated = await _repository.UpdateCustomerAsync(customerId, customerDTO);
+            var updated = await _service.UpdateCustomerByIdAsync(customerId, customerDTO);
             if (!updated)
             {
                 _logger.LogWarning($"Customer with ID {customerId} not found.");
                 return NotFound();
             }
 
-            _logger.LogInformation($"Updated customer with ID {customerId}");
             return NoContent();
         }
         [HttpDelete("{customerId}")]
         public async Task<IActionResult> DeleteCustomerById([FromRoute] int customerId)
         {
-            var deleted = await _repository.DeleteCustomerByIdAsync(customerId);
+            var deleted = await _service.DeleteCustomerByIdAsync(customerId);
             if (!deleted)
             {
                 _logger.LogWarning($"Customer with ID {customerId} not found.");
                 return NotFound();
             }
 
-            _logger.LogInformation($"Deleted customer with ID {customerId}");
             return NoContent();
         }
 

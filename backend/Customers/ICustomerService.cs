@@ -1,6 +1,6 @@
 namespace backend.Customers
 {
-    public interface ICustomerRepository
+    public interface ICustomerService
     {
         Task<object> GetCustomersAsync(int page, int pageSize);
         Task<Customer?> GetCustomerByIdAsync(int customerId);
