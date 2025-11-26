@@ -11,9 +11,18 @@ namespace backend.Customers
             _logger = logger;
         }
 
-        public async Task<object> GetCustomersAsync(int page, int pageSize)
+        public async Task<PaginatedResponse<Customer>> GetCustomersAsync(int page = 1, int pageSize = 25, string? search = null)
         {
-            return await _repository.GetCustomersAsync(page, pageSize);
+            var customers = await _repository.GetCustomersAsync(page, pageSize, search);
+            var total = await _repository.GetTotalCountAsync(search);
+
+            return new PaginatedResponse<Customer>
+            {
+                Page = page,
+                PageSize = pageSize,
+                Total = total,
+                Data = customers
+            };
         }
 
         public async Task<Customer?> GetCustomerByIdAsync(int customerId)

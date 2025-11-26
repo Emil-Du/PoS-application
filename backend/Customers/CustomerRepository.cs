@@ -13,17 +13,36 @@ namespace backend.Customers
             _context = context;
         }
 
-        public async Task<object> GetCustomersAsync(int page, int pageSize)
+        public async Task<List<Customer>> GetCustomersAsync(int page, int pageSize, string? search = null)
         {
-            var customers = await _context.Customers
+            var query = _context.Customers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(c => c.Name.Contains(search)
+                                      || c.Email.Contains(search)
+                                      || c.PhoneNumber.Contains(search));
+            }
+
+            return await query
                 .OrderBy(c => c.CustomerId)
-                .Skip(page * pageSize)
+                .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+        }
 
-            var total = await _context.Customers.CountAsync();
+        public async Task<int> GetTotalCountAsync(string? search = null)
+        {
+            var query = _context.Customers.AsQueryable();
 
-            return new { Customers = customers, Total = total };
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(c => c.Name.Contains(search)
+                                      || c.Email.Contains(search)
+                                      || c.PhoneNumber.Contains(search));
+            }
+
+            return await query.CountAsync();
         }
         public async Task<Customer?> GetCustomerByIdAsync(int customerId)
         {

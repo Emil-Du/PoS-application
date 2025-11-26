@@ -16,11 +16,10 @@ namespace backend.Customers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCustomers([FromQuery] int page = 0, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<PaginatedResponse<Customer>>> GetCustomers([FromQuery] int page = 1, [FromQuery] int pageSize = 25, [FromQuery] string? search = null)
         {
-            var response = await _service.GetCustomersAsync(page, pageSize);
-
-            return Ok(response);
+            var result = await _service.GetCustomersAsync(page, pageSize, search);
+            return Ok(result);
         }
 
         [HttpGet("{customerId}")]

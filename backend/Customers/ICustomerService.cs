@@ -2,7 +2,7 @@ namespace backend.Customers
 {
     public interface ICustomerService
     {
-        Task<object> GetCustomersAsync(int page, int pageSize);
+        Task<PaginatedResponse<Customer>> GetCustomersAsync(int page = 1, int pageSize = 25, string? search = null);
         Task<Customer?> GetCustomerByIdAsync(int customerId);
         Task<Customer> CreateCustomerAsync(CustomerDTO customerDTO);
         Task<bool> UpdateCustomerByIdAsync(int customerId, CustomerDTO customerDTO);
