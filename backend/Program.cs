@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Database;
+using backend.Roles;
+using backend.Payments;
+using backend.Refunds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add controllers
 builder.Services.AddControllers();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IRefundRepository, RefundRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
