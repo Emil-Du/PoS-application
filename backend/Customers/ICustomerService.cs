@@ -2,10 +2,11 @@ namespace backend.Customers
 {
     public interface ICustomerService
     {
-        Task<PaginatedResponse<Customer>> GetCustomersAsync(int page = 1, int pageSize = 25, string? search = null);
-        Task<Customer?> GetCustomerByIdAsync(int customerId);
-        Task<Customer> CreateCustomerAsync(CustomerDTO customerDTO);
-        Task<bool> UpdateCustomerByIdAsync(int customerId, CustomerDTO customerDTO);
-        Task<bool> DeleteCustomerByIdAsync(int customerId);
+        Task<PaginatedResponse<CustomerResponse>> GetCustomersAsync(CustomerQuery query);
+        Task<CustomerResponse?> GetCustomerByIdAsync(int id);
+        Task<CustomerResponse> CreateCustomerAsync(CustomerRequest request);
+        Task<bool> UpdateCustomerByIdAsync(int id, CustomerRequest request);
+        Task<bool> DeleteCustomerByIdAsync(int id);
+
     }
 }

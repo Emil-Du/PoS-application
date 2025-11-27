@@ -16,14 +16,14 @@ namespace backend.Customers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<Customer>>> GetCustomers([FromQuery] int page = 1, [FromQuery] int pageSize = 25, [FromQuery] string? search = null)
+        public async Task<ActionResult<PaginatedResponse<CustomerResponse>>> GetCustomers([FromQuery] CustomerQuery query)
         {
-            var result = await _service.GetCustomersAsync(page, pageSize, search);
+            var result = await _service.GetCustomersAsync(query);
             return Ok(result);
         }
 
         [HttpGet("{customerId}")]
-        public async Task<ActionResult<Customer>> GetCustomerById([FromRoute] int customerId)
+        public async Task<ActionResult<CustomerResponse>> GetCustomerById([FromRoute] int customerId)
         {
             var response = await _service.GetCustomerByIdAsync(customerId);
             if (response == null)
@@ -36,15 +36,15 @@ namespace backend.Customers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> CreateCustomer([FromBody] CustomerDTO customerDTO)
+        public async Task<ActionResult<CustomerResponse>> CreateCustomer([FromBody] CustomerRequest customerRequest)
         {
-            if (customerDTO == null)
+            if (customerRequest == null)
             {
-                _logger.LogWarning("CustomerDTO is null.");
+                _logger.LogWarning("Failed to create customer: invalid request.");
                 return BadRequest();
             }
 
-            var createdCustomer = await _service.CreateCustomerAsync(customerDTO);
+            var createdCustomer = await _service.CreateCustomerAsync(customerRequest);
 
             return CreatedAtAction(
                 nameof(GetCustomerById),
@@ -54,15 +54,15 @@ namespace backend.Customers
         }
 
         [HttpPatch("{customerId}")]
-        public async Task<IActionResult> UpdateCustomerById([FromRoute] int customerId, [FromBody] CustomerDTO customerDTO)
+        public async Task<IActionResult> UpdateCustomerById([FromRoute] int customerId, [FromBody] CustomerRequest customerRequest)
         {
-            if (customerDTO == null)
+            if (customerRequest == null)
             {
-                _logger.LogWarning("CustomerDTO is null.");
+                _logger.LogWarning("Failed to update customer: invalid request.");
                 return BadRequest();
             }
 
-            var updated = await _service.UpdateCustomerByIdAsync(customerId, customerDTO);
+            var updated = await _service.UpdateCustomerByIdAsync(customerId, customerRequest);
             if (!updated)
             {
                 _logger.LogWarning($"Customer with ID {customerId} not found.");

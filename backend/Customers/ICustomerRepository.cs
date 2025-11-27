@@ -2,11 +2,12 @@ namespace backend.Customers
 {
     public interface ICustomerRepository
     {
-        Task<List<Customer>> GetCustomersAsync(int page, int pageSize, string? search = null);
-        Task<int> GetTotalCountAsync(string? search = null);
-        Task<Customer?> GetCustomerByIdAsync(int customerId);
-        Task<Customer> CreateCustomerAsync(CustomerDTO customerDTO);
-        Task<bool> UpdateCustomerByIdAsync(int customerId, CustomerDTO customerDTO);
-        Task<bool> DeleteCustomerByIdAsync(int customerId);
+        Task<List<Customer>> GetCustomersAsync(CustomerQuery query);
+        Task<int> GetTotalCountAsync(CustomerQuery query);
+        Task<Customer?> GetCustomerByIdAsync(int id);
+        Task<Customer> CreateCustomerAsync(Customer customer);
+        Task<bool> UpdateCustomerAsync(Customer customer);
+        Task<bool> DeleteCustomerAsync(int id);
+
     }
 }

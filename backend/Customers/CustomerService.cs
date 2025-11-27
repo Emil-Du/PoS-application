@@ -1,48 +1,90 @@
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+
 namespace backend.Customers
 {
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _repository;
-        private readonly ILogger<CustomerService> _logger;
 
         public CustomerService(ICustomerRepository repository, ILogger<CustomerService> logger)
         {
             _repository = repository;
-            _logger = logger;
         }
 
-        public async Task<PaginatedResponse<Customer>> GetCustomersAsync(int page = 1, int pageSize = 25, string? search = null)
+        public async Task<PaginatedResponse<CustomerResponse>> GetCustomersAsync(CustomerQuery query)
         {
-            var customers = await _repository.GetCustomersAsync(page, pageSize, search);
-            var total = await _repository.GetTotalCountAsync(search);
+            var customers = await _repository.GetCustomersAsync(query);
+            var total = await _repository.GetTotalCountAsync(query);
 
-            return new PaginatedResponse<Customer>
+            var data = customers.Select(c => new CustomerResponse
             {
-                Page = page,
-                PageSize = pageSize,
+                CustomerId = c.CustomerId,
+                Name = c.Name,
+                Email = c.Email,
+                PhoneNumber = c.PhoneNumber
+            }).ToList();
+
+            return new PaginatedResponse<CustomerResponse>
+            {
+                Page = query.Page,
+                PageSize = query.PageSize,
                 Total = total,
-                Data = customers
+                Data = data
             };
         }
 
-        public async Task<Customer?> GetCustomerByIdAsync(int customerId)
+        public async Task<CustomerResponse?> GetCustomerByIdAsync(int customerId)
         {
-            return await _repository.GetCustomerByIdAsync(customerId);
+            var customer = await _repository.GetCustomerByIdAsync(customerId);
+            if (customer == null) return null;
+
+            return new CustomerResponse
+            {
+                CustomerId = customer.CustomerId,
+                Name = customer.Name,
+                Email = customer.Email,
+                PhoneNumber = customer.PhoneNumber
+            };
         }
 
-        public async Task<Customer> CreateCustomerAsync(CustomerDTO customerDTO)
+        public async Task<CustomerResponse> CreateCustomerAsync(CustomerRequest request)
         {
-            return await _repository.CreateCustomerAsync(customerDTO);
+            var customer = new Customer
+            {
+                Name = request.Name,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber
+            };
+
+            var created = await _repository.CreateCustomerAsync(customer);
+
+            return new CustomerResponse
+            {
+                CustomerId = created.CustomerId,
+                Name = created.Name,
+                Email = created.Email,
+                PhoneNumber = created.PhoneNumber
+            };
         }
 
-        public async Task<bool> UpdateCustomerByIdAsync(int customerId, CustomerDTO customerDTO)
+        public async Task<bool> UpdateCustomerByIdAsync(int customerId, CustomerRequest request)
         {
-            return await _repository.UpdateCustomerByIdAsync(customerId, customerDTO);
+            var customer = new Customer
+            {
+                CustomerId = customerId,
+                Name = request.Name,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber
+            };
+
+            return await _repository.UpdateCustomerAsync(customer);
         }
 
         public async Task<bool> DeleteCustomerByIdAsync(int customerId)
         {
-            return await _repository.DeleteCustomerByIdAsync(customerId);
+            return await _repository.DeleteCustomerAsync(customerId);
         }
     }
 }

@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using backend.Database;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace backend.Customers
 {
@@ -13,77 +15,69 @@ namespace backend.Customers
             _context = context;
         }
 
-        public async Task<List<Customer>> GetCustomersAsync(int page, int pageSize, string? search = null)
+        public async Task<List<Customer>> GetCustomersAsync(CustomerQuery query)
         {
-            var query = _context.Customers.AsQueryable();
+            var dbQuery = _context.Customers.AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(query.Search))
             {
-                query = query.Where(c => c.Name.Contains(search)
-                                      || c.Email.Contains(search)
-                                      || c.PhoneNumber.Contains(search));
+                dbQuery = dbQuery.Where(c =>
+                    c.Name.Contains(query.Search) ||
+                    c.Email.Contains(query.Search) ||
+                    c.PhoneNumber.Contains(query.Search));
             }
 
-            return await query
+            return await dbQuery
                 .OrderBy(c => c.CustomerId)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
                 .ToListAsync();
         }
 
-        public async Task<int> GetTotalCountAsync(string? search = null)
+        public async Task<int> GetTotalCountAsync(CustomerQuery query)
         {
-            var query = _context.Customers.AsQueryable();
+            var dbQuery = _context.Customers.AsQueryable();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(query.Search))
             {
-                query = query.Where(c => c.Name.Contains(search)
-                                      || c.Email.Contains(search)
-                                      || c.PhoneNumber.Contains(search));
+                dbQuery = dbQuery.Where(c =>
+                    c.Name.Contains(query.Search) ||
+                    c.Email.Contains(query.Search) ||
+                    c.PhoneNumber.Contains(query.Search));
             }
 
-            return await query.CountAsync();
+            return await dbQuery.CountAsync();
         }
+
         public async Task<Customer?> GetCustomerByIdAsync(int customerId)
         {
             return await _context.Customers.FindAsync(customerId);
         }
 
-        public async Task<Customer> CreateCustomerAsync(CustomerDTO customerDTO)
+        public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-            var customer = new Customer
-            {
-                Name = customerDTO.Name,
-                Email = customerDTO.Email,
-                PhoneNumber = customerDTO.PhoneNumber
-            };
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
-
             return customer;
         }
-        public async Task<bool> UpdateCustomerByIdAsync(int customerId, CustomerDTO customerDTO)
-        {
-            var customer = await _context.Customers.FindAsync(customerId);
-            if (customer == null)
-            {
-                return false;
-            }
 
-            customer.Name = customerDTO.Name;
-            customer.Email = customerDTO.Email;
-            customer.PhoneNumber = customerDTO.PhoneNumber;
+        public async Task<bool> UpdateCustomerAsync(Customer customer)
+        {
+            var existing = await _context.Customers.FindAsync(customer.CustomerId);
+            if (existing == null) return false;
+
+            existing.Name = customer.Name;
+            existing.Email = customer.Email;
+            existing.PhoneNumber = customer.PhoneNumber;
 
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<bool> DeleteCustomerByIdAsync(int customerId)
+
+        public async Task<bool> DeleteCustomerAsync(int customerId)
         {
             var customer = await _context.Customers.FindAsync(customerId);
-            if (customer == null)
-            {
-                return false;
-            }
+            if (customer == null) return false;
 
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();

@@ -1,3 +1,5 @@
+namespace backend.Customers;
+
 public class PaginatedResponse<T>
 {
     public int Page { get; set; }
