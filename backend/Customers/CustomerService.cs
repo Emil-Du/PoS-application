@@ -4,7 +4,7 @@ namespace backend.Customers
     {
         private readonly ICustomerRepository _repository;
 
-        public CustomerService(ICustomerRepository repository, ILogger<CustomerService> logger)
+        public CustomerService(ICustomerRepository repository)
         {
             _repository = repository;
         }
