@@ -1,7 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-
 namespace backend.Customers
 {
     public class CustomerService : ICustomerService
@@ -79,12 +75,12 @@ namespace backend.Customers
                 PhoneNumber = request.PhoneNumber
             };
 
-            return await _repository.UpdateCustomerAsync(customer);
+            return await _repository.UpdateCustomerByIdAsync(customer);
         }
 
         public async Task<bool> DeleteCustomerByIdAsync(int customerId)
         {
-            return await _repository.DeleteCustomerAsync(customerId);
+            return await _repository.DeleteCustomerByIdAsync(customerId);
         }
     }
 }

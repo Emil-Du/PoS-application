@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using backend.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,7 +58,7 @@ namespace backend.Customers
             return customer;
         }
 
-        public async Task<bool> UpdateCustomerAsync(Customer customer)
+        public async Task<bool> UpdateCustomerByIdAsync(Customer customer)
         {
             var existing = await _context.Customers.FindAsync(customer.CustomerId);
             if (existing == null) return false;
@@ -74,7 +71,7 @@ namespace backend.Customers
             return true;
         }
 
-        public async Task<bool> DeleteCustomerAsync(int customerId)
+        public async Task<bool> DeleteCustomerByIdAsync(int customerId)
         {
             var customer = await _context.Customers.FindAsync(customerId);
             if (customer == null) return false;
