@@ -1,104 +1,94 @@
 ﻿namespace backend.Roles;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 [ApiController]
 [Route("api/v1/[controller]")]
 
 public class RoleController : ControllerBase
 {
-    private readonly IRoleRepository _roleRepository;
-    private readonly ILogger<RoleController> _logger;
+    private readonly IRoleRepository _repository;
 
-    public RoleController(IRoleRepository roleRepository, ILogger<RoleController> logger)
+    public RoleController(IRoleRepository repository)
     {
-        _roleRepository = roleRepository;
-        _logger = logger;
+        _repository = repository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetRoles()
     {
-        var roles = await _roleRepository.GetRolesAsync();
+        var roles = await _repository.GetRolesAsync();
         return Ok(roles);
     }
 
     [HttpGet("{roleId}")]
     public async Task<IActionResult> GetRoleById(int roleId)
     {
-        var role = await _roleRepository.GetRoleByIdAsync(roleId);
+        var role = await _repository.GetRoleByIdAsync(roleId);
 
         if (role == null)
         {
             return NotFound();
         }
 
-        _logger.LogInformation($"Fetched role with ID {roleId}");
         return Ok(role);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRole([FromBody] RoleDTO roleDTO)
+    public async Task<IActionResult> CreateRole([FromBody] RoleCreateRequest roleCreateRequest)
     {
 
-        if (roleDTO == null)
+        if (roleCreateRequest == null)
         {
-                _logger.LogWarning("RoleDTO is null.");
                 return BadRequest();
         }
 
-        var newRole = await _roleRepository.CreateRoleAsync(roleDTO);
+        var newRole = await _repository.CreateRoleAsync(roleCreateRequest);
         return CreatedAtAction(nameof(GetRoles), new { roleId = newRole.RoleId }, newRole);
     }
 
     [HttpPatch("{roleId}")]
-    public async Task<IActionResult> UpdateRole(int roleId, [FromBody] RoleDTO roleDTO)
+    public async Task<IActionResult> UpdateRole(int roleId, [FromBody] RoleUpdateRequest roleUpdateRequest)
     {
-        if (roleDTO == null)
+        if (roleUpdateRequest == null)
         {
-                _logger.LogWarning("RoleDTO is null.");
                 return BadRequest();
         }
 
-        var updated = await _roleRepository.UpdateRoleByIdAsync(roleId, roleDTO);
+        var updated = await _repository.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
 
-        if (!updated)
+        if (updated == null)
         {
-            _logger.LogWarning($"Role with ID {roleId} not found.");
             return NotFound();
         }
 
-        _logger.LogInformation($"Updated role with ID {roleId}");
         return NoContent();
     }
 
     [HttpDelete("{roleId}")]
     public async Task<IActionResult> DeleteRole(int roleId)
     {
-        var deleted = await _roleRepository.DeleteRoleByIdAsync(roleId);
+        var deleted = await _repository.DeleteRoleByIdAsync(roleId);
 
         if (!deleted)
         {
-            _logger.LogWarning($"Role with ID {roleId} not found.");
             return NotFound();
         }
 
-        _logger.LogInformation($"Deleted role with ID {roleId}");
         return NoContent();
     }
 
     [HttpPost("{roleId}/assign")]
     public async Task<IActionResult> AssignRole([FromRoute] int roleId, [FromBody] RoleAssignmentRequest request)
     {
-        await _roleRepository.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
+        await _repository.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
         return NoContent();
     }
 
     [HttpDelete("{roleId}/assign/{employeeId}")]
     public async Task<IActionResult> RemoveRole([FromRoute] int roleId, [FromRoute] int employeeId)
     {
-        var removed = await _roleRepository.RemoveRoleFromEmployeeAsync(roleId, employeeId);
+        var removed = await _repository.RemoveRoleFromEmployeeAsync(roleId, employeeId);
         if (!removed) return NotFound();
         return NoContent();
     }

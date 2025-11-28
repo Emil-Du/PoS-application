@@ -10,18 +10,15 @@ public class RefundRepository : IRefundRepository
     {
         _context = context;
     }
-    public async Task<bool> RefundByPaymentIdAsync(int paymentId, string reason)
+    public async Task<RefundRequest> RefundPaymentByIdAsync(RefundRequest refundRequest)
     {
-        var payment = await _context.Payments.FindAsync(paymentId);
-        if (payment == null)
-        {
-            return false;
-        }
 
-        // pakeicia order status i refunded
-
-        await _context.SaveChangesAsync();
-
-        return true;
+            var payment = await _context.Payments.FindAsync(refundRequest.PaymentId);
+            if (payment == null)
+            {
+                throw new Exception("Payment not found");
+            }
+            
+            return refundRequest;
     }
 }

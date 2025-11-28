@@ -12,8 +12,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add controllers
 builder.Services.AddControllers();
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IRefundService, RefundService>();
 builder.Services.AddScoped<IRefundRepository, RefundRepository>();
 
 builder.Services.AddEndpointsApiExplorer();

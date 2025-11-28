@@ -1,34 +1,34 @@
 ﻿namespace backend.Refunds;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 [ApiController]
 [Route("api/[controller]")]
 public class RefundController : ControllerBase
 {
 
-    private readonly IRefundRepository _refundRepository;
+    private readonly IRefundService _service;
     private readonly ILogger<RefundController> _logger;
 
-    public RefundController(IRefundRepository refundRepository, ILogger<RefundController> logger)
+    public RefundController(IRefundService service, ILogger<RefundController> logger)
     {
-        _refundRepository = refundRepository;
+        _service = service;
         _logger = logger;
     }
 
     [HttpPost]
     public async Task<IActionResult> RefundPayment([FromBody] RefundRequest request)
     {
-        var success = await _refundRepository.RefundByPaymentIdAsync(request.PaymentId, request.Reason);
+        var success = await _service.RefundPaymentByIdAsync(request);
 
-        if (!success)
+        if(success == null)
         {
             _logger.LogWarning("Refund failed for Payment {PaymentId}", request.PaymentId);
             return NotFound();
         }
 
-        _logger.LogInformation("Refund successful for Payment {PaymentId}", request.PaymentId);
+        // pridet bussiness logic, kad kviecia metoda kur pakeicia order status i refunded...
+
         return NoContent();
     }
 }

@@ -7,37 +7,42 @@ using Microsoft.AspNetCore.Mvc;
 
 public class PaymentController : ControllerBase
 {
-    private readonly IPaymentRepository _paymentRepository;
+    private readonly IPaymentService _service;
     private readonly ILogger<PaymentController> _logger;
 
-    public PaymentController(IPaymentRepository paymentRepository, ILogger<PaymentController> logger)
+    public PaymentController(IPaymentService service, ILogger<PaymentController> logger)
     {
-        _paymentRepository = paymentRepository;
+        _service = service;
         _logger = logger;
     }
 
     [HttpGet("order/{orderId}")]
     public async Task<IActionResult> GetPaymentsByOrder(int orderId)
     {
-        var payments = await _paymentRepository.GetPaymentsByOrderIdAsync(orderId);
+        var payments = await _service.GetPaymentsByOrderIdAsync(orderId);
 
-        _logger.LogInformation($"Fetched payments for Order ID {orderId}");
+        if (payments == null)
+        {
+            _logger.LogWarning("No payments found for Order {OrderId}", orderId);
+            return NotFound();
+        }
+
         return Ok(payments);
     }
 
-    [HttpGet("{paymentId}")]
-    public async Task<IActionResult> GetPaymentById(int paymentId)
+     [HttpPost("payment/cash")]
+    public async Task<IActionResult> CreateCashPayment([FromBody] PaymentRequest request)
     {
-        var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
-        if (payment == null) return NotFound();
+        var payment = await _service.CreateCashPaymentAsync(request);
+
         return Ok(payment);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest request)   
+    [HttpPost("payment/card")]
+    public async Task<IActionResult> CreateCardPayment([FromBody] PaymentRequest request)
     {
-        var payment = await _paymentRepository.CreatePaymentAsync(request);
-        _logger.LogInformation("Payment created with ID {PaymentId} for Order {OrderId}", payment.PaymentId, payment.OrderId);
-        return CreatedAtAction(nameof(GetPaymentById), new { id = payment.PaymentId }, payment);
+        var payment = await _service.CreateCardPaymentAsync(request);
+        
+        return Ok(payment);
     }
 }

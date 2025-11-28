@@ -1,6 +1,6 @@
 ﻿namespace backend.Roles;
 
-public interface IRoleRepository
+public interface IRoleService
 {
     Task<List<Role>> GetRolesAsync();
     Task<Role?> GetRoleByIdAsync(int roleId);

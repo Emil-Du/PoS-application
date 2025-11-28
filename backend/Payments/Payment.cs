@@ -10,6 +10,6 @@ public class Payment
 
     public String Method { get; set; } = string.Empty;
 
-    public int PayerCustomerId { get; set; }
+    public int? PayerCustomerId { get; set; }
     public String? StripeChargeId { get; set; }
 }

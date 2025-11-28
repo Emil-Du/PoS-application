@@ -12,7 +12,7 @@ public class RoleRepository : IRoleRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Role>> GetRolesAsync()
+    public async Task<List<Role>> GetRolesAsync()
     {
         return await _context.Roles.ToListAsync();
     }
@@ -22,11 +22,12 @@ public class RoleRepository : IRoleRepository
         return await _context.Roles.FindAsync(roleId);
     }
 
-    public async Task<Role> CreateRoleAsync(RoleDTO roleDTO)
+    public async Task<Role> CreateRoleAsync(RoleCreateRequest roleCreateRequest)
     {
         var role = new Role
         {
-                Name = roleDTO.Name
+                Name = roleCreateRequest.Name,
+                Flags = roleCreateRequest.Flags
         };
 
         _context.Roles.Add(role);
@@ -34,19 +35,26 @@ public class RoleRepository : IRoleRepository
         return role;
     }
 
-    public async Task<bool> UpdateRoleByIdAsync(int roleId, RoleDTO roleDTO)
+    public async Task<Role> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
     {
         var role = await _context.Roles.FindAsync(roleId);
         if (role == null)
         {
-            return false;
+            return null;
         }
 
-        role.Name = roleDTO.Name;
+        if(roleUpdateRequest.Name != null)
+        {
+            role.Name = roleUpdateRequest.Name;
+        }
+        if(roleUpdateRequest.Flags != null)
+        {
+            role.Flags = roleUpdateRequest.Flags;
+        }
 
         _context.Roles.Update(role);
         await _context.SaveChangesAsync();
-        return true;
+        return role;
     }
 
     public async Task<bool> DeleteRoleByIdAsync(int roleId)

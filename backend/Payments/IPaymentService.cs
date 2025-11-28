@@ -1,8 +1,8 @@
 ﻿namespace backend.Payments;
 
-public interface IPaymentRepository
+public interface IPaymentService
 {
     Task<Payment?> GetPaymentsByOrderIdAsync(int orderId);
     Task<Payment> CreateCashPaymentAsync(PaymentRequest request);
-    Task<Payment> CreateCardPaymentAsync(PaymentRequest request, string? stripeChargeId = null); // papildyt pagal stripe
+    Task<Payment> CreateCardPaymentAsync(PaymentRequest request);
 }

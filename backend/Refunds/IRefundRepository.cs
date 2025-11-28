@@ -2,5 +2,5 @@
 
 public interface IRefundRepository
 {
-    Task<bool> RefundByPaymentIdAsync(int paymentId, string reason);
+    Task<RefundRequest> RefundPaymentByIdAsync(RefundRequest refundRequest);
 }
