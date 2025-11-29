@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Database;
-
+using backend.Employees;
+using backend.Providers;
 var builder = WebApplication.CreateBuilder(args);
 
 // PostgreSQL DbContext
@@ -9,7 +10,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add controllers
 builder.Services.AddControllers();
-
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IProviderService, ProviderService>();
+builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
