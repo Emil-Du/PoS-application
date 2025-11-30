@@ -11,27 +11,51 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    public async Task<Customer> Register(RegistrationDTO registrationDTO)
+    public async Task<Customer> RegisterCustomer(CustomerRegistrationDTO customerRegistrationDTO)
     {
-        if (await _authRepository.EmailExists(registrationDTO.Email))
+        if (await _authRepository.CustomerEmailExists(customerRegistrationDTO.Email))
         {
             throw new EmailAlreadyExistsException();
         }
 
-        var newCustomer = await _authRepository.RegisterCustomerAsync(registrationDTO);
+        var newCustomer = await _authRepository.RegisterCustomerAsync(customerRegistrationDTO);
 
         return newCustomer;
     }
 
-    public async Task<LoginResponseDTO> Login(LoginDTO loginDTO)
+    public async Task<CustomerLoginResponseDTO> LoginCustomer(CustomerLoginDTO customerLoginDTO)
     {
-        int loggedInCustomerId = await _authRepository.LoginCustomerAsync(loginDTO);
+        int loggedInCustomerId = await _authRepository.LoginCustomerAsync(customerLoginDTO);
 
         int expiresIn = int.Parse(_configuration["Jwt:ExpiresIn"] ?? throw new Exception("JWT 'ExpiresIn' is missing in configuration."));
 
-        return new LoginResponseDTO
+        return new CustomerLoginResponseDTO
             {
                 AccessToken = JwtUtils.GenerateToken(loggedInCustomerId, _configuration),
+                TokenType = "Bearer",
+                ExpiresIn = expiresIn
+            };
+    }
+
+    public async Task<Employee> RegisterEmployee(EmployeeRegistrationDTO employeeRegistrationDTO)
+    {
+        if (await _authRepository.EmployeeEmailExists(employeeRegistrationDTO.Email))
+        {
+            throw new EmailAlreadyExistsException();
+        }
+
+        return await _authRepository.RegisterEmployeeAsync(employeeRegistrationDTO);
+    }
+
+    public async Task<EmployeeLoginResponseDTO> LoginEmployee(EmployeeLoginDTO employeeLoginDTO)
+    {
+        int loggedInEmployeeId = await _authRepository.LoginEmployeeAsync(employeeLoginDTO);
+
+        int expiresIn = int.Parse(_configuration["Jwt:ExpiresIn"] ?? throw new Exception("JWT 'ExpiresIn' is missing in configuration."));
+
+        return new EmployeeLoginResponseDTO
+            {
+                AccessToken = JwtUtils.GenerateToken(loggedInEmployeeId, _configuration),
                 TokenType = "Bearer",
                 ExpiresIn = expiresIn
             };

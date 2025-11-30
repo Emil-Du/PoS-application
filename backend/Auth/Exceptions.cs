@@ -13,3 +13,10 @@ public class IncorrectLoginDetailsException : Exception
 
     public IncorrectLoginDetailsException() : base(ExceptionMessage) {}
 }
+
+public class InactiveStatusException : Exception
+{
+    private const string ExceptionMessage = "Inactive employees cannot log in.";
+
+    public InactiveStatusException() : base(ExceptionMessage) {}
+}

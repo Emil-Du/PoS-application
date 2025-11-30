@@ -2,7 +2,9 @@ using backend.Auth;
 
 public interface IAuthService
 {
-    Task<Customer> Register(RegistrationDTO registrationDTO);
+    Task<Customer> RegisterCustomer(CustomerRegistrationDTO customerRegistrationDTO);
 
-    Task<LoginResponseDTO> Login(LoginDTO loginDTO);
+    Task<CustomerLoginResponseDTO> LoginCustomer(CustomerLoginDTO customerLoginDTO);
+    Task<Employee> RegisterEmployee(EmployeeRegistrationDTO employeeRegistrationDTO);
+    Task<EmployeeLoginResponseDTO> LoginEmployee(EmployeeLoginDTO employeeLoginDTO);
 }
