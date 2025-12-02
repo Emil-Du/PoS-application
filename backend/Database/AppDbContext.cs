@@ -5,6 +5,8 @@ using backend.Mappings;
 using backend.Products;
 using backend.Services;
 using Microsoft.EntityFrameworkCore;
+using backend.Roles;
+using backend.Payments;
 using backend.Auth;
 using backend.Reservations;
 using backend.Customers;
@@ -25,6 +27,9 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
-
+    // will be EmployeeRoles table 
+    //public DbSet<EmployeeRole> EmployeeRoles { get; set; } new class?
 }

@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Database;
+using backend.Roles;
+using backend.Payments;
+using backend.Refunds;
 using backend.Employees;
 using backend.Providers;
 using backend.Services;
@@ -12,6 +15,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add controllers
+builder.Services.AddControllers();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IRefundService, RefundService>();
+builder.Services.AddScoped<IRefundRepository, RefundRepository>();
 
 
 builder.Services.AddControllers()
