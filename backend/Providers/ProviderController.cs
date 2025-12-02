@@ -8,9 +8,12 @@ namespace backend.Providers
     {
         private readonly IProviderService _service;
 
-        public ProviderController(IProviderService service)
+        private readonly ILogger<ProviderController> _logger;
+
+        public ProviderController(IProviderService service, ILogger<ProviderController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -26,17 +29,32 @@ namespace backend.Providers
             var provider = await _service.GetProviderByIdAsync(providerId);
 
             if (provider == null)
+            {
+                _logger.LogWarning($"Provider with ID {providerId} not found.");
                 return NotFound();
+            }
+
 
             return Ok(provider);
         }
         [HttpPatch("{providerId}")]
-        public async Task<IActionResult> UpdateQualifications(int providerId, ProviderRequest request)
+        public async Task<IActionResult> UpdateQualificationsByIdAsync([FromRoute] int providerId, [FromBody] ProviderRequest request)
         {
+
+            if (request == null)
+            {
+                _logger.LogWarning("Failed to update qualifications: invalid request.");
+                return BadRequest();
+            }
+
             var success = await _service.UpdateProviderByIdAsync(providerId, request);
 
             if (!success)
+            {
+                _logger.LogWarning($"Failed to update provider with ID {providerId}.");
                 return NotFound();
+            }
+
 
             return NoContent();
         }

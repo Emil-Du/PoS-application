@@ -1,7 +1,12 @@
-namespace backend.Services;
+using System.Text.Json.Serialization;
 
-public enum ServiceStatus
+namespace backend.Services
 {
-    available,
-    unavailable
+    [JsonConverter(typeof(JsonStringEnumConverter))] // to show proper enum in swagger
+    public enum ServiceStatus
+    {
+
+        available,
+        unavailable
+    }
 }

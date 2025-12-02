@@ -1,5 +1,8 @@
+using backend.Companies;
 using backend.Employees;
+using backend.Locations;
 using backend.Mappings;
+using backend.Products;
 using backend.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +15,10 @@ public class AppDbContext : DbContext
     {
     }
     public DbSet<Employee> Employees { get; set; }
-    public DbSet<EmployeeServiceQualification> ProviderServiceQualifications { get; set; }
+    public DbSet<EmployeeServiceQualification> EmployeeServiceQualifications { get; set; }
     public DbSet<Service> Services { get; set; }
+    public DbSet<Location> Locations { get; set; }
+    public DbSet<Company> Companies { get; set; }
+    public DbSet<Product> Products { get; set; }
 
 }
