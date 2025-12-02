@@ -5,7 +5,7 @@ namespace backend.Employees
     [JsonConverter(typeof(JsonStringEnumConverter))] // to show proper enum in swagger
     public enum EmployeeStatus
     {
-        active,
-        inactive
+        Active,
+        Inactive
     }
 }

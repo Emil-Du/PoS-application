@@ -8,6 +8,6 @@ public class EmployeeResponse
     public int LocationId { get; set; }
     public string PhoneNumber { get; set; } = default!;
     public string Email { get; set; } = default!;
-    public EmployeeStatus Status { get; set; } = EmployeeStatus.active;
+    public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
 
 }

@@ -1,5 +1,7 @@
 using backend.Database;
 using backend.Auth;
+using backend.Customers;
+using backend.Employees;
 using backend.Auth.Utils;
 using Microsoft.EntityFrameworkCore;
 public class AuthRepository
@@ -70,7 +72,7 @@ public class AuthRepository
         {
             FirstName = employeeRegistrationDTO.FirstName,
             LastName = employeeRegistrationDTO.LastName,
-            EmploymentLocationId = employeeRegistrationDTO.EmploymentLocationId,
+            LocationId = employeeRegistrationDTO.EmploymentLocationId,
             Email = employeeRegistrationDTO.Email,
             PhoneNumber = employeeRegistrationDTO.PhoneNumber,
             Salt = salt,

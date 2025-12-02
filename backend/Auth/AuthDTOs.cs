@@ -1,5 +1,5 @@
 namespace backend.Auth;
-
+using backend.Employees;
 public class CustomerRegistrationDTO
 {
     public string Name { get; set; } = string.Empty;

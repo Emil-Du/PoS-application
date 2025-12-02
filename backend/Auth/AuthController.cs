@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
                 EmployeeId = response_details.EmployeeId,
                 FirstName = response_details.FirstName,
                 LastName = response_details.LastName,
-                EmploymentLocationId = response_details.EmploymentLocationId,
+                EmploymentLocationId = response_details.LocationId,
                 Email = response_details.Email,
                 PhoneNumber = response_details.PhoneNumber
             };  

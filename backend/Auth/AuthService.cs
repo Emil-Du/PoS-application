@@ -1,5 +1,6 @@
 using backend.Auth;
-
+using backend.Customers;
+using backend.Employees;
 public class AuthService : IAuthService
 {
     private readonly AuthRepository _authRepository;
