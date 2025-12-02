@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Database;
+using backend.Employees;
+using backend.Providers;
+using backend.Services;
 using backend.Customers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,9 +12,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add controllers
+
+
 builder.Services.AddControllers()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IProviderService, ProviderService>();
+builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<AuthRepository>();
 builder.Services.AddScoped<IReservationsService, ReservationsService>();
