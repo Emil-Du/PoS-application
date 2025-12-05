@@ -7,7 +7,6 @@ using backend.Services;
 using Microsoft.EntityFrameworkCore;
 using backend.Roles;
 using backend.Payments;
-using backend.Auth;
 using backend.Reservations;
 using backend.Customers;
 
@@ -31,5 +30,13 @@ public class AppDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
 
     // will be EmployeeRoles table 
-    //public DbSet<EmployeeRole> EmployeeRoles { get; set; } new class?
+    public DbSet<EmployeeRole> EmployeeRoles { get; set; }
+
+}
+
+// Bnadymas priverst veikt.
+public class EmployeeRole
+{
+    public int Id { get; set; }
+    public int? RoleId { get; set; }
 }
