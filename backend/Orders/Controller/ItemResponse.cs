@@ -1,6 +1,6 @@
 namespace backend.Orders;
 
-public interface IOrderService
+public class ItemResponse
 {
     
 }

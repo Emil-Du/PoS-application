@@ -1,10 +1,8 @@
-using System.Collections.Concurrent;
-
 namespace backend.Orders;
 
-public interface IOrderRepository
+public interface IOrderService
 {
-    Task OpenOrderAsync(int operatorId, int serviceCharge, int discountTotal, Currency currency, int reservationId);
+        Task OpenOrderAsync(int operatorId, int serviceCharge, int discountTotal, Currency currency, int reservationId);
     // Open order response altered to have no return value, because the client already has the contents
     // of the opened order and the method will either throw an exception or succeed 
     Task<OrderResponse> GetOrderByIdAsync(int orderId);
@@ -35,5 +33,10 @@ public interface IOrderRepository
     Task AddItemToOrderAsync(int orderId, ItemRequest item);
     //Add item to order response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
-
+    Task UpdateItemByIdAsync(int orderId, int itemId, ItemRequest item);
+    //Update item by id response altered to have no return value, because the client already has the contents
+    //of the added order and the method will either throw an exception or succeed
+    Task RemoveItemById(int orderId, int itemId);
+    // Remove item by response altered to have no return value, because the client will delete contents after
+    // item is succesfully removed from backend and the method will either throw an exception or succeed
 }
