@@ -1,0 +1,92 @@
+.reservation-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+
+.area {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+}
+
+.area-calendar {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.area-time {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.area-service {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.area-provider {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.area-form {
+    grid-column: 3;
+    grid-row: span 2;
+
+}
+
+.form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.form button {
+    margin-top: auto;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.form button:hover {
+    background-color: #0056b3;
+}
+
+.placeholder {
+    background: #f4f4f4;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    background: #e9e9e9;
+    cursor: pointer;
+}
+
+.calendar-day.selected {
+    background: #4caf50;
+    color: white;
+}
