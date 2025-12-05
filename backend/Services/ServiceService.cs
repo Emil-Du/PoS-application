@@ -1,0 +1,66 @@
+using Microsoft.Extensions.Logging;
+
+namespace backend.Services
+{
+    public class ServiceService : IServiceService
+    {
+        private readonly IServiceRepository _repository;
+
+        public ServiceService(IServiceRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<List<ServiceResponse>> GetServicesAsync(ServiceQuery query)
+        {
+            var services = await _repository.GetServicesAsync(query);
+
+            return services.Select(s => new ServiceResponse
+            {
+                ServiceId = s.ServiceId,
+                ProductId = s.ProductId,
+                CompanyId = s.Location.CompanyId,
+                Title = s.Product.Name,
+                BasePrice = new BasePrice
+                {
+                    Amount = s.Product.UnitPrice,
+                    Currency = s.Product.Currency
+                },
+                DurationMinutes = s.DurationMinutes,
+                Status = s.Status
+            }).ToList();
+        }
+
+        public async Task<ServiceResponse?> GetServiceByIdAsync(int serviceId)
+        {
+            var s = await _repository.GetServiceByIdAsync(serviceId);
+            if (s == null) return null;
+
+            return new ServiceResponse
+            {
+                ServiceId = s.ServiceId,
+                ProductId = s.ProductId,
+                CompanyId = s.Location.CompanyId,
+                Title = s.Product.Name,
+                BasePrice = new BasePrice
+                {
+                    Amount = s.Product.UnitPrice,
+                    Currency = s.Product.Currency
+                },
+                DurationMinutes = s.DurationMinutes,
+                Status = s.Status
+            };
+        }
+
+        public async Task<bool> UpdateServiceByIdAsync(int serviceId, ServiceRequest request)
+        {
+            var service = await _repository.GetServiceByIdAsync(serviceId);
+            if (service == null) return false;
+
+            service.Status = request.Status;
+            service.DurationMinutes = request.DurationMinutes;
+
+            return await _repository.UpdateServiceAsync(service);
+        }
+    }
+}
