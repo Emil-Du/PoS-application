@@ -70,7 +70,7 @@ public class AuthRepository
         {
             FirstName = employeeRegistrationDTO.FirstName,
             LastName = employeeRegistrationDTO.LastName,
-            EmploymentLocationId = employeeRegistrationDTO.EmploymentLocationId,
+            LocationId = employeeRegistrationDTO.LocationId,
             Email = employeeRegistrationDTO.Email,
             PhoneNumber = employeeRegistrationDTO.PhoneNumber,
             Salt = salt,

@@ -1,0 +1,85 @@
+main {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  --border_radius : 5px;
+  border-radius: var(--border_radius);
+  border-color: rgb(177, 177, 177);
+}
+
+h1 {
+    font-size: 45px;
+}
+
+.center-box {
+    width: 550px;
+    height: 470px;
+    border-radius: inherit;
+    border: 1px solid;
+    border-color: inherit;
+    text-align: left;
+
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.login-text {
+    padding-top: 10px;
+    padding-bottom: 40px;
+    font-size: 25px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    font-size: 17px;
+}
+
+.input-with-icon {
+  position: relative;
+  width: 100%;
+}
+
+.input-with-icon .icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: rgb(157, 157, 157);
+  pointer-events: none;
+  font-size: 18px;
+}
+
+form input{
+    display: flex;
+    flex-direction: column;
+    height: 45px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    border-radius: var(--border_radius);
+    font-size: 20px;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid;
+    border-color: rgb(177, 177, 177);
+    padding-left: 40px;
+}
+
+form button {
+    height: auto;
+    border-radius: var(--border_radius);
+    margin-top: 30px;
+    font-size: inherit;
+    height: 55px;
+    border: 2px solid rgb(177, 177, 177);
+    background-color: white;
+}
+
+form button:hover {
+  background-color: rgb(234, 227, 227);
+  border-color: rgb(155, 154, 154);
+}

@@ -1,4 +1,5 @@
 using backend.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -53,6 +54,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("RegisterEmployee")]
+    [Authorize]
     public async Task<IActionResult> RegisterEmployee([FromBody] EmployeeRegistrationDTO employeeRegistrationDTO)
     {
         try
@@ -64,7 +66,7 @@ public class AuthController : ControllerBase
                 EmployeeId = response_details.EmployeeId,
                 FirstName = response_details.FirstName,
                 LastName = response_details.LastName,
-                EmploymentLocationId = response_details.EmploymentLocationId,
+                LocationId = response_details.LocationId,
                 Email = response_details.Email,
                 PhoneNumber = response_details.PhoneNumber
             };  
@@ -84,8 +86,21 @@ public class AuthController : ControllerBase
         try
         {
             var responseDTO = await _authService.LoginEmployee(employeeLoginDTO);
-            
-            return Ok(responseDTO);
+
+            Response.Cookies.Append(
+                "accessToken",
+                responseDTO.AccessToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,     // true: HTTPS; false: HTTP, LOCALHOST
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.UtcNow.AddSeconds(responseDTO.ExpiresIn),
+                    Path = "/"
+                }
+            );
+
+            return Ok(responseDTO.EmployeeId);
         }
         catch (IncorrectLoginDetailsException e)
         {   

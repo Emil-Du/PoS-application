@@ -56,8 +56,8 @@ public class AuthService : IAuthService
         return new EmployeeLoginResponseDTO
             {
                 AccessToken = JwtUtils.GenerateToken(loggedInEmployeeId, _configuration),
-                TokenType = "Bearer",
-                ExpiresIn = expiresIn
+                ExpiresIn = expiresIn,
+                EmployeeId = loggedInEmployeeId
             };
     }
 }
