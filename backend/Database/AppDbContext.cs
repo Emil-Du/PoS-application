@@ -10,6 +10,7 @@ using backend.Payments;
 using backend.Auth;
 using backend.Reservations;
 using backend.Customers;
+using backend.Orders;
 
 namespace backend.Database;
 
@@ -29,6 +30,8 @@ public class AppDbContext : DbContext
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Item> Items { get; set; }
 
     // will be EmployeeRoles table 
     //public DbSet<EmployeeRole> EmployeeRoles { get; set; } new class?

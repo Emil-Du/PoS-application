@@ -7,8 +7,10 @@ namespace backend.Orders
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _service;
-        private readonly ILogger<OrderController> _logger;
 
-        
+        public OrderController(IOrderService service)
+        {
+            _service = service;
+        }
     }
 }

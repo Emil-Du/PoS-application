@@ -1,4 +1,4 @@
-namespace backend.Orders;
+namespace backend.Common;
 
 public enum Currency
 {

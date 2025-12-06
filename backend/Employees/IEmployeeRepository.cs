@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace backend.Employees;
 
 public interface IEmployeeRepository
@@ -7,5 +9,4 @@ public interface IEmployeeRepository
     Task<Employee?> GetEmployeeByIdAsync(int employeeId);
     Task<Employee> CreateEmployeeAsync(Employee employee);
     Task<bool> UpdateEmployeeByIdAsync(Employee employee);
-
 }

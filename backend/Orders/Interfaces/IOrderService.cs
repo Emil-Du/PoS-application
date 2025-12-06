@@ -1,28 +1,33 @@
+using backend.Common;
+
 namespace backend.Orders;
 
 public interface IOrderService
 {
-        Task OpenOrderAsync(int operatorId, int serviceCharge, int discountTotal, Currency currency, int reservationId);
+    Task<Order> GetOrderByIdAsync(int orderId);
+    Task<IEnumerable<Order>> GetOrdersByLocation(int locationId);
+    // Added GetOrdersByLocationAsync, because there was no api contract for getting multiple orders at once
+    public Task OpenOrderAsync(int operatorId, decimal serviceCharge, decimal discount, Currency currency);
     // Open order response altered to have no return value, because the client already has the contents
     // of the opened order and the method will either throw an exception or succeed 
-    Task<OrderResponse> GetOrderByIdAsync(int orderId);
-    Task<OrderResponse> UpdateOrderAsync(int orderId, int tip, int serviceCharge, int discountTotal, int status);
+    // Removed reservationId, as orders don't have such field in the data model
+    public Task UpdateOrderAsync(int orderId, decimal tip, decimal serviceCharge, decimal discount, OrderStatus status);
     // Update order response altered to have no return value, because the client already has the contents
     // of the updated order and the method will either throw an exception or succeed
-    Task CloseOrderAsync(int orderId);
+    public Task CloseOrderAsync(int orderId);
     // Close order response altered to have no return value, because the client already has the contents
     // of the closed order and the method will either throw an exception or succeed
-    Task CancelOrderAsync(int orderId);
+    public Task CancelOrderAsync(int orderId);
     // Cancel order response altered to have no return value, because the client already has the contents
     // of the cancelled order and the method will either throw an exception or succeed
-    Task<string> GetReceiptAsync(int orderId);
+    public Task<string> GetReceiptAsync(int orderId);
     // Get receipt response altered to a string, because the receipt will be printed in text anyways,
     // so there is no point in returning a full object
 
     // I strongly believe this request is entirely pointless, as to have a receipt printed the client
     // should already have an order selected and returned before, which means all of the business logic
     // can be completed clientside without any further requests related to the order
-    Task<List<ItemResponse>> GetOrderItemsAsync(int orderId);
+    public Task<IEnumerable<Item>> GetItemsByOrderAsync(int orderId);
     // Get receipt response altered to a list of ItemResponses, because there is no need to send details
     // of the entire order since another method already fullfils that purpose
 
@@ -30,13 +35,13 @@ public interface IOrderService
     // the client should already have an order selected and and its items returned before, which means
     // all of the business logic can be completed clientside without any further requests related to
     // the order
-    Task AddItemToOrderAsync(int orderId, ItemRequest item);
+    public Task AddItemAsync(Item item);
     //Add item to order response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
-    Task UpdateItemByIdAsync(int orderId, int itemId, ItemRequest item);
+    public Task UpdateItemAsync(Item item);
     //Update item by id response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
-    Task RemoveItemById(int orderId, int itemId);
+    public Task RemoveItemAsync(int itemId);
     // Remove item by response altered to have no return value, because the client will delete contents after
     // item is succesfully removed from backend and the method will either throw an exception or succeed
 }
