@@ -1,4 +1,5 @@
 namespace backend.Auth;
+using backend.Employees;
 
 public class CustomerRegistrationDTO
 {
@@ -33,7 +34,7 @@ public class EmployeeRegistrationDTO
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public int EmploymentLocationId { get; set; }
+    public int LocationId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Password {get; set; } = string.Empty;
@@ -44,7 +45,7 @@ public class EmployeeRegistrationResponseDTO
     public int EmployeeId { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public int EmploymentLocationId { get; set; }
+    public int LocationId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
@@ -59,6 +60,9 @@ public class EmployeeLoginDTO
 public class EmployeeLoginResponseDTO
 {
     public string AccessToken { get; set; } = string.Empty;
-    public string TokenType { get; set; } = string.Empty;
+    public string TokenType { get; set; } = "Bearer";
     public int ExpiresIn { get; set; }
+    public int EmployeeId { get; set; }
+    //public string EmployeeRole { get; set; } = string.Empty;
+
 }
