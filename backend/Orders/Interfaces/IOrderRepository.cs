@@ -6,8 +6,8 @@ public interface IOrderRepository
 {
     public Task<Order?> GetOrderByIdAsync(int orderId);
     public Task<IEnumerable<Order>> GetOrdersByEmployeeIdsAsync(IEnumerable<int> employeeIds);
-    public Task AddOrUpdateOrderAsync(Order order);
+    public Task<Order> AddOrUpdateOrderAsync(Order order);
     public Task<Item?> GetItemByIdAsync(int itemId);
     public Task<IEnumerable<Item>> GetItemsByOrderIdAsync(int orderId);
-    public Task AddOrUpdateItemAsync(Item item);
+    public Task<Item> AddOrUpdateItemAsync(Item item);
 }

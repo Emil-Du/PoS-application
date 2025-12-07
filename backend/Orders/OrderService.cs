@@ -1,5 +1,6 @@
 using backend.Common;
 using backend.Employees;
+using backend.Exceptions;
 using backend.Locations;
 
 namespace backend.Orders;
@@ -15,9 +16,9 @@ public class OrderService : IOrderService
         _employeeRepository = employeeRepository;
     }
 
-    public async Task AddItemAsync(Item item)
+    public async Task<Item> AddItemAsync(int orderId, Item item)
     {
-        await _orderRepository.AddOrUpdateItemAsync(item);
+        return await _orderRepository.AddOrUpdateItemAsync(item) ?? throw new NotFoundException();
     }
 
     public async Task CancelOrderAsync(int orderId)
@@ -67,14 +68,18 @@ public class OrderService : IOrderService
         throw new NotImplementedException();
     }
 
-    public async Task OpenOrderAsync(int operatorId, decimal serviceCharge, decimal discount, Currency currency)
+    public async Task<Order> OpenOrderAsync(int operatorId, decimal serviceCharge, decimal discount, Currency currency)
     {
+        if (await _employeeRepository.GetEmployeeByIdAsync(operatorId) == null) throw new Exception();
+
         var order = new Order(operatorId, serviceCharge, discount, currency);
 
         await _orderRepository.AddOrUpdateOrderAsync(order);
+
+        return order;
     }
 
-    public Task RemoveItemAsync(int itemId)
+    public Task RemoveItemAsync(int orderId, int itemId)
     {
         throw new NotImplementedException();
     }

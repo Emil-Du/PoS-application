@@ -7,9 +7,7 @@ public interface IOrderService
     Task<Order> GetOrderByIdAsync(int orderId);
     Task<IEnumerable<Order>> GetOrdersByLocation(int locationId);
     // Added GetOrdersByLocationAsync, because there was no api contract for getting multiple orders at once
-    public Task OpenOrderAsync(int operatorId, decimal serviceCharge, decimal discount, Currency currency);
-    // Open order response altered to have no return value, because the client already has the contents
-    // of the opened order and the method will either throw an exception or succeed 
+    public Task<Order> OpenOrderAsync(int operatorId, decimal serviceCharge, decimal discount, Currency currency);
     // Removed reservationId, as orders don't have such field in the data model
     public Task UpdateOrderAsync(int orderId, decimal tip, decimal serviceCharge, decimal discount, OrderStatus status);
     // Update order response altered to have no return value, because the client already has the contents
@@ -35,13 +33,13 @@ public interface IOrderService
     // the client should already have an order selected and and its items returned before, which means
     // all of the business logic can be completed clientside without any further requests related to
     // the order
-    public Task AddItemAsync(Item item);
+    public Task<Item> AddItemAsync(int orderId, Item item);
     //Add item to order response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
     public Task UpdateItemAsync(Item item);
     //Update item by id response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
-    public Task RemoveItemAsync(int itemId);
+    public Task RemoveItemAsync(int orderId, int itemId);
     // Remove item by response altered to have no return value, because the client will delete contents after
     // item is succesfully removed from backend and the method will either throw an exception or succeed
 }
