@@ -18,13 +18,17 @@ namespace backend.Orders
         }
 
         [HttpPost]
-        public async Task<IActionResult> OpenNewOrder([FromBody] int operatorId, [FromBody] decimal serviceCharge, [FromBody] decimal discount, [FromBody] Currency currency)
+        public async Task<IActionResult> OpenNewOrder([FromBody] OrderRequest request)
         {
             try
             {
-                var order = await _service.OpenOrderAsync(operatorId, serviceCharge, discount, currency);
+                var order = await _service.OpenOrderAsync(request);
                 
                 return Created(order.OrderId.ToString(), order);
+            }
+            catch(BadHttpRequestException)
+            {
+                return BadRequest();
             }
             catch(NotFoundException)
             {
@@ -54,11 +58,11 @@ namespace backend.Orders
         }
 
         [HttpPatch("{orderId}")]
-        public async Task<IActionResult> UpdateOrderFields(int orderId, [FromBody] decimal tip, [FromBody] decimal serviceCharge, [FromBody] decimal discount, [FromBody] Currency currency, [FromBody] OrderStatus status)
+        public async Task<IActionResult> UpdateOrderFields(int orderId, [FromBody] OrderRequest request)
         {
             try
             {
-                await _service.UpdateOrderAsync(orderId, tip, serviceCharge, discount, status);
+                await _service.UpdateOrderAsync(orderId, request);
                 
                 return Ok();
             }
@@ -141,12 +145,16 @@ namespace backend.Orders
         }
 
         [HttpPost("{orderId}/items")]
-        public async Task<IActionResult> AddItem(int orderId, [FromBody] Item item)
+        public async Task<IActionResult> AddItem(int orderId, [FromBody] ItemRequest request)
         {
             try
             {
-                var createdItem = await _service.AddItemAsync(orderId, item);
+                var createdItem = await _service.AddItemAsync(orderId, request);
                 return Created(createdItem.ItemId.ToString(), createdItem);
+            }
+            catch(BadHttpRequestException)
+            {
+                return BadRequest();
             }
             catch (NotFoundException)
             {
@@ -159,11 +167,11 @@ namespace backend.Orders
         }
 
         [HttpPatch("{orderId}/items/{itemId}")]
-        public async Task<IActionResult> UpdateItem(int orderId, int itemId, [FromBody] Item item)
+        public async Task<IActionResult> UpdateItem(int orderId, int itemId, [FromBody] ItemRequest item)
         {
             try
             {
-                await _service.UpdateItemAsync(item);
+                await _service.UpdateItemAsync(orderId, itemId, item);
 
                 return StatusCode(204);
             }

@@ -2,6 +2,7 @@ using backend.Common;
 using backend.Employees;
 using backend.Exceptions;
 using backend.Locations;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace backend.Orders;
 
@@ -16,91 +17,127 @@ public class OrderService : IOrderService
         _employeeRepository = employeeRepository;
     }
 
-    public async Task<Item> AddItemAsync(int orderId, Item item)
+    public async Task<Item> AddItemAsync(int orderId, ItemRequest request)
     {
-        return await _orderRepository.AddOrUpdateItemAsync(item) ?? throw new NotFoundException();
+        if (request.Currency == null) throw new BadHttpRequestException("Missing currency field");
+        if (request.Quantity == null) throw new BadHttpRequestException("Missing quantity field");
+        if (request.Discount == null) throw new BadHttpRequestException("Missing discount field");
+        if (request.VATPercentage == null) throw new BadHttpRequestException("Missing vatpercentage field");
+
+        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+
+        //add logic to check whether product with productId from request exists
+
+        var item = new Item()
+        {
+            ProductId = (int)request.ProductId, //warning will be fixed when product logic is added
+            Currency = (Currency)request.Currency,
+            Quantity = (int)request.Quantity,
+            Discount = (decimal)request.Discount,
+            VATPercentage = (decimal)request.VATPercentage
+        };
+
+        return await _orderRepository.AddOrUpdateItemAsync(item);
     }
 
     public async Task CancelOrderAsync(int orderId)
     {
-        Order order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new Exception();
+        Order order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
-        if (order.Status != OrderStatus.Opened) throw new Exception();
+        if (order.Status != OrderStatus.Opened) throw new NotFoundException();
 
         order.Status = OrderStatus.Closed;
-        order.Time = DateTime.Now.Ticks;
 
         await _orderRepository.AddOrUpdateOrderAsync(order);
     }
 
     public async Task CloseOrderAsync(int orderId)
     {
-        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new Exception();
+        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
-        if (order.Status != OrderStatus.Opened) throw new Exception();
+        if (order.Status != OrderStatus.Opened) throw new NotFoundException();
 
         order.Status = OrderStatus.Closed;
-        order.Time = DateTime.Now.Ticks;
 
         await _orderRepository.AddOrUpdateOrderAsync(order);
     }
 
     public async Task<Order> GetOrderByIdAsync(int orderId)
     {
-        return await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new Exception();
+        return await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
     }
 
     public async Task<IEnumerable<Item>> GetItemsByOrderAsync(int orderId)
     {
-        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new Exception();
+        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
         var items = await _orderRepository.GetItemsByOrderIdAsync(orderId);
 
-        if (!items.Any()) throw new Exception();
+        if (!items.Any()) throw new NotFoundException();
 
         return items;
     }
 
     public async Task<string> GetReceiptAsync(int orderId)
     {
-        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new Exception();
+        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
         throw new NotImplementedException();
     }
 
-    public async Task<Order> OpenOrderAsync(int operatorId, decimal serviceCharge, decimal discount, Currency currency)
+    public async Task<Order> OpenOrderAsync(OrderRequest request)
     {
-        if (await _employeeRepository.GetEmployeeByIdAsync(operatorId) == null) throw new Exception();
+        if (request.OperatorId == null) throw new BadHttpRequestException("Missing operatorid field");
+        if (request.ServiceCharge == null) throw new BadHttpRequestException("Missing service charge field");
+        if (request.Discount == null) throw new BadHttpRequestException("Missing discount field");
+        if (request.Currency == null) throw new BadHttpRequestException("Missing currency field");
 
-        var order = new Order(operatorId, serviceCharge, discount, currency);
+        if (await _employeeRepository.GetEmployeeByIdAsync((int)request.OperatorId) == null) throw new NotFoundException();
+
+        var order = new Order((int)request.OperatorId, (Currency)request.Currency, (decimal)request.ServiceCharge, (decimal)request.Discount);
 
         await _orderRepository.AddOrUpdateOrderAsync(order);
 
         return order;
     }
 
-    public Task RemoveItemAsync(int orderId, int itemId)
+    public async Task RemoveItemAsync(int orderId, int itemId)
     {
-        throw new NotImplementedException();
+        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+
+        var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
+
+        item.Status = ItemStatus.Removed;
+
+        await _orderRepository.AddOrUpdateItemAsync(item);
     }
 
-    public Task UpdateItemAsync(Item item)
+    public async Task UpdateItemAsync(int orderId, int itemId, ItemRequest request)
     {
-        throw new NotImplementedException();
+        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+
+        //add check for whether product with productId from ItemRequest exists
+
+        var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
+
+        if (request.Quantity != null) item.Quantity = (int)request.Quantity;
+        if (request.Discount != null) item.Discount = (decimal)request.Discount;
+        if (request.VATPercentage != null) item.VATPercentage = (decimal)request.VATPercentage;
+
+        await _orderRepository.AddOrUpdateItemAsync(item);
     }
 
-    public async Task UpdateOrderAsync(int orderId, decimal tip, decimal serviceCharge, decimal discount, OrderStatus status)
+    public async Task UpdateOrderAsync(int orderId, OrderRequest request)
     //idk if order status should be updateable by UpdateOrder, because there are independant methods for each different state and logic associated with order status
     {
-        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new Exception();
+        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
-        if (order.Status != OrderStatus.Opened) throw new Exception();
+        if (order.Status != OrderStatus.Opened) throw new NotFoundException();
 
-        order.Tip = tip;
-        order.ServiceCharge = serviceCharge;
-        order.Discount = discount;
-        order.Status = status;
-        order.Time = DateTime.Now.Ticks;
+        if (request.Tip != null) order.Tip = (decimal)request.Tip;
+        if (request.Discount != null) order.Discount = (decimal)request.Discount;
+        if (request.ServiceCharge != null) order.ServiceCharge = (decimal)request.ServiceCharge;
+        if (request.Status != null) order.Status = (OrderStatus)request.Status;
 
         await _orderRepository.AddOrUpdateOrderAsync(order);
     }
@@ -109,7 +146,7 @@ public class OrderService : IOrderService
     {
         var employees = await _employeeRepository.GetEmployeesAsync(new EmployeeQuery() { LocationId = locationId });
 
-        if (employees.Count == 0) throw new Exception();
+        if (employees.Count == 0) throw new NotFoundException();
 
         var employeeIds = employees.Select(employee => employee.EmployeeId);
 

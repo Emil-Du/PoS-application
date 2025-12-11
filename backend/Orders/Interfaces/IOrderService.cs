@@ -7,9 +7,9 @@ public interface IOrderService
     Task<Order> GetOrderByIdAsync(int orderId);
     Task<IEnumerable<Order>> GetOrdersByLocation(int locationId);
     // Added GetOrdersByLocationAsync, because there was no api contract for getting multiple orders at once
-    public Task<Order> OpenOrderAsync(int operatorId, decimal serviceCharge, decimal discount, Currency currency);
+    public Task<Order> OpenOrderAsync(OrderRequest request);
     // Removed reservationId, as orders don't have such field in the data model
-    public Task UpdateOrderAsync(int orderId, decimal tip, decimal serviceCharge, decimal discount, OrderStatus status);
+    public Task UpdateOrderAsync(int orderId, OrderRequest request);
     // Update order response altered to have no return value, because the client already has the contents
     // of the updated order and the method will either throw an exception or succeed
     public Task CloseOrderAsync(int orderId);
@@ -33,10 +33,10 @@ public interface IOrderService
     // the client should already have an order selected and and its items returned before, which means
     // all of the business logic can be completed clientside without any further requests related to
     // the order
-    public Task<Item> AddItemAsync(int orderId, Item item);
+    public Task<Item> AddItemAsync(int orderId, ItemRequest item);
     //Add item to order response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
-    public Task UpdateItemAsync(Item item);
+    public Task UpdateItemAsync(int orderId, int itemId, ItemRequest item);
     //Update item by id response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
     public Task RemoveItemAsync(int orderId, int itemId);

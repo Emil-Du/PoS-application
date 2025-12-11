@@ -11,6 +11,7 @@ using backend.Employees;
 using backend.Providers;
 using backend.Services;
 using backend.Customers;
+using backend.Orders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,8 @@ builder.Services.AddScoped<IReservationsService, ReservationsService>();
 builder.Services.AddScoped<ReservationsRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
