@@ -37,6 +37,8 @@ namespace backend.Services
         {
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
+            await _context.Entry(service).Reference(s => s.Product).LoadAsync();
+            await _context.Entry(service).Reference(s => s.Location).LoadAsync();
             return service;
         }
 
