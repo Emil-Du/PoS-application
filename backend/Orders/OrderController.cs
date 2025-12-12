@@ -1,6 +1,7 @@
 using backend.Common;
 using backend.Exceptions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Orders
@@ -23,14 +24,14 @@ namespace backend.Orders
             try
             {
                 var order = await _service.OpenOrderAsync(request);
-                
+
                 return Created(order.OrderId.ToString(), order);
             }
-            catch(BadHttpRequestException)
+            catch (BadHttpRequestException)
             {
                 return BadRequest();
             }
-            catch(NotFoundException)
+            catch (NotFoundException)
             {
                 return NotFound();
             }
@@ -41,11 +42,12 @@ namespace backend.Orders
         }
 
         [HttpGet("{orderId}")]
-        public async Task<IActionResult> GetOrderById(int orderId)
+        public async Task<ActionResult<Order>> GetOrderById(int orderId)
         {
             try
             {
-                return Ok(await _service.GetOrderByIdAsync(orderId));
+                var order = await _service.GetOrderByIdAsync(orderId);
+                return Ok(order);
             }
             catch (NotFoundException)
             {
@@ -63,7 +65,7 @@ namespace backend.Orders
             try
             {
                 await _service.UpdateOrderAsync(orderId, request);
-                
+
                 return Ok();
             }
             catch (NotFoundException)
@@ -82,7 +84,7 @@ namespace backend.Orders
             try
             {
                 await _service.CloseOrderAsync(orderId);
-                
+
                 return Ok();
             }
             catch (NotFoundException)
@@ -101,7 +103,7 @@ namespace backend.Orders
             try
             {
                 await _service.CancelOrderAsync(orderId);
-                
+
                 return Ok();
             }
             catch (NotFoundException)
@@ -114,7 +116,7 @@ namespace backend.Orders
             }
         }
 
-       [HttpGet("{orderId}/receipt")]
+        [HttpGet("{orderId}/receipt")]
         public async Task<IActionResult> GetReceipt(int orderId)
         {
             try
@@ -132,7 +134,8 @@ namespace backend.Orders
         {
             try
             {
-                return Ok(await _service.GetItemsByOrderAsync(orderId));
+                var items = await _service.GetItemsByOrderAsync(orderId);
+                return Ok(items);
             }
             catch (NotFoundException)
             {
@@ -152,7 +155,7 @@ namespace backend.Orders
                 var createdItem = await _service.AddItemAsync(orderId, request);
                 return Created(createdItem.ItemId.ToString(), createdItem);
             }
-            catch(BadHttpRequestException)
+            catch (BadHttpRequestException)
             {
                 return BadRequest();
             }

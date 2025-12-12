@@ -14,7 +14,7 @@ public class Reservation
     public int LocationId { get; set; }
     public int ProviderId { get; set; }
     public int CustomerId { get; set; }
-    public long ReservationTime {get; set; }
-    public long AppointmentTime {get; set; }
+    public long ReservationTime { get; set; }
+    public long AppointmentTime { get; set; }
     public ReservationStatus Status { get; set; } = ReservationStatus.Active;
 }
