@@ -11,9 +11,9 @@ public class PaymentRepository : IPaymentRepository
         _context = context;
     }
 
-    public async Task<Payment> GetPaymentsByOrderIdAsync(int orderId)
+    public async Task<Payment?> GetPaymentsByOrderIdAsync(int orderId)
     {
-        return await _context.Payments.FindAsync(orderId); 
+        return await _context.Payments.FindAsync(orderId);
     }
 
     public async Task<Payment> CreateCashPaymentAsync(PaymentRequest request)

@@ -17,14 +17,26 @@ namespace backend.Services
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ServiceResponse>>> GetServicesAsync([FromQuery] ServiceQuery query)
+        public async Task<ActionResult<List<ServiceResponse>>> GetServices([FromQuery] ServiceQuery query)
         {
             var services = await _service.GetServicesAsync(query);
             return Ok(services);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse>> CreateService([FromBody] CreateServiceRequest request)
+        {
+            var createdService = await _service.CreateServiceAsync(request);
+
+            return CreatedAtAction(
+                nameof(GetServiceById),
+                new { serviceId = createdService.ServiceId },
+                createdService
+            );
+        }
+
         [HttpGet("{serviceId}")]
-        public async Task<ActionResult<ServiceResponse>> GetServiceByIdAsync([FromRoute] int serviceId)
+        public async Task<ActionResult<ServiceResponse>> GetServiceById([FromRoute] int serviceId)
         {
             var response = await _service.GetServiceByIdAsync(serviceId);
             if (response == null)
@@ -38,14 +50,8 @@ namespace backend.Services
 
 
         [HttpPatch("{serviceId}")]
-        public async Task<IActionResult> UpdateServiceByIdAsync([FromRoute] int serviceId, [FromBody] ServiceRequest request)
+        public async Task<IActionResult> UpdateServiceById([FromRoute] int serviceId, [FromBody] ServiceRequest request)
         {
-            if (request == null)
-            {
-                _logger.LogWarning("Failed to update service: invalid request.");
-                return BadRequest();
-            }
-
             var updated = await _service.UpdateServiceByIdAsync(serviceId, request);
             if (!updated)
             {

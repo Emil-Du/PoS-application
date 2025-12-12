@@ -19,6 +19,19 @@ public class AppDbContext : DbContext
         : base(options)
     {
     }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<EmployeeServiceQualification>()
+            .HasKey(q => new { q.EmployeeId, q.ServiceId });
+
+        modelBuilder.Entity<ItemProductSelection>()
+            .HasKey(q => new { q.ItemId, q.ProductId });
+
+
+
+        base.OnModelCreating(modelBuilder);
+    }
+
     public DbSet<Employee> Employees { get; set; }
     public DbSet<EmployeeServiceQualification> EmployeeServiceQualifications { get; set; }
     public DbSet<Service> Services { get; set; }
@@ -33,7 +46,6 @@ public class AppDbContext : DbContext
     public DbSet<Item> Items { get; set; }
     public DbSet<ItemProductSelection> ItemProductSelections { get; set; }
 
-    // will be EmployeeRoles table 
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
 
 }
@@ -42,5 +54,5 @@ public class AppDbContext : DbContext
 public class EmployeeRole
 {
     public int Id { get; set; }
-    public int? RoleId { get; set; }
+    public int RoleId { get; set; }
 }

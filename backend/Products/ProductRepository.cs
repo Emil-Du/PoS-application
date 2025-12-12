@@ -1,4 +1,5 @@
 using backend.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Products;
 
@@ -18,8 +19,9 @@ public class ProductRepository : IProductRepository
 
     public async Task<IEnumerable<Product?>> GetProductsByItemIdAsync(int itemId)
     {
-        return _context.ItemProductSelections
+        return await _context.ItemProductSelections
             .Where(selection => selection.ItemId == itemId)
-            .Select(selection => _context.Products.Find(selection.ProductId));
+            .Select(selection => selection.Product)
+            .ToListAsync();
     }
 }

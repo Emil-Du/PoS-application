@@ -24,7 +24,7 @@ public class RoleService : IRoleService
         return await _repository.CreateRoleAsync(roleCreateRequest);
     }
 
-    public async Task<Role> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
+    public async Task<Role?> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
     {
         return await _repository.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
     }

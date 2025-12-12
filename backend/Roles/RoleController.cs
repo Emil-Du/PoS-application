@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/[controller]")]
 
 public class RoleController : ControllerBase
 {
@@ -40,7 +40,7 @@ public class RoleController : ControllerBase
 
         if (roleCreateRequest == null)
         {
-                return BadRequest();
+            return BadRequest();
         }
 
         var newRole = await _repository.CreateRoleAsync(roleCreateRequest);
@@ -52,7 +52,7 @@ public class RoleController : ControllerBase
     {
         if (roleUpdateRequest == null)
         {
-                return BadRequest();
+            return BadRequest();
         }
 
         var updated = await _repository.UpdateRoleByIdAsync(roleId, roleUpdateRequest);

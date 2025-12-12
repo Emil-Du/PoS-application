@@ -33,6 +33,13 @@ namespace backend.Services
                 .FirstOrDefaultAsync(s => s.ServiceId == serviceId);
         }
 
+        public async Task<Service> CreateServiceAsync(Service service)
+        {
+            _context.Services.Add(service);
+            await _context.SaveChangesAsync();
+            return service;
+        }
+
         public async Task<bool> UpdateServiceAsync(Service service)
         {
             var existing = await _context.Services.FindAsync(service.ServiceId);

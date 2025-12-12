@@ -51,6 +51,33 @@ namespace backend.Services
                 Status = s.Status
             };
         }
+        public async Task<ServiceResponse> CreateServiceAsync(CreateServiceRequest request)
+        {
+            var service = new Service
+            {
+                ProductId = request.ProductId,
+                LocationId = request.LocationId,
+                Status = request.Status,
+                DurationMinutes = request.DurationMinutes
+            };
+
+            var createdService = await _repository.CreateServiceAsync(service);
+
+            return new ServiceResponse
+            {
+                ServiceId = createdService.ServiceId,
+                ProductId = createdService.ProductId,
+                CompanyId = createdService.Location.CompanyId,
+                Title = createdService.Product.Name,
+                BasePrice = new BasePrice
+                {
+                    Amount = createdService.Product.UnitPrice,
+                    Currency = createdService.Product.Currency
+                },
+                DurationMinutes = createdService.DurationMinutes,
+                Status = createdService.Status
+            };
+        }
 
         public async Task<bool> UpdateServiceByIdAsync(int serviceId, ServiceRequest request)
         {

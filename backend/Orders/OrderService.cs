@@ -23,10 +23,6 @@ public class OrderService : IOrderService
 
     public async Task<Item> AddItemAsync(int orderId, ItemRequest request)
     {
-        if (request.Currency == null) throw new BadHttpRequestException("Missing currency field");
-        if (request.Quantity == null) throw new BadHttpRequestException("Missing quantity field");
-        if (request.Discount == null) throw new BadHttpRequestException("Missing discount field");
-        if (request.VATPercentage == null) throw new BadHttpRequestException("Missing vatpercentage field");
 
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
@@ -115,10 +111,6 @@ public class OrderService : IOrderService
 
     public async Task<Order> OpenOrderAsync(OrderRequest request)
     {
-        if (request.OperatorId == null) throw new BadHttpRequestException("Missing operatorid field");
-        if (request.ServiceCharge == null) throw new BadHttpRequestException("Missing service charge field");
-        if (request.Discount == null) throw new BadHttpRequestException("Missing discount field");
-        if (request.Currency == null) throw new BadHttpRequestException("Missing currency field");
 
         if (await _employeeRepository.GetEmployeeByIdAsync((int)request.OperatorId) == null) throw new NotFoundException();
 
@@ -146,9 +138,6 @@ public class OrderService : IOrderService
 
         var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
 
-        if (request.Quantity != null) item.Quantity = (int)request.Quantity;
-        if (request.Discount != null) item.Discount = (decimal)request.Discount;
-        if (request.VATPercentage != null) item.VATPercentage = (decimal)request.VATPercentage;
 
         await _orderRepository.AddOrUpdateItemAsync(item);
     }
@@ -159,11 +148,6 @@ public class OrderService : IOrderService
         var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
         if (order.Status != OrderStatus.Opened) throw new NotFoundException();
-
-        if (request.Tip != null) order.Tip = (decimal)request.Tip;
-        if (request.Discount != null) order.Discount = (decimal)request.Discount;
-        if (request.ServiceCharge != null) order.ServiceCharge = (decimal)request.ServiceCharge;
-        if (request.Status != null) order.Status = (OrderStatus)request.Status;
 
         await _orderRepository.AddOrUpdateOrderAsync(order);
     }

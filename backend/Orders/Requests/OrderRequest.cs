@@ -4,19 +4,10 @@ namespace backend.Orders;
 
 public class OrderRequest
 {
-    public int? OperatorId;
-    public decimal? Tip;
-    public decimal? Discount;
-    public decimal? ServiceCharge;
-    public OrderStatus? Status;
-    public Currency? Currency;
-
-    public OrderRequest(decimal? tip = null, decimal? discount = null, decimal? serviceCharge = null, OrderStatus? status = null, Currency? currency = null)
-    {
-        Tip = tip;
-        Discount = discount;
-        ServiceCharge = serviceCharge;
-        Status = status;
-        Currency = currency;
-    }
+    public int OperatorId { get; set; }
+    public decimal Tip { get; set; }
+    public decimal Discount { get; set; }
+    public decimal ServiceCharge { get; set; }
+    public OrderStatus Status { get; set; }
+    public Currency Currency { get; set; }
 }

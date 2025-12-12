@@ -16,14 +16,14 @@ namespace backend.Customers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<CustomerResponse>>> GetCustomersAsync([FromQuery] CustomerQuery query)
+        public async Task<ActionResult<PaginatedResponse<CustomerResponse>>> GetCustomers([FromQuery] CustomerQuery query)
         {
             var result = await _service.GetCustomersAsync(query);
             return Ok(result);
         }
 
         [HttpGet("{customerId}")]
-        public async Task<ActionResult<CustomerResponse>> GetCustomerByIdAsync([FromRoute] int customerId)
+        public async Task<ActionResult<CustomerResponse>> GetCustomerById([FromRoute] int customerId)
         {
             var response = await _service.GetCustomerByIdAsync(customerId);
             if (response == null)
@@ -36,32 +36,26 @@ namespace backend.Customers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerResponse>> CreateCustomerAsync([FromBody] CustomerRequest customerRequest)
+        public async Task<ActionResult<CustomerResponse>> CreateCustomer([FromBody] CustomerRequest customerRequest)
         {
-            if (customerRequest == null)
+            var createdCustomer = await _service.CreateCustomerAsync(customerRequest);
+
+            if (createdCustomer == null)
             {
-                _logger.LogWarning("Failed to create customer: invalid request.");
+                _logger.LogError("Failed to create customer.");
                 return BadRequest();
             }
 
-            var createdCustomer = await _service.CreateCustomerAsync(customerRequest);
-
             return CreatedAtAction(
-                nameof(GetCustomerByIdAsync),
+                nameof(GetCustomerById),
                 new { customerId = createdCustomer.CustomerId },
                 createdCustomer
             );
         }
 
         [HttpPatch("{customerId}")]
-        public async Task<IActionResult> UpdateCustomerByIdAsync([FromRoute] int customerId, [FromBody] CustomerRequest customerRequest)
+        public async Task<IActionResult> UpdateCustomerById([FromRoute] int customerId, [FromBody] CustomerRequest customerRequest)
         {
-            if (customerRequest == null)
-            {
-                _logger.LogWarning("Failed to update customer: invalid request.");
-                return BadRequest();
-            }
-
             var updated = await _service.UpdateCustomerByIdAsync(customerId, customerRequest);
             if (!updated)
             {
@@ -72,7 +66,7 @@ namespace backend.Customers
             return NoContent();
         }
         [HttpDelete("{customerId}")]
-        public async Task<IActionResult> DeleteCustomerByIdAsync([FromRoute] int customerId)
+        public async Task<IActionResult> DeleteCustomerById([FromRoute] int customerId)
         {
             var deleted = await _service.DeleteCustomerByIdAsync(customerId);
             if (!deleted)
