@@ -1,4 +1,6 @@
 using backend.Database;
+using backend.Mappings;
+using backend.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Orders;
@@ -25,6 +27,8 @@ public class OrderRepository : IOrderRepository
     public async Task AddOrUpdateOrderAsync(Order order)
     {
         await _context.Orders.AddAsync(order);
+        
+        await _context.SaveChangesAsync();
     }
 
     public async Task<Item?> GetItemByIdAsync(int itemId)
@@ -40,5 +44,14 @@ public class OrderRepository : IOrderRepository
     public async Task AddOrUpdateItemAsync(Item item)
     {
         await _context.Items.AddAsync(item);
+        
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task AddOrUpdateItemProductSelection(ItemProductSelection selection)
+    {
+        await  _context.ItemProductSelections.AddAsync(selection);
+        
+        await _context.SaveChangesAsync();
     }
 }

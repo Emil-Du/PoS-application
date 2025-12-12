@@ -1,8 +1,10 @@
+using System.Linq;
 using backend.Common;
 using backend.Employees;
 using backend.Exceptions;
-using backend.Locations;
-using Microsoft.AspNetCore.Http.HttpResults;
+using backend.Mappings;
+using backend.Products;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Orders;
 
@@ -10,11 +12,13 @@ public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IProductRepository _productRepository;
 
-    public OrderService(IOrderRepository repository, IEmployeeRepository employeeRepository)
+    public OrderService(IOrderRepository repository, IEmployeeRepository employeeRepository, IProductRepository productRepository)
     {
         _orderRepository = repository;
         _employeeRepository = employeeRepository;
+        _productRepository = productRepository;
     }
 
     public async Task<Item> AddItemAsync(int orderId, ItemRequest request)
@@ -26,18 +30,33 @@ public class OrderService : IOrderService
 
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
-        //add logic to check whether product with productId from request exists
+        var products = await Task.WhenAll(request.ProductIds.Select(_productRepository.GetProductByIdAsync));
+
+        if (products.Contains(null)) throw new NotFoundException();
 
         var item = new Item()
         {
-            ProductId = (int)request.ProductId, //warning will be fixed when product logic is added
+            Products = products!,
             Currency = (Currency)request.Currency,
             Quantity = (int)request.Quantity,
             Discount = (decimal)request.Discount,
             VATPercentage = (decimal)request.VATPercentage
         };
 
-        return await _orderRepository.AddOrUpdateItemAsync(item);
+        await _orderRepository.AddOrUpdateItemAsync(item);
+
+        var selections = products
+            .Select(product => new ItemProductSelection()
+            {
+                ItemId = item.ItemId,
+                Item = item,
+                ProductId = product!.ProductId,
+                Product = product
+            });
+
+        foreach (var selection in selections) await _orderRepository.AddOrUpdateItemProductSelection(selection);
+
+        return item;
     }
 
     public async Task CancelOrderAsync(int orderId)
@@ -73,7 +92,16 @@ public class OrderService : IOrderService
 
         var items = await _orderRepository.GetItemsByOrderIdAsync(orderId);
 
-        if (!items.Any()) throw new NotFoundException();
+        if (items == null || items.Any(item => item == null)) throw new NotFoundException();
+
+        foreach (var item in items)
+        {
+            var products = await _productRepository.GetProductsByItemIdAsync(item.ItemId);
+
+            if (products == null || products.Any(product => product == null)) throw new NotFoundException();
+
+            item.Products = products!;
+        }
 
         return items;
     }
@@ -106,8 +134,6 @@ public class OrderService : IOrderService
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
         var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
-
-        item.Status = ItemStatus.Removed;
 
         await _orderRepository.AddOrUpdateItemAsync(item);
     }

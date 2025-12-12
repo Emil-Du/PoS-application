@@ -31,6 +31,7 @@ public class AppDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Item> Items { get; set; }
+    public DbSet<ItemProductSelection> ItemProductSelections { get; set; }
 
     // will be EmployeeRoles table 
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }

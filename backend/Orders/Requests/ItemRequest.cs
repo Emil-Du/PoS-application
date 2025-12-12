@@ -4,7 +4,7 @@ namespace backend.Orders;
 
 public class ItemRequest
 {
-    public int? ProductId { get; set; }
+    public ICollection<int> ProductIds { get; set; } = [];
     public Currency? Currency { get; set; }
     public int? Quantity { get; set; }
     public decimal? Discount { get; set; }

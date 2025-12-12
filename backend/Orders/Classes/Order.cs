@@ -13,7 +13,7 @@ public class Order
         ServiceCharge = serviceCharge;
         Discount = discount;
         Currency = currency;
-        Payments = [];
+        PaymentIds = [];
     }
 
     public int OrderId { get; set; }
@@ -23,6 +23,6 @@ public class Order
     public decimal ServiceCharge { get; set; }
     public decimal Discount { get; set; }
     public Currency Currency { get; set; }
-    public IEnumerable<Payment> Payments { get; set; }
+    public IEnumerable<int> PaymentIds { get; set; }
 }
 
