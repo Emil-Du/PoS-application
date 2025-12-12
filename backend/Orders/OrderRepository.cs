@@ -48,9 +48,9 @@ public class OrderRepository : IOrderRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task AddOrUpdateItemProductSelection(ItemProductSelection selection)
+    public async Task AddOrUpdateItemProductSelection(ItemVariationSelection selection)
     {
-        await  _context.ItemProductSelections.AddAsync(selection);
+        await  _context.ItemVariationSelections.AddAsync(selection);
         
         await _context.SaveChangesAsync();
     }

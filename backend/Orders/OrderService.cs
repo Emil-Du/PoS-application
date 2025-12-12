@@ -4,6 +4,7 @@ using backend.Employees;
 using backend.Exceptions;
 using backend.Mappings;
 using backend.Products;
+using backend.Variations;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Orders;
@@ -13,12 +14,14 @@ public class OrderService : IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IVariationRepository _variationRepository;
 
-    public OrderService(IOrderRepository repository, IEmployeeRepository employeeRepository, IProductRepository productRepository)
+    public OrderService(IOrderRepository repository, IEmployeeRepository employeeRepository, IProductRepository productRepository, IVariationRepository variationRepository)
     {
         _orderRepository = repository;
         _employeeRepository = employeeRepository;
         _productRepository = productRepository;
+        _variationRepository = variationRepository;
     }
 
     public async Task<Item> AddItemAsync(int orderId, ItemRequest request)
@@ -26,13 +29,13 @@ public class OrderService : IOrderService
 
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
-        var products = await Task.WhenAll(request.ProductIds.Select(_productRepository.GetProductByIdAsync));
+        var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
 
-        if (products.Contains(null)) throw new NotFoundException();
+        if (variations.Contains(null)) throw new NotFoundException();
 
         var item = new Item()
         {
-            Products = products!,
+            Variations = variations!,
             Currency = (Currency)request.Currency,
             Quantity = (int)request.Quantity,
             Discount = (decimal)request.Discount,
@@ -41,13 +44,13 @@ public class OrderService : IOrderService
 
         await _orderRepository.AddOrUpdateItemAsync(item);
 
-        var selections = products
-            .Select(product => new ItemProductSelection()
+        var selections = variations
+            .Select(variation => new ItemVariationSelection()
             {
                 ItemId = item.ItemId,
                 Item = item,
-                ProductId = product!.ProductId,
-                Product = product
+                VariationId = variation!.ProductId,
+                Variation = variation
             });
 
         foreach (var selection in selections) await _orderRepository.AddOrUpdateItemProductSelection(selection);
@@ -92,11 +95,11 @@ public class OrderService : IOrderService
 
         foreach (var item in items)
         {
-            var products = await _productRepository.GetProductsByItemIdAsync(item.ItemId);
+            var products = await _variationRepository.GetVariationsByItemIdAsync(item.ItemId);
 
             if (products == null || products.Any(product => product == null)) throw new NotFoundException();
 
-            item.Products = products!;
+            item.Variations = products!;
         }
 
         return items;

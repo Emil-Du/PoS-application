@@ -10,6 +10,7 @@ using backend.Payments;
 using backend.Reservations;
 using backend.Customers;
 using backend.Orders;
+using backend.Variations;
 
 namespace backend.Database;
 
@@ -24,8 +25,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<EmployeeServiceQualification>()
             .HasKey(q => new { q.EmployeeId, q.ServiceId });
 
-        modelBuilder.Entity<ItemProductSelection>()
-            .HasKey(q => new { q.ItemId, q.ProductId });
+        modelBuilder.Entity<ItemVariationSelection>()
+            .HasKey(q => new { q.ItemId, q.VariationId });
 
 
 
@@ -44,8 +45,8 @@ public class AppDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Item> Items { get; set; }
-    public DbSet<ItemProductSelection> ItemProductSelections { get; set; }
-
+    public DbSet<ItemVariationSelection> ItemVariationSelections { get; set; }
+    public DbSet<Variation> Variations { get; set; }
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
 
 }

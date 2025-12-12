@@ -11,5 +11,5 @@ public interface IOrderRepository
     public Task<Item?> GetItemByIdAsync(int itemId);
     public Task<IEnumerable<Item>> GetItemsByOrderIdAsync(int orderId);
     public Task AddOrUpdateItemAsync(Item item);
-    public Task AddOrUpdateItemProductSelection(ItemProductSelection selection);
+    public Task AddOrUpdateItemProductSelection(ItemVariationSelection selection);
 }

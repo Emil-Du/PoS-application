@@ -21,7 +21,7 @@ public class ProductRepository : IProductRepository
     {
         return await _context.ItemProductSelections
             .Where(selection => selection.ItemId == itemId)
-            .Select(selection => selection.Product)
+            .Select(selection => selection.Variation)
             .ToListAsync();
     }
 }
