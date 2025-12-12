@@ -9,6 +9,7 @@ using backend.Roles;
 using backend.Payments;
 using backend.Reservations;
 using backend.Customers;
+using backend.Orders;
 
 namespace backend.Database;
 
@@ -28,6 +29,9 @@ public class AppDbContext : DbContext
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Item> Items { get; set; }
+    public DbSet<ItemProductSelection> ItemProductSelections { get; set; }
 
     // will be EmployeeRoles table 
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }

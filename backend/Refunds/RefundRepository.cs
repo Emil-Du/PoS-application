@@ -18,7 +18,15 @@ public class RefundRepository : IRefundRepository
             {
                 throw new Exception("Payment not found");
             }
-            
+
+            //Business logic for changing Order status to refunded
+            var order = await _context.Orders.FindAsync(payment.OrderId) ?? throw new Exception(); //add NotFoundException
+
+            order.Status = Orders.OrderStatus.Refunded;
+            order.Time = DateTime.Now.Ticks;
+
+            await _context.Orders.AddAsync(order);
+
             return refundRequest;
     }
 }
