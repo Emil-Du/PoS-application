@@ -1,6 +1,5 @@
 using backend.Database;
 using backend.Mappings;
-using backend.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Orders;
@@ -24,11 +23,13 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders.Where(order => employeeIds.Contains(order.OperatorId)).ToListAsync();
     }
 
-    public async Task AddOrUpdateOrderAsync(Order order)
+    public async Task<Order> AddOrUpdateOrderAsync(Order order)
     {
-        await _context.Orders.AddAsync(order);
+        var uploadedOrder = await _context.Orders.AddAsync(order);
         
         await _context.SaveChangesAsync();
+
+        return uploadedOrder.Entity;
     }
 
     public async Task<Item?> GetItemByIdAsync(int itemId)
@@ -41,14 +42,16 @@ public class OrderRepository : IOrderRepository
         return await _context.Items.Where(item => item.OrderId == orderId).ToListAsync();
     }
 
-    public async Task AddOrUpdateItemAsync(Item item)
+    public async Task<Item> AddOrUpdateItemAsync(Item item)
     {
-        await _context.Items.AddAsync(item);
+        var uploadedItem = await _context.Items.AddAsync(item);
         
         await _context.SaveChangesAsync();
+
+        return uploadedItem.Entity;
     }
 
-    public async Task AddOrUpdateItemProductSelection(ItemVariationSelection selection)
+    public async Task AddOrUpdateItemVariationSelection(ItemVariationSelection selection)
     {
         await  _context.ItemVariationSelections.AddAsync(selection);
         

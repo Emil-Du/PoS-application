@@ -32,27 +32,25 @@ public class OrderService : IOrderService
 
         if (variations.Contains(null)) throw new NotFoundException();
 
-        var item = new Item()
+        var item = await _orderRepository.AddOrUpdateItemAsync(new Item()
         {
             Variations = variations!,
-            Currency = (Currency)request.Currency,
-            Quantity = (int)request.Quantity,
-            Discount = (decimal)request.Discount,
-            VATPercentage = (decimal)request.VATPercentage
-        };
-
-        await _orderRepository.AddOrUpdateItemAsync(item);
+            Currency = request.Currency,
+            Quantity = request.Quantity,
+            Discount = request.Discount,
+            VATPercentage = request.VATPercentage
+        });
 
         var selections = variations
             .Select(variation => new ItemVariationSelection()
             {
                 ItemId = item.ItemId,
                 Item = item,
-                VariationId = variation!.ProductId,
+                VariationId = variation!.VariationId,
                 Variation = variation
             });
 
-        foreach (var selection in selections) await _orderRepository.AddOrUpdateItemProductSelection(selection);
+        foreach (var selection in selections) await _orderRepository.AddOrUpdateItemVariationSelection(selection);
 
         return item;
     }
@@ -94,11 +92,11 @@ public class OrderService : IOrderService
 
         foreach (var item in items)
         {
-            var products = await _variationRepository.GetVariationsByItemIdAsync(item.ItemId);
+            var variations = await _variationRepository.GetVariationsByItemIdAsync(item.ItemId);
 
-            if (products == null || products.Any(product => product == null)) throw new NotFoundException();
+            if (variations == null || variations.Any(variation => variation == null)) throw new NotFoundException();
 
-            item.Variations = products!;
+            item.Variations = variations!;
         }
 
         return items;
@@ -113,14 +111,15 @@ public class OrderService : IOrderService
 
     public async Task<Order> OpenOrderAsync(OrderRequest request)
     {
-
         if (await _employeeRepository.GetEmployeeByIdAsync((int)request.OperatorId) == null) throw new NotFoundException();
 
-        var order = new Order((int)request.OperatorId, (Currency)request.Currency, (decimal)request.ServiceCharge, (decimal)request.Discount);
-
-        await _orderRepository.AddOrUpdateOrderAsync(order);
-
-        return order;
+        return await _orderRepository.AddOrUpdateOrderAsync(new Order() 
+        {
+            OperatorId = request.OperatorId, 
+            Currency = request.Currency, 
+            ServiceCharge = request.ServiceCharge,
+            Discount = request.Discount
+        });
     }
 
     public async Task RemoveItemAsync(int orderId, int itemId)
@@ -135,12 +134,34 @@ public class OrderService : IOrderService
     public async Task UpdateItemAsync(int orderId, int itemId, ItemRequest request)
     {
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
-        if (await _variationRepository.GetVariationByIdAsync(request.ProductId) == null) throw new NotFoundException();
+        if (await _productRepository.GetProductByIdAsync(request.ProductId) == null) throw new NotFoundException();
 
-        var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
+        var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
 
+        if (variations.Contains(null)) throw new NotFoundException();
+
+        var item = new Item()
+        {
+            ItemId = itemId,
+            Variations = variations!,
+            Currency = (Currency)request.Currency,
+            Quantity = (int)request.Quantity,
+            Discount = (decimal)request.Discount,
+            VATPercentage = (decimal)request.VATPercentage
+        };
 
         await _orderRepository.AddOrUpdateItemAsync(item);
+
+        var selections = variations
+            .Select(variation => new ItemVariationSelection()
+            {
+                ItemId = item.ItemId,
+                Item = item,
+                VariationId = variation!.VariationId,
+                Variation = variation
+            });
+
+        foreach (var selection in selections) await _orderRepository.AddOrUpdateItemVariationSelection(selection);
     }
 
     public async Task UpdateOrderAsync(int orderId, OrderRequest request)
@@ -150,7 +171,16 @@ public class OrderService : IOrderService
 
         if (order.Status != OrderStatus.Opened) throw new NotFoundException();
 
-        await _orderRepository.AddOrUpdateOrderAsync(order);
+        await _orderRepository.AddOrUpdateOrderAsync(new Order()
+        {
+            OrderId = orderId,
+            OperatorId = request.OperatorId,
+            Status = request.Status,
+            Tip = request.Tip,
+            ServiceCharge = request.ServiceCharge,
+            Discount = request.Discount,
+            Currency = request.Currency
+        });
     }
 
     public async Task<IEnumerable<Order>> GetOrdersByLocation(int locationId)
