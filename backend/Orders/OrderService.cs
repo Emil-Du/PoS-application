@@ -1,4 +1,3 @@
-using System.Linq;
 using backend.Common;
 using backend.Employees;
 using backend.Exceptions;
@@ -26,8 +25,8 @@ public class OrderService : IOrderService
 
     public async Task<Item> AddItemAsync(int orderId, ItemRequest request)
     {
-
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+        if (await _productRepository.GetProductByIdAsync(request.ProductId) == null) throw new NotFoundException();
 
         var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
 
@@ -136,8 +135,7 @@ public class OrderService : IOrderService
     public async Task UpdateItemAsync(int orderId, int itemId, ItemRequest request)
     {
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
-
-        //add check for whether product with productId from ItemRequest exists
+        if (await _variationRepository.GetVariationByIdAsync(request.ProductId) == null) throw new NotFoundException();
 
         var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
 
