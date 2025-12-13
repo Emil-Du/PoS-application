@@ -44,16 +44,22 @@ namespace backend.Services
 
         public async Task<bool> UpdateServiceAsync(Service service)
         {
-            var existing = await _context.Services.FindAsync(service.ServiceId);
+            var existing = await _context.Services
+                .Include(s => s.Product)
+                .FirstOrDefaultAsync(s => s.ServiceId == service.ServiceId);
+
             if (existing == null) return false;
 
             existing.Status = service.Status;
             existing.DurationMinutes = service.DurationMinutes;
             existing.ProductId = service.ProductId;
-            existing.LocationId = service.LocationId;
+            existing.Product.Name = service.Product.Name;
+            existing.Product.UnitPrice = service.Product.UnitPrice;
+            existing.Product.Currency = service.Product.Currency;
 
             await _context.SaveChangesAsync();
             return true;
         }
+
     }
 }

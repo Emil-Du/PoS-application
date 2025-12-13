@@ -1,5 +1,8 @@
 using backend.Locations;
 using backend.Mappings;
+using backend.Orders;
+using backend.Reservations;
+using backend.Roles;
 namespace backend.Employees;
 
 public class Employee
@@ -14,7 +17,8 @@ public class Employee
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
     public string Salt { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
-
-    public ICollection<EmployeeServiceQualification> Qualifications { get; set; } = new List<EmployeeServiceQualification>(); // navigation, to use methods like .Include()
+    public ICollection<Reservation> Reservations { get; set; } = [];
+    public ICollection<Order> Orders { get; set; } = [];
+    public ICollection<EmployeeServiceQualification> Qualifications { get; set; } = [];
 
 }
