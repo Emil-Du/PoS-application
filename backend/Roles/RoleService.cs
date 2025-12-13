@@ -24,7 +24,7 @@ public class RoleService : IRoleService
         return await _repository.CreateRoleAsync(roleCreateRequest);
     }
 
-    public async Task<Role?> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
+    public async Task<bool> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
     {
         return await _repository.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
     }
@@ -39,8 +39,4 @@ public class RoleService : IRoleService
         return await _repository.AssignRoleToEmployeeAsync(roleId, employeeId);
     }
 
-    public async Task<bool> RemoveRoleFromEmployeeAsync(int roleId, int employeeId)
-    {
-        return await _repository.RemoveRoleFromEmployeeAsync(roleId, employeeId);
-    }
 }

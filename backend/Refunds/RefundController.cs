@@ -27,8 +27,6 @@ public class RefundController : ControllerBase
             return NotFound();
         }
 
-        // pridet bussiness logic, kad kviecia metoda kur pakeicia order status i refunded...
-
         return NoContent();
     }
 }

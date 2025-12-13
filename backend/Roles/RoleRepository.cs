@@ -26,8 +26,8 @@ public class RoleRepository : IRoleRepository
     {
         var role = new Role
         {
-            Name = roleCreateRequest.Name,
-            Flags = roleCreateRequest.Flags
+                Name = roleCreateRequest.Name,
+                Flags = roleCreateRequest.Flags
         };
 
         _context.Roles.Add(role);
@@ -35,26 +35,26 @@ public class RoleRepository : IRoleRepository
         return role;
     }
 
-    public async Task<Role?> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
+    public async Task<bool> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
     {
         var role = await _context.Roles.FindAsync(roleId);
         if (role == null)
         {
-            return null;
+            return false;
         }
 
-        if (roleUpdateRequest.Name != null)
+        if(roleUpdateRequest.Name != null)
         {
             role.Name = roleUpdateRequest.Name;
         }
-        if (roleUpdateRequest.Flags != null)
+        if(roleUpdateRequest.Flags != null)
         {
             role.Flags = roleUpdateRequest.Flags;
         }
 
         _context.Roles.Update(role);
         await _context.SaveChangesAsync();
-        return role;
+        return true;
     }
 
     public async Task<bool> DeleteRoleByIdAsync(int roleId)
@@ -80,25 +80,6 @@ public class RoleRepository : IRoleRepository
         }
 
         employee.RoleId = roleId;
-        await _context.SaveChangesAsync();
-        return true;
-    }
-
-    public async Task<bool> RemoveRoleFromEmployeeAsync(int roleId, int employeeId)
-    {
-        var role = await _context.Roles.FindAsync(roleId);
-        var employee = await _context.EmployeeRoles.FindAsync(employeeId);
-        if (role == null || employee == null)
-        {
-            return false;
-        }
-
-        if (employee.RoleId != roleId)
-        {
-            return false;
-        }
-
-        employee.RoleId = 0;
         await _context.SaveChangesAsync();
         return true;
     }

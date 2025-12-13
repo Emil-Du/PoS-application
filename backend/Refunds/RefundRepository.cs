@@ -12,7 +12,7 @@ public class RefundRepository : IRefundRepository
     }
     public async Task<RefundRequest> RefundPaymentByIdAsync(RefundRequest refundRequest)
     {
-
+        //turetu but Charge table
         var payment = await _context.Payments.FindAsync(refundRequest.PaymentId);
         if (payment == null)
         {

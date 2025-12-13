@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 
 public class RoleController : ControllerBase
 {
@@ -40,7 +40,7 @@ public class RoleController : ControllerBase
 
         if (roleCreateRequest == null)
         {
-            return BadRequest();
+                return BadRequest();
         }
 
         var newRole = await _repository.CreateRoleAsync(roleCreateRequest);
@@ -52,12 +52,11 @@ public class RoleController : ControllerBase
     {
         if (roleUpdateRequest == null)
         {
-            return BadRequest();
+                return BadRequest();
         }
 
         var updated = await _repository.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
-
-        if (updated == null)
+        if (!updated)
         {
             return NotFound();
         }
@@ -81,17 +80,9 @@ public class RoleController : ControllerBase
     [HttpPost("{roleId}/assign")]
     public async Task<IActionResult> AssignRole([FromRoute] int roleId, [FromBody] RoleAssignmentRequest request)
     {
-        await _repository.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
+        var updated =await _repository.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
+        if (!updated) return NotFound();
         return NoContent();
     }
-
-    [HttpDelete("{roleId}/assign/{employeeId}")]
-    public async Task<IActionResult> RemoveRole([FromRoute] int roleId, [FromRoute] int employeeId)
-    {
-        var removed = await _repository.RemoveRoleFromEmployeeAsync(roleId, employeeId);
-        if (!removed) return NotFound();
-        return NoContent();
-    }
-
 
 }
