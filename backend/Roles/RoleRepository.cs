@@ -26,8 +26,8 @@ public class RoleRepository : IRoleRepository
     {
         var role = new Role
         {
-                Name = roleCreateRequest.Name,
-                Flags = roleCreateRequest.Flags
+            Name = roleCreateRequest.Name,
+            Flags = roleCreateRequest.Flags
         };
 
         _context.Roles.Add(role);
@@ -35,7 +35,7 @@ public class RoleRepository : IRoleRepository
         return role;
     }
 
-    public async Task<Role> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
+    public async Task<Role?> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
     {
         var role = await _context.Roles.FindAsync(roleId);
         if (role == null)
@@ -43,11 +43,11 @@ public class RoleRepository : IRoleRepository
             return null;
         }
 
-        if(roleUpdateRequest.Name != null)
+        if (roleUpdateRequest.Name != null)
         {
             role.Name = roleUpdateRequest.Name;
         }
-        if(roleUpdateRequest.Flags != null)
+        if (roleUpdateRequest.Flags != null)
         {
             role.Flags = roleUpdateRequest.Flags;
         }
@@ -98,7 +98,7 @@ public class RoleRepository : IRoleRepository
             return false;
         }
 
-        employee.RoleId = null;
+        employee.RoleId = 0;
         await _context.SaveChangesAsync();
         return true;
     }

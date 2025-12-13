@@ -1,3 +1,5 @@
+using backend.Reservations;
+
 namespace backend.Customers;
 
 public class Customer
@@ -7,6 +9,7 @@ public class Customer
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Salt { get; set; } = string.Empty;
-    public string PasswordHash {get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public ICollection<Reservation> Reservations { get; set; } = [];
 
 }

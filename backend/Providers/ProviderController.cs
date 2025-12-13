@@ -40,13 +40,6 @@ namespace backend.Providers
         [HttpPatch("{providerId}")]
         public async Task<IActionResult> UpdateQualificationsByIdAsync([FromRoute] int providerId, [FromBody] ProviderRequest request)
         {
-
-            if (request == null)
-            {
-                _logger.LogWarning("Failed to update qualifications: invalid request.");
-                return BadRequest();
-            }
-
             var success = await _service.UpdateProviderByIdAsync(providerId, request);
 
             if (!success)

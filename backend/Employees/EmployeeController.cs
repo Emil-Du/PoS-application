@@ -18,14 +18,14 @@ namespace backend.Customers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginatedResponse<EmployeeResponse>>> GetEmployeesAsync([FromQuery] EmployeeQuery query)
+        public async Task<ActionResult<PaginatedResponse<EmployeeResponse>>> GetEmployees([FromQuery] EmployeeQuery query)
         {
             var employees = await _service.GetEmployeesAsync(query);
             return Ok(employees);
         }
 
         [HttpGet("{employeeId}")]
-        public async Task<ActionResult<EmployeeResponse>> GetEmployeeByIdAsync([FromRoute] int employeeId)
+        public async Task<ActionResult<EmployeeResponse>> GetEmployeeById([FromRoute] int employeeId)
         {
             var response = await _service.GetEmployeeByIdAsync(employeeId);
             if (response == null)
@@ -39,32 +39,20 @@ namespace backend.Customers
 
 
         [HttpPost]
-        public async Task<ActionResult<EmployeeResponse>> CreateEmployeeAsync([FromBody] EmployeeRequest request)
+        public async Task<ActionResult<EmployeeResponse>> CreateEmployee([FromBody] EmployeeRequest request)
         {
-            if (request == null)
-            {
-                _logger.LogWarning("Failed to create employee: invalid request.");
-                return BadRequest();
-            }
-
             var createdEmployee = await _service.CreateEmployeeAsync(request);
 
             return CreatedAtAction(
-                nameof(GetEmployeeByIdAsync),
+                nameof(GetEmployeeById),
                 new { employeeId = createdEmployee.EmployeeId },
                 createdEmployee
             );
         }
 
         [HttpPatch("{employeeId}")]
-        public async Task<IActionResult> UpdateEmployeeByIdAsync([FromRoute] int employeeId, [FromBody] EmployeeRequest request)
+        public async Task<IActionResult> UpdateEmployeeById([FromRoute] int employeeId, [FromBody] EmployeeRequest request)
         {
-            if (request == null)
-            {
-                _logger.LogWarning("Failed to update employee: invalid request.");
-                return BadRequest();
-            }
-
             var updated = await _service.UpdateEmployeeByIdAsync(employeeId, request);
             if (!updated)
             {

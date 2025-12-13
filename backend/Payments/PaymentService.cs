@@ -9,7 +9,7 @@ public class PaymentService : IPaymentService
         _repository = repository;
     }
 
-    public async Task<Payment> GetPaymentsByOrderIdAsync(int orderId)
+    public async Task<Payment?> GetPaymentsByOrderIdAsync(int orderId)
     {
         return await _repository.GetPaymentsByOrderIdAsync(orderId);
     }

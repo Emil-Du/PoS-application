@@ -15,11 +15,4 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products.FindAsync(productId);
     }
-
-    public async Task<IEnumerable<Product?>> GetProductsByItemIdAsync(int itemId)
-    {
-        return _context.ItemProductSelections
-            .Where(selection => selection.ItemId == itemId)
-            .Select(selection => _context.Products.Find(selection.ProductId));
-    }
 }

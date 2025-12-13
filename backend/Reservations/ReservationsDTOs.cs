@@ -21,7 +21,7 @@ public class ReservationCreationDTO
     public int ProviderId { get; set; }
     public int CustomerId { get; set; }
     public long AppointmentTime { get; set; }
-    
+
 }
 
 public class ReservationCreationResponseDTO
@@ -31,12 +31,12 @@ public class ReservationCreationResponseDTO
 
 public class GetReservationsDTO
 {
-    public int CustomerId { get; set; }
-    public int ServiceId { get; set; }
-    public int ProviderId { get; set; }
-    public long From { get; set; }
-    public long To { get; set; }
-    
+    public int? CustomerId { get; set; }
+    public int? ServiceId { get; set; }
+    public int? ProviderId { get; set; }
+    public long? From { get; set; }
+    public long? To { get; set; }
+
 }
 
 public class GetReservationsResponseDTO
@@ -55,7 +55,7 @@ public class EditReservationDTO
     public long AppointmentTime { get; set; }
     public int ProviderId { get; set; }
     public ReservationStatus Status { get; set; }
-    
+
 }
 
 public class EditReservationResponseDTO
