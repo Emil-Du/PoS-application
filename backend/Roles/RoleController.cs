@@ -7,24 +7,24 @@ using Microsoft.AspNetCore.Mvc;
 
 public class RoleController : ControllerBase
 {
-    private readonly IRoleRepository _repository;
+    private readonly IRoleService _service;
 
-    public RoleController(IRoleRepository repository)
+    public RoleController(IRoleService service)
     {
-        _repository = repository;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetRoles()
     {
-        var roles = await _repository.GetRolesAsync();
+        var roles = await _service.GetRolesAsync();
         return Ok(roles);
     }
 
     [HttpGet("{roleId}")]
     public async Task<IActionResult> GetRoleById(int roleId)
     {
-        var role = await _repository.GetRoleByIdAsync(roleId);
+        var role = await _service.GetRoleByIdAsync(roleId);
 
         if (role == null)
         {
@@ -43,7 +43,7 @@ public class RoleController : ControllerBase
                 return BadRequest();
         }
 
-        var newRole = await _repository.CreateRoleAsync(roleCreateRequest);
+        var newRole = await _service.CreateRoleAsync(roleCreateRequest);
         return CreatedAtAction(nameof(GetRoles), new { roleId = newRole.RoleId }, newRole);
     }
 
@@ -55,7 +55,7 @@ public class RoleController : ControllerBase
                 return BadRequest();
         }
 
-        var updated = await _repository.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
+        var updated = await _service.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
         if (!updated)
         {
             return NotFound();
@@ -67,7 +67,7 @@ public class RoleController : ControllerBase
     [HttpDelete("{roleId}")]
     public async Task<IActionResult> DeleteRole(int roleId)
     {
-        var deleted = await _repository.DeleteRoleByIdAsync(roleId);
+        var deleted = await _service.DeleteRoleByIdAsync(roleId);
 
         if (!deleted)
         {
@@ -80,7 +80,7 @@ public class RoleController : ControllerBase
     [HttpPost("{roleId}/assign")]
     public async Task<IActionResult> AssignRole([FromRoute] int roleId, [FromBody] RoleAssignmentRequest request)
     {
-        var updated =await _repository.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
+        var updated =await _service.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
         if (!updated) return NotFound();
         return NoContent();
     }

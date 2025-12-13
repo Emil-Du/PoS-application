@@ -1,5 +1,6 @@
 ﻿using backend.Database;
 using Microsoft.EntityFrameworkCore;
+using backend.Mappings;
 
 namespace backend.Roles;
 
@@ -14,7 +15,10 @@ public class RoleRepository : IRoleRepository
 
     public async Task<List<Role>> GetRolesAsync()
     {
-        return await _context.Roles.ToListAsync();
+        return await _context.Roles
+        .Include(r => r.RolePermissions)
+            .ThenInclude(rp => rp.Permission)
+        .ToListAsync();
     }
 
     public async Task<Role?> GetRoleByIdAsync(int roleId)
@@ -27,8 +31,18 @@ public class RoleRepository : IRoleRepository
         var role = new Role
         {
                 Name = roleCreateRequest.Name,
-                Flags = roleCreateRequest.Flags
         };
+
+        foreach (var flag in roleCreateRequest.Flags)
+    {
+        var permission = await _context.Permissions
+            .SingleAsync(p => p.Name == flag);
+
+        role.RolePermissions.Add(new RolePermission
+        {
+            Permission = permission
+        });
+    }
 
         _context.Roles.Add(role);
         await _context.SaveChangesAsync();
@@ -37,7 +51,10 @@ public class RoleRepository : IRoleRepository
 
     public async Task<bool> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
     {
-        var role = await _context.Roles.FindAsync(roleId);
+        var role = await _context.Roles
+        .Include(r => r.RolePermissions)
+        .FirstOrDefaultAsync(r => r.RoleId == roleId);
+
         if (role == null)
         {
             return false;
@@ -49,10 +66,20 @@ public class RoleRepository : IRoleRepository
         }
         if(roleUpdateRequest.Flags != null)
         {
-            role.Flags = roleUpdateRequest.Flags;
+            role.RolePermissions.Clear();
+
+        foreach (var flag in roleUpdateRequest.Flags)
+        {
+            var permission = await _context.Permissions
+                .SingleAsync(p => p.Name == flag);
+
+            role.RolePermissions.Add(new RolePermission
+            {
+                Permission = permission
+            });
+        }
         }
 
-        _context.Roles.Update(role);
         await _context.SaveChangesAsync();
         return true;
     }
@@ -79,7 +106,12 @@ public class RoleRepository : IRoleRepository
             return false;
         }
 
-        employee.RoleId = roleId;
+         _context.EmployeeRoles.Add(new EmployeeRole
+         {
+            RoleId = roleId,
+            EmployeeId = employeeId
+         });
+
         await _context.SaveChangesAsync();
         return true;
     }

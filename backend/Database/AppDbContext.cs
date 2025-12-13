@@ -28,6 +28,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ItemVariationSelection>()
             .HasKey(q => new { q.ItemId, q.VariationId });
 
+        modelBuilder.Entity<EmployeeRole>()
+            .HasKey(er => new { er.EmployeeId, er.RoleId });
+
+        modelBuilder.Entity<RolePermission>()
+            .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
 
         modelBuilder.Entity<Company>().HasData(
             new Company
@@ -103,13 +109,8 @@ public class AppDbContext : DbContext
     public DbSet<Item> Items { get; set; }
     public DbSet<ItemVariationSelection> ItemVariationSelections { get; set; }
     public DbSet<Variation> Variations { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
+    public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
 
-}
-
-// Bnadymas priverst veikt.
-public class EmployeeRole
-{
-    public int Id { get; set; }
-    public int RoleId { get; set; }
 }
