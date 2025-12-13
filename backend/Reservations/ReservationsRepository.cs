@@ -6,9 +6,9 @@ public class ReservationsRepository
     private readonly AppDbContext _context;
 
     public ReservationsRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+    {
+        _context = context;
+    }
 
     public async Task<Reservation> CreateReservationAsync(Reservation reservation)
     {
@@ -21,14 +21,24 @@ public class ReservationsRepository
 
     public async Task<GetReservationsResponseDTO> GetReservationsAsync(GetReservationsDTO getReservationsDTO)
     {
-        var matchingReservations =  await _context.Reservations
-            .Where(r =>
-                (r.CustomerId == getReservationsDTO.CustomerId) &&
-                (r.ServiceId == getReservationsDTO.ServiceId) &&
-                (r.ProviderId == getReservationsDTO.ProviderId) &&
-                r.AppointmentTime >= getReservationsDTO.From &&
-                r.AppointmentTime <= getReservationsDTO.To)
-            .ToListAsync();
+        var query = _context.Reservations.AsQueryable();
+
+        if (getReservationsDTO.CustomerId.HasValue)
+            query = query.Where(r => r.CustomerId == getReservationsDTO.CustomerId.Value);
+
+        if (getReservationsDTO.ServiceId.HasValue)
+            query = query.Where(r => r.ServiceId == getReservationsDTO.ServiceId.Value);
+
+        if (getReservationsDTO.ProviderId.HasValue)
+            query = query.Where(r => r.ProviderId == getReservationsDTO.ProviderId.Value);
+
+        if (getReservationsDTO.From.HasValue)
+            query = query.Where(r => r.AppointmentTime >= getReservationsDTO.From.Value);
+
+        if (getReservationsDTO.To.HasValue)
+            query = query.Where(r => r.AppointmentTime <= getReservationsDTO.To.Value);
+
+        var matchingReservations = await query.ToListAsync();
 
         return new GetReservationsResponseDTO
         {
@@ -46,6 +56,7 @@ public class ReservationsRepository
         };
     }
 
+
     public async Task<GetReservationResponseDTO> GetReservationAsync(int reservationId)
     {
         var reservationDetails = await _context.Reservations.FirstOrDefaultAsync(r => r.Id == reservationId);
@@ -54,10 +65,10 @@ public class ReservationsRepository
         {
             throw new ReservationNotFoundException();
         }
-        
+
         return new GetReservationResponseDTO
         {
-            Reservation = 
+            Reservation =
             {
                 Id = reservationDetails.Id,
                 CustomerId = reservationDetails.CustomerId,
@@ -85,10 +96,10 @@ public class ReservationsRepository
         reservationDetails.Status = editReservationDTO.Status;
 
         await _context.SaveChangesAsync();
-        
+
         return new EditReservationResponseDTO
         {
-            Reservation = 
+            Reservation =
             {
                 Id = reservationDetails.Id,
                 CustomerId = reservationDetails.CustomerId,

@@ -113,10 +113,10 @@ public class OrderService : IOrderService
     {
         if (await _employeeRepository.GetEmployeeByIdAsync((int)request.OperatorId) == null) throw new NotFoundException();
 
-        return await _orderRepository.AddOrUpdateOrderAsync(new Order() 
+        return await _orderRepository.AddOrUpdateOrderAsync(new Order()
         {
-            OperatorId = request.OperatorId, 
-            Currency = request.Currency, 
+            OperatorId = request.OperatorId,
+            Currency = request.Currency,
             ServiceCharge = request.ServiceCharge,
             Discount = request.Discount
         });
