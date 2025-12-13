@@ -4,10 +4,10 @@ namespace backend.Orders;
 
 public interface IOrderService
 {
-    Task<Order> GetOrderByIdAsync(int orderId);
-    Task<IEnumerable<Order>> GetOrdersByLocation(int locationId);
+    Task<OrderResponse> GetOrderByIdAsync(int orderId);
+    Task<IEnumerable<OrderResponse>> GetOrdersByLocation(int locationId);
     // Added GetOrdersByLocationAsync, because there was no api contract for getting multiple orders at once
-    public Task<Order> OpenOrderAsync(OrderRequest request);
+    public Task<OrderResponse> OpenOrderAsync(OrderRequest request);
     // Removed reservationId, as orders don't have such field in the data model
     public Task UpdateOrderAsync(int orderId, OrderRequest request);
     // Update order response altered to have no return value, because the client already has the contents
@@ -25,7 +25,7 @@ public interface IOrderService
     // I strongly believe this request is entirely pointless, as to have a receipt printed the client
     // should already have an order selected and returned before, which means all of the business logic
     // can be completed clientside without any further requests related to the order
-    public Task<IEnumerable<Item>> GetItemsByOrderAsync(int orderId);
+    public Task<IEnumerable<ItemResponse>> GetItemsByOrderAsync(int orderId);
     // Get receipt response altered to a list of ItemResponses, because there is no need to send details
     // of the entire order since another method already fullfils that purpose
 
@@ -33,7 +33,7 @@ public interface IOrderService
     // the client should already have an order selected and and its items returned before, which means
     // all of the business logic can be completed clientside without any further requests related to
     // the order
-    public Task<Item> AddItemAsync(int orderId, ItemRequest item);
+    public Task<ItemResponse> AddItemAsync(int orderId, ItemRequest item);
     //Add item to order response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
     public Task UpdateItemAsync(int orderId, int itemId, ItemRequest item);
