@@ -16,7 +16,7 @@ public class PaymentController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("order/{orderId}")]
+    [HttpGet("order/{orderId}/payments")]
     public async Task<IActionResult> GetPaymentsByOrder(int orderId)
     {
         var payments = await _service.GetPaymentsByOrderIdAsync(orderId);
@@ -30,19 +30,12 @@ public class PaymentController : ControllerBase
         return Ok(payments);
     }
 
-     [HttpPost("payment/cash")]
-    public async Task<IActionResult> CreateCashPayment([FromBody] PaymentRequest request)
+     [HttpPost("payment")]
+    public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest request)
     {
-        var payment = await _service.CreateCashPaymentAsync(request);
+        var payment = await _service.CreatePaymentAsync(request);
 
         return Ok(payment);
     }
 
-    [HttpPost("payment/card")]
-    public async Task<IActionResult> CreateCardPayment([FromBody] PaymentRequest request)
-    {
-        var payment = await _service.CreateCardPaymentAsync(request);
-        
-        return Ok(payment);
-    }
 }

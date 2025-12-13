@@ -16,14 +16,14 @@ public class PaymentRepository : IPaymentRepository
         return await _context.Payments.FindAsync(orderId);
     }
 
-    public async Task<Payment> CreateCashPaymentAsync(PaymentRequest request)
+    public async Task<Payment> CreatePaymentAsync(PaymentRequest request)
     {
         var payment = new Payment
         {
             OrderId = request.OrderId,
-            Method = "cash",
+            Method = request.Method,
             Amount = request.Amount,
-            Currency = request.Amount.Currency
+            Currency = request.Currency
         };
 
         _context.Payments.Add(payment);
@@ -32,20 +32,4 @@ public class PaymentRepository : IPaymentRepository
         return payment;
     }
 
-    public async Task<Payment> CreateCardPaymentAsync(PaymentRequest request, string? stripeChargeId = null) //papildyt pagal stripe
-    {
-        var payment = new Payment
-        {
-            OrderId = request.OrderId,
-            Method = "card",
-            Amount = request.Amount,
-            Currency = request.Amount.Currency,
-            StripeChargeId = stripeChargeId
-        };
-
-        _context.Payments.Add(payment);
-        await _context.SaveChangesAsync();
-
-        return payment;
-    }
 }
