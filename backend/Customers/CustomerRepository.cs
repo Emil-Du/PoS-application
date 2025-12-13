@@ -16,6 +16,16 @@ namespace backend.Customers
         {
             var dbQuery = _context.Customers.AsQueryable();
 
+            if (!string.IsNullOrWhiteSpace(query.Name))
+            {
+                dbQuery = dbQuery.Where(c => c.Name.Contains(query.Name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.PhoneNumber))
+            {
+                dbQuery = dbQuery.Where(c => c.PhoneNumber.Contains(query.PhoneNumber));
+            }
+
             if (!string.IsNullOrWhiteSpace(query.Search))
             {
                 dbQuery = dbQuery.Where(c =>
@@ -34,6 +44,17 @@ namespace backend.Customers
         public async Task<int> GetTotalCountAsync(CustomerQuery query)
         {
             var dbQuery = _context.Customers.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Name))
+            {
+                dbQuery = dbQuery.Where(c => c.Name.Contains(query.Name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.PhoneNumber))
+            {
+                dbQuery = dbQuery.Where(c => c.PhoneNumber.Contains(query.PhoneNumber));
+            }
+
 
             if (!string.IsNullOrWhiteSpace(query.Search))
             {
