@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-
+using backend.Products;
 namespace backend.Services
 {
     public class ServiceService : IServiceService
@@ -79,15 +79,25 @@ namespace backend.Services
             };
         }
 
+
         public async Task<bool> UpdateServiceByIdAsync(int serviceId, ServiceRequest request)
         {
-            var service = await _repository.GetServiceByIdAsync(serviceId);
-            if (service == null) return false;
-
-            service.Status = request.Status;
-            service.DurationMinutes = request.DurationMinutes;
+            var service = new Service
+            {
+                ServiceId = serviceId,
+                Status = request.Status,
+                DurationMinutes = request.DurationMinutes,
+                ProductId = request.ProductId,
+                Product = new Product
+                {
+                    UnitPrice = request.BasePrice.Amount,
+                    Currency = request.BasePrice.Currency,
+                    Name = request.Title
+                }
+            };
 
             return await _repository.UpdateServiceAsync(service);
         }
+
     }
 }
