@@ -28,17 +28,19 @@ public class OrderService : IOrderService
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
         if (await _productRepository.GetProductByIdAsync(request.ProductId) == null) throw new NotFoundException();
 
-        var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
-
-        if (variations.Contains(null)) throw new NotFoundException();
+        //var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
+        //
+        //if (variations.Contains(null)) throw new NotFoundException();
 
         var item = await _orderRepository.AddOrUpdateItemAsync(new Item()
         {
-            Variations = variations!,
+            OrderId = orderId,
+            ProductId = request.ProductId,
             Currency = request.Currency,
             Quantity = request.Quantity,
             Discount = request.Discount,
             VATPercentage = request.VATPercentage
+            //Variations = variations!,
         });
 
         //var selections = variations
@@ -194,14 +196,14 @@ public class OrderService : IOrderService
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
         if (await _productRepository.GetProductByIdAsync(request.ProductId) == null) throw new NotFoundException();
 
-        var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
-
-        if (variations.Contains(null)) throw new NotFoundException();
+        //var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
+        //
+        //if (variations.Contains(null)) throw new NotFoundException();
 
         var item = new Item()
         {
             ItemId = itemId,
-            Variations = variations!,
+            //Variations = variations!,
             Currency = (Currency)request.Currency,
             Quantity = (int)request.Quantity,
             Discount = (decimal)request.Discount,

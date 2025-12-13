@@ -14,5 +14,5 @@ public class Item
     public int Quantity { get; set; }
     public decimal Discount { get; set; }
     public decimal VATPercentage { get; set; }
-    public IEnumerable<Variation> Variations { get; set; } = [];
+    //public IEnumerable<Variation> Variations { get; set; } = [];
 }
