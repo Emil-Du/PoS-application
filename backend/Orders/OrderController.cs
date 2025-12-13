@@ -8,7 +8,7 @@ namespace backend.Orders
 {
     [ApiController]
     [Route("api/orders")]
-    [Authorize]
+    // [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _service;
@@ -19,7 +19,7 @@ namespace backend.Orders
         }
 
         [HttpPost]
-        public async Task<IActionResult> OpenNewOrder([FromBody] OrderRequest request)
+        public async Task<ActionResult<Order>> OpenNewOrder([FromBody] OrderRequest request)
         {
             try
             {

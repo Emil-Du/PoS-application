@@ -2,12 +2,11 @@
 
 public interface IRoleService
 {
-    Task<List<Role>> GetRolesAsync();
-    Task<Role?> GetRoleByIdAsync(int roleId);
-    Task<Role> CreateRoleAsync(RoleCreateRequest roleCreateRequest);
-    Task<Role?> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest);
+    Task<List<RoleDTO>> GetRolesAsync();
+    Task<RoleDTO?> GetRoleByIdAsync(int roleId);
+    Task<RoleDTO> CreateRoleAsync(RoleCreateRequest roleCreateRequest);
+    Task<bool> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest);
     Task<bool> DeleteRoleByIdAsync(int roleId);
 
     Task<bool> AssignRoleToEmployeeAsync(int roleId, int employeeId);
-    Task<bool> RemoveRoleFromEmployeeAsync(int roleId, int employeeId);
 }

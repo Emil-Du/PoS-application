@@ -162,8 +162,8 @@ public class OrderService : IOrderService
         
         var order = await _orderRepository.AddOrUpdateOrderAsync(new Order()
         {
-            OperatorId = request.OperatorId, 
-            Currency = request.Currency, 
+            OperatorId = request.OperatorId,
+            Currency = request.Currency,
             ServiceCharge = request.ServiceCharge,
             Discount = request.Discount
         });

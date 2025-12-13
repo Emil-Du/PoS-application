@@ -3,6 +3,5 @@
 public interface IPaymentService
 {
     Task<Payment?> GetPaymentsByOrderIdAsync(int orderId);
-    Task<Payment> CreateCashPaymentAsync(PaymentRequest request);
-    Task<Payment> CreateCardPaymentAsync(PaymentRequest request);
+    Task<Payment> CreatePaymentAsync(PaymentRequest request);
 }

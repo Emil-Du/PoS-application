@@ -36,6 +36,7 @@ namespace backend.Providers
                 .OrderBy(emp => emp.EmployeeId)
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
+                .Include(emp => emp.Qualifications)
                 .ToListAsync();
         }
 
