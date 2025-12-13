@@ -100,17 +100,25 @@ public class RoleRepository : IRoleRepository
     public async Task<bool> AssignRoleToEmployeeAsync(int roleId, int employeeId)
     {
         var role = await _context.Roles.FindAsync(roleId);
-        var employee = await _context.EmployeeRoles.FindAsync(employeeId);
+        var employee = await _context.Employees.FindAsync(employeeId);
+        
         if (role == null || employee == null)
         {
             return false;
         }
 
-         _context.EmployeeRoles.Add(new EmployeeRole
-         {
-            RoleId = roleId,
-            EmployeeId = employeeId
-         });
+        var employeeRole = await _context.EmployeeRoles.FindAsync(employeeId, roleId);
+
+         if (employeeRole == null)
+        {
+            employeeRole = new EmployeeRole
+            {
+                EmployeeId = employeeId,
+                RoleId = roleId
+            };
+            _context.EmployeeRoles.Add(employeeRole);
+            await _context.SaveChangesAsync();
+        }
 
         await _context.SaveChangesAsync();
         return true;

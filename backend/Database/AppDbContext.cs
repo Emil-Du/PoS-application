@@ -35,6 +35,17 @@ public class AppDbContext : DbContext
             .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
 
+            
+
+        modelBuilder.Entity<Permission>().HasData(
+            Enum.GetValues<PermissionFlag>()
+                .Select((flag, index) => new Permission
+                {
+                    PermissionId = index + 1,
+                    Name = flag
+                })
+        );
+
         modelBuilder.Entity<Company>().HasData(
             new Company
             {
