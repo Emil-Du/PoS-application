@@ -19,7 +19,7 @@ namespace backend.Orders
         }
 
         [HttpPost]
-        public async Task<ActionResult<Order>> OpenNewOrder([FromBody] OrderRequest request)
+        public async Task<ActionResult<OrderResponse>> OpenNewOrder([FromBody] OrderRequest request)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace backend.Orders
         }
 
         [HttpGet("{orderId}")]
-        public async Task<ActionResult<Order>> GetOrderById(int orderId)
+        public async Task<ActionResult<OrderResponse>> GetOrderById(int orderId)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace backend.Orders
         }
 
         [HttpGet("{orderId}/items")]
-        public async Task<IActionResult> GetOrderItems(int orderId)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetOrderItems(int orderId)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace backend.Orders
         }
 
         [HttpPost("{orderId}/items")]
-        public async Task<IActionResult> AddItem(int orderId, [FromBody] ItemRequest request)
+        public async Task<ActionResult<ItemResponse>> AddItem(int orderId, [FromBody] ItemRequest request)
         {
             try
             {
