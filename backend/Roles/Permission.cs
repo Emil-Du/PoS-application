@@ -2,10 +2,9 @@
 
 using backend.Mappings;
 
-public class Role
+public class Permission
 {
-    public int RoleId { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public int PermissionId { get; set; }
+    public PermissionFlag Name { get; set; }
     public ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
-
 }

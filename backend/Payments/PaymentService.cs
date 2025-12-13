@@ -14,13 +14,9 @@ public class PaymentService : IPaymentService
         return await _repository.GetPaymentsByOrderIdAsync(orderId);
     }
 
-    public async Task<Payment> CreateCashPaymentAsync(PaymentRequest request)
+    public async Task<Payment> CreatePaymentAsync(PaymentRequest request)
     {
-        return await _repository.CreateCashPaymentAsync(request);
+        return await _repository.CreatePaymentAsync(request);
     }
 
-    public async Task<Payment> CreateCardPaymentAsync(PaymentRequest request) //papildyt pagal stripe
-    {
-        return await _repository.CreateCardPaymentAsync(request);
-    }
 }

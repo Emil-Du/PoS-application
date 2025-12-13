@@ -1,4 +1,5 @@
 ﻿namespace backend.Roles;
+using backend.Mappings;
 
 public class RoleService : IRoleService
 {
@@ -9,22 +10,26 @@ public class RoleService : IRoleService
         _repository = repository;
     }
 
-    public async Task<List<Role>> GetRolesAsync()
+    public async Task<List<RoleDTO>> GetRolesAsync()
     {
-        return await _repository.GetRolesAsync();
+        var roles = await _repository.GetRolesAsync();
+        
+        return roles.Select(MapToDto).ToList();
     }
 
-    public async Task<Role?> GetRoleByIdAsync(int roleId)
+    public async Task<RoleDTO?> GetRoleByIdAsync(int roleId)
     {
-        return await _repository.GetRoleByIdAsync(roleId);
+        var role = await _repository.GetRoleByIdAsync(roleId);
+        return role == null ? null : MapToDto(role);
     }
 
-    public async Task<Role> CreateRoleAsync(RoleCreateRequest roleCreateRequest)
+    public async Task<RoleDTO> CreateRoleAsync(RoleCreateRequest roleCreateRequest)
     {
-        return await _repository.CreateRoleAsync(roleCreateRequest);
+        var role = await _repository.CreateRoleAsync(roleCreateRequest);
+        return MapToDto(role);
     }
 
-    public async Task<Role?> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
+    public async Task<bool> UpdateRoleByIdAsync(int roleId, RoleUpdateRequest roleUpdateRequest)
     {
         return await _repository.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
     }
@@ -39,8 +44,16 @@ public class RoleService : IRoleService
         return await _repository.AssignRoleToEmployeeAsync(roleId, employeeId);
     }
 
-    public async Task<bool> RemoveRoleFromEmployeeAsync(int roleId, int employeeId)
+    private static RoleDTO MapToDto(Role role)
     {
-        return await _repository.RemoveRoleFromEmployeeAsync(roleId, employeeId);
+        return new RoleDTO
+        {
+            RoleId = role.RoleId,
+            Name = role.Name,
+            Flags = role.RolePermissions
+                .Select(rp => rp.Permission.Name)
+                .ToList()
+        };
     }
+
 }
