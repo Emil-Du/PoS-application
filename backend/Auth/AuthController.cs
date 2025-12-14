@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("RegisterEmployee")]
-    [Authorize]
+    //[Authorize]  // Only need authorization if doing from frontend, if doing from swagger than this needs to be disabled
     public async Task<IActionResult> RegisterEmployee([FromBody] EmployeeRegistrationDTO employeeRegistrationDTO)
     {
         try
@@ -85,22 +85,22 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var responseDTO = await _authService.LoginEmployee(employeeLoginDTO);
+            var serviceResponse = await _authService.LoginEmployee(employeeLoginDTO);
 
             Response.Cookies.Append(
                 "accessToken",
-                responseDTO.AccessToken,
+                serviceResponse.AccessToken,
                 new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = false,     // true: HTTPS; false: HTTP, LOCALHOST
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTimeOffset.UtcNow.AddSeconds(responseDTO.ExpiresIn),
+                    Expires = DateTimeOffset.UtcNow.AddSeconds(serviceResponse.ExpiresIn),
                     Path = "/"
                 }
             );
 
-            return Ok(responseDTO.EmployeeId);
+            return Ok(serviceResponse.Employee);
         }
         catch (IncorrectLoginDetailsException e)
         {   

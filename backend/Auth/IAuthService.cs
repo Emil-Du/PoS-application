@@ -8,5 +8,5 @@ public interface IAuthService
 
     Task<CustomerLoginResponseDTO> LoginCustomer(CustomerLoginDTO customerLoginDTO);
     Task<Employee> RegisterEmployee(EmployeeRegistrationDTO employeeRegistrationDTO);
-    Task<EmployeeLoginResponseDTO> LoginEmployee(EmployeeLoginDTO employeeLoginDTO);
+    Task<EmployeeLoginServiceResponse> LoginEmployee(EmployeeLoginDTO employeeLoginDTO);
 }

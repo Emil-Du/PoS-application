@@ -2,12 +2,16 @@ import './Login.css'
 import { useState } from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { login } from '../services/authService'
+import { useEmployee } from "../contexts/EmployeeContext";
+import { useNavigate } from "react-router-dom";
 
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null> (null);
+  const { setEmployee } = useEmployee();
+  const navigate = useNavigate();
 
   const isDisabled = !email.includes("@") || !password;
 
@@ -16,14 +20,14 @@ function Login() {
     setError(null);
 
     try {
-      const data = await login(email, password); // only EmployeeId is returned right now
+      const employeeData = await login(email, password);
 
-      // navigate()
+      setEmployee(employeeData);
+
+      navigate("/reservation");
     } 
     catch (err: any) {
       setError(err.message);
-
-      console.log(error)
     }
   };
 

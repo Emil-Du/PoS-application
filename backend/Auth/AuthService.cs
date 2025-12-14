@@ -49,17 +49,17 @@ public class AuthService : IAuthService
         return await _authRepository.RegisterEmployeeAsync(employeeRegistrationDTO);
     }
 
-    public async Task<EmployeeLoginResponseDTO> LoginEmployee(EmployeeLoginDTO employeeLoginDTO)
+    public async Task<EmployeeLoginServiceResponse> LoginEmployee(EmployeeLoginDTO employeeLoginDTO)
     {
-        int loggedInEmployeeId = await _authRepository.LoginEmployeeAsync(employeeLoginDTO);
+        var employee = await _authRepository.LoginEmployeeAsync(employeeLoginDTO);
 
         int expiresIn = int.Parse(_configuration["Jwt:ExpiresIn"] ?? throw new Exception("JWT 'ExpiresIn' is missing in configuration."));
 
-        return new EmployeeLoginResponseDTO
-            {
-                AccessToken = JwtUtils.GenerateToken(loggedInEmployeeId, _configuration),
-                ExpiresIn = expiresIn,
-                EmployeeId = loggedInEmployeeId
-            };
+        return new EmployeeLoginServiceResponse
+        {
+            Employee = employee,
+            AccessToken = JwtUtils.GenerateToken(employee.EmployeeId, _configuration),
+            ExpiresIn = expiresIn
+        };
     }
 }
