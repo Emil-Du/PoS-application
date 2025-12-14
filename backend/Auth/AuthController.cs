@@ -26,12 +26,12 @@ public class AuthController : ControllerBase
                 Name = response_details.Name,
                 Email = response_details.Email,
                 PhoneNumber = response_details.PhoneNumber
-            };  
-            
+            };
+
             return Ok(responseDTO);
         }
         catch (EmailAlreadyExistsException e)
-        {   
+        {
             return StatusCode(409, e.Message);
         }
 
@@ -43,18 +43,18 @@ public class AuthController : ControllerBase
         try
         {
             var responseDTO = await _authService.LoginCustomer(customerLoginDTO);
-            
+
             return Ok(responseDTO);
         }
         catch (IncorrectLoginDetailsException e)
-        {   
+        {
             return StatusCode(401, e.Message);
         }
 
     }
 
     [HttpPost("RegisterEmployee")]
-    [Authorize]
+    // [Authorize]
     public async Task<IActionResult> RegisterEmployee([FromBody] EmployeeRegistrationDTO employeeRegistrationDTO)
     {
         try
@@ -69,12 +69,12 @@ public class AuthController : ControllerBase
                 LocationId = response_details.LocationId,
                 Email = response_details.Email,
                 PhoneNumber = response_details.PhoneNumber
-            };  
-            
+            };
+
             return Ok(responseDTO);
         }
         catch (EmailAlreadyExistsException e)
-        {   
+        {
             return StatusCode(409, e.Message);
         }
 
@@ -103,11 +103,11 @@ public class AuthController : ControllerBase
             return Ok(responseDTO.EmployeeId);
         }
         catch (IncorrectLoginDetailsException e)
-        {   
+        {
             return StatusCode(401, e.Message);
         }
         catch (InactiveStatusException e)
-        {   
+        {
             return StatusCode(403, e.Message);
         }
 
