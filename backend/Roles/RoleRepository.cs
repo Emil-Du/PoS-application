@@ -23,7 +23,10 @@ public class RoleRepository : IRoleRepository
 
     public async Task<Role?> GetRoleByIdAsync(int roleId)
     {
-        return await _context.Roles.FindAsync(roleId);
+        return await _context.Roles
+        .Include(r => r.RolePermissions)
+            .ThenInclude(rp => rp.Permission)
+        .FirstOrDefaultAsync(r => r.RoleId == roleId);
     }
 
     public async Task<Role> CreateRoleAsync(RoleCreateRequest roleCreateRequest)

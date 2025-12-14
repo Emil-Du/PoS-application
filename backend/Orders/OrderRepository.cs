@@ -23,13 +23,20 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders.Where(order => employeeIds.Contains(order.OperatorId)).ToListAsync();
     }
 
-    public async Task<Order> AddOrUpdateOrderAsync(Order order)
+    public async Task<Order> AddOrderAsync(Order order)
     {
         var uploadedOrder = await _context.Orders.AddAsync(order);
         
         await _context.SaveChangesAsync();
 
         return uploadedOrder.Entity;
+    }
+
+    public async Task UpdateOrderAsync(Order order)
+    {
+        _context.Orders.Update(order);
+        
+        await _context.SaveChangesAsync();
     }
 
     public async Task<Item?> GetItemByIdAsync(int itemId)
@@ -42,7 +49,7 @@ public class OrderRepository : IOrderRepository
         return await _context.Items.Where(item => item.OrderId == orderId).ToListAsync();
     }
 
-    public async Task<Item> AddOrUpdateItemAsync(Item item)
+    public async Task<Item> AddItemAsync(Item item)
     {
         var uploadedItem = await _context.Items.AddAsync(item);
         
@@ -51,9 +58,23 @@ public class OrderRepository : IOrderRepository
         return uploadedItem.Entity;
     }
 
-    public async Task AddOrUpdateItemVariationSelection(ItemVariationSelection selection)
+    public async Task UpdateItemAsync(Item item)
     {
-        await  _context.ItemVariationSelections.AddAsync(selection);
+        _context.Update(item);
+        
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteItemAsync(Item item)
+    {
+        _context.Items.Remove(item);
+        
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task AddItemVariationSelection(ItemVariationSelection selection)
+    {
+        await _context.ItemVariationSelections.AddAsync(selection);
         
         await _context.SaveChangesAsync();
     }
