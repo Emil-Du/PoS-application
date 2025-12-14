@@ -1,4 +1,5 @@
 namespace backend.Auth;
+using backend.Employees;
 
 public class CustomerRegistrationDTO
 {

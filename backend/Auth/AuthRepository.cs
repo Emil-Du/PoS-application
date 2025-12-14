@@ -1,7 +1,10 @@
 using backend.Database;
 using backend.Auth;
+using backend.Customers;
+using backend.Employees;
 using backend.Auth.Utils;
 using Microsoft.EntityFrameworkCore;
+
 public class AuthRepository
 {
     private readonly AppDbContext _context;

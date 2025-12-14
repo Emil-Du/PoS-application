@@ -4,7 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
+<<<<<<< HEAD
 [Authorize]
+=======
+//[Authorize]
+>>>>>>> main
 public class ReservationsController : ControllerBase
 {
     private readonly IReservationsService _reservationsService;
@@ -31,13 +35,13 @@ public class ReservationsController : ControllerBase
     {
         try
         {
-            return Ok(await _reservationsService.GetSingle(reservationId));    
+            return Ok(await _reservationsService.GetSingle(reservationId));
         }
         catch (ReservationNotFoundException e)
         {
             return StatusCode(404, e.Message);
         }
-        
+
     }
 
     [HttpPatch("{reservationId}")]
@@ -45,7 +49,7 @@ public class ReservationsController : ControllerBase
     {
         try
         {
-            return Ok(await _reservationsService.Edit(reservationId, editReservationDTO));            
+            return Ok(await _reservationsService.Edit(reservationId, editReservationDTO));
         }
         catch (ReservationNotFoundException e)
         {

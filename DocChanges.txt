@@ -1,0 +1,3 @@
+Changed naming in api contracts from regular "Id" to "{Entityname}Id" for clarity.
+Added durationMinutes to service entity, which wasn't present in domain model.
+Removed description that came from apicontracts, as it wasn't present in domain model and isn't absolutely necessary.
