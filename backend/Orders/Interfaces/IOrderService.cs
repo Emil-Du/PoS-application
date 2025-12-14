@@ -33,10 +33,10 @@ public interface IOrderService
     // the client should already have an order selected and and its items returned before, which means
     // all of the business logic can be completed clientside without any further requests related to
     // the order
-    public Task<ItemResponse> AddItemAsync(int orderId, ItemRequest item);
+    public Task<ItemResponse> AddItemAsync(int orderId, ItemCreateRequest item);
     //Add item to order response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
-    public Task UpdateItemAsync(int orderId, int itemId, ItemRequest item);
+    public Task UpdateItemAsync(int orderId, int itemId, ItemUpdateRequest item);
     //Update item by id response altered to have no return value, because the client already has the contents
     //of the added order and the method will either throw an exception or succeed
     public Task RemoveItemAsync(int orderId, int itemId);

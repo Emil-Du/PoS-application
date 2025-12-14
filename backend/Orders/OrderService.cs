@@ -23,16 +23,19 @@ public class OrderService : IOrderService
         _variationRepository = variationRepository;
     }
 
-    public async Task<ItemResponse> AddItemAsync(int orderId, ItemRequest request)
+    public async Task<ItemResponse> AddItemAsync(int orderId, ItemCreateRequest request)
     {
-        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
+
+        if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
+        
         if (await _productRepository.GetProductByIdAsync(request.ProductId) == null) throw new NotFoundException();
 
         //var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
         //
         //if (variations.Contains(null)) throw new NotFoundException();
 
-        var item = await _orderRepository.AddOrUpdateItemAsync(new Item()
+        var item = await _orderRepository.AddItemAsync(new Item()
         {
             OrderId = orderId,
             ProductId = request.ProductId,
@@ -42,17 +45,6 @@ public class OrderService : IOrderService
             VATPercentage = request.VATPercentage
             //Variations = variations!,
         });
-
-        //var selections = variations
-        //    .Select(variation => new ItemVariationSelection()
-        //    {
-        //        ItemId = item.ItemId,
-        //        Item = item,
-        //        VariationId = variation!.VariationId,
-        //        Variation = variation
-        //    });
-
-        //foreach (var selection in selections) await _orderRepository.AddOrUpdateItemVariationSelection(selection);
 
         return new ItemResponse()
         {
@@ -70,22 +62,22 @@ public class OrderService : IOrderService
     {
         Order order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
-        if (order.Status != OrderStatus.Opened) throw new NotFoundException();
+        if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
 
         order.Status = OrderStatus.Closed;
 
-        await _orderRepository.AddOrUpdateOrderAsync(order);
+        await _orderRepository.UpdateOrderAsync(order);
     }
 
     public async Task CloseOrderAsync(int orderId)
     {
         var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
-        if (order.Status != OrderStatus.Opened) throw new NotFoundException();
+        if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
 
         order.Status = OrderStatus.Closed;
 
-        await _orderRepository.AddOrUpdateOrderAsync(order);
+        await _orderRepository.UpdateOrderAsync(order);
     }
 
     public async Task<OrderResponse> GetOrderByIdAsync(int orderId)
@@ -162,7 +154,7 @@ public class OrderService : IOrderService
     {
         if (await _employeeRepository.GetEmployeeByIdAsync((int)request.OperatorId) == null) throw new NotFoundException();
         
-        var order = await _orderRepository.AddOrUpdateOrderAsync(new Order()
+        var order = await _orderRepository.AddOrderAsync(new Order()
         {
             OperatorId = request.OperatorId,
             Currency = request.Currency,
@@ -184,44 +176,34 @@ public class OrderService : IOrderService
 
     public async Task RemoveItemAsync(int orderId, int itemId)
     {
-        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
+
+        if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
 
         var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
 
-        await _orderRepository.AddOrUpdateItemAsync(item);
+        await _orderRepository.DeleteItemAsync(item);
     }
 
-    public async Task UpdateItemAsync(int orderId, int itemId, ItemRequest request)
+    public async Task UpdateItemAsync(int orderId, int itemId, ItemUpdateRequest request)
     {
-        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
-        if (await _productRepository.GetProductByIdAsync(request.ProductId) == null) throw new NotFoundException();
+        var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
+
+        if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
+
+        var item = await _orderRepository.GetItemByIdAsync(itemId) ?? throw new NotFoundException();
 
         //var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
         //
         //if (variations.Contains(null)) throw new NotFoundException();
+        
+        //item.Variations = variations!;
+        item.Currency = request.Currency;
+        item.Quantity = request.Quantity;
+        item.Discount = request.Discount;
+        item.VATPercentage = request.VATPercentage;
 
-        var item = new Item()
-        {
-            ItemId = itemId,
-            //Variations = variations!,
-            Currency = (Currency)request.Currency,
-            Quantity = (int)request.Quantity,
-            Discount = (decimal)request.Discount,
-            VATPercentage = (decimal)request.VATPercentage
-        };
-
-        //await _orderRepository.AddOrUpdateItemAsync(item);
-        //
-        //var selections = variations
-        //    .Select(variation => new ItemVariationSelection()
-        //    {
-        //        ItemId = item.ItemId,
-        //        Item = item,
-        //        VariationId = variation!.VariationId,
-        //        Variation = variation
-        //    });
-        //
-        //foreach (var selection in selections) await _orderRepository.AddOrUpdateItemVariationSelection(selection);
+        await _orderRepository.UpdateItemAsync(item);
     }
 
     public async Task UpdateOrderAsync(int orderId, OrderRequest request)
@@ -229,18 +211,15 @@ public class OrderService : IOrderService
     {
         var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
-        if (order.Status != OrderStatus.Opened) throw new NotFoundException();
+        if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
 
-        await _orderRepository.AddOrUpdateOrderAsync(new Order()
-        {
-            OrderId = orderId,
-            OperatorId = request.OperatorId,
-            Status = request.Status,
-            Tip = request.Tip,
-            ServiceCharge = request.ServiceCharge,
-            Discount = request.Discount,
-            Currency = request.Currency
-        });
+        order.Status = request.Status;
+        order.Tip = request.Tip;
+        order.ServiceCharge = request.ServiceCharge;
+        order.Discount = request.Discount;
+        order.Currency = request.Currency;
+
+        await _orderRepository.UpdateOrderAsync(order);
     }
 
     public async Task<IEnumerable<OrderResponse>> GetOrdersByLocation(int locationId)

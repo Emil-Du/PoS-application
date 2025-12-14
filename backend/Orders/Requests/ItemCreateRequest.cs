@@ -2,7 +2,7 @@ using backend.Common;
 
 namespace backend.Orders;
 
-public class ItemRequest
+public class ItemCreateRequest
 {
     public int ProductId { get; set; }
     //public IEnumerable<int> VariationIds { get; set; } = [];
