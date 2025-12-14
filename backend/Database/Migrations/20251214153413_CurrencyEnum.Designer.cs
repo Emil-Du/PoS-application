@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.Database;
 
 #nullable disable
 
-namespace backend.Database
+namespace backend.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251214153413_CurrencyEnum")]
+    partial class CurrencyEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -356,7 +359,7 @@ namespace backend.Database
                         new
                         {
                             ProductId = 1,
-                            Currency = "Eur",
+                            Currency = "eur",
                             Name = "Chicken",
                             UnitPrice = 7m,
                             VatPercent = 21m
@@ -364,7 +367,7 @@ namespace backend.Database
                         new
                         {
                             ProductId = 2,
-                            Currency = "Eur",
+                            Currency = "eur",
                             Name = "Potato",
                             UnitPrice = 1m,
                             VatPercent = 21m
@@ -372,7 +375,7 @@ namespace backend.Database
                         new
                         {
                             ProductId = 3,
-                            Currency = "Eur",
+                            Currency = "eur",
                             Name = "Beef",
                             UnitPrice = 5m,
                             VatPercent = 21m
