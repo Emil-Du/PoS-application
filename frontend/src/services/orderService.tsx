@@ -25,7 +25,7 @@ export const orderService = {
     },
 
     getProducts: async () => {
-        const locationId = 1; // Hardcoded for now, will be from session later
+        const locationId = 1;
 
         const response = await fetch(`${API_BASE_URL}/api/Product/${locationId}`, {
             method: 'GET',

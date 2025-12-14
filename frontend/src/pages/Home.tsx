@@ -45,7 +45,9 @@ export default function Home() {
             setCreatingOrder(true);
 
             const result = await orderService.createOrder();
-            setOrderId(result.orderId || result.id);
+            const newOrderId = result.orderId;
+            setOrderId(newOrderId);
+
 
         } catch (err) {
             alert('Failed to create order. Please try again.');
@@ -56,7 +58,9 @@ export default function Home() {
     };
 
     const addToOrder = () => {
-        if (!selectedItem) return;
+        if (!selectedItem || !orderId) return;
+
+        console.log('Adding item to order:', orderId, selectedItem);
 
         setOrderItems(prev => {
             const existing = prev.find(i => i.productId === selectedItem.productId);
@@ -95,7 +99,6 @@ export default function Home() {
                 </div>
 
                 <div className="columns">
-                    {/* ITEMS */}
                     <div className="column column-large">
                         <p>ITEMS</p>
 
@@ -120,7 +123,6 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* ORDER */}
                     <div className="column column-small">
                         <p>ORDER</p>
 
@@ -135,6 +137,10 @@ export default function Home() {
                             </button>
                         ) : (
                             <>
+                                <div className="order-info">
+                                    <small>Order ID: {orderId}</small>
+                                </div>
+
                                 <div className="scroll-container">
                                     {orderItems.length === 0 && (
                                         <div className="empty-state">No items added</div>
@@ -175,7 +181,6 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* MODAL */}
             {selectedItem && (
                 <div className="modal-overlay">
                     <div className="modal">

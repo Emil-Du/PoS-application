@@ -1,4 +1,3 @@
-/* Reset and viewport setup */
 html,
 body,
 #root {
@@ -9,14 +8,12 @@ body,
     font-family: 'Inter', sans-serif;
 }
 
-/* Main layout container */
 .layout {
     display: flex;
     height: 100%;
     width: 100%;
 }
 
-/* Sidebar */
 .sidebar-placeholder {
     width: 200px !important;
     min-width: 200px;
@@ -25,7 +22,6 @@ body,
     background-color: #ddd;
 }
 
-/* Main content area */
 .module {
     flex: 1;
     display: flex;
@@ -34,7 +30,6 @@ body,
     min-height: 0;
 }
 
-/* Header */
 .module-header {
     flex-shrink: 0;
     margin-bottom: 10px;
@@ -45,7 +40,6 @@ body,
     font-size: 20px;
 }
 
-/* Two-column layout */
 .columns {
     flex: 1;
     display: flex;
@@ -53,7 +47,6 @@ body,
     min-height: 0;
 }
 
-/* Individual columns */
 .column {
     display: flex;
     flex-direction: column;
@@ -74,14 +67,12 @@ body,
     flex: 1;
 }
 
-/* Column title */
 .column>p {
     margin: 0 0 10px 0;
     font-size: 18px;
     flex-shrink: 0;
 }
 
-/* Scrollable area */
 .scroll-container {
     flex: 1;
     overflow-y: auto;
@@ -92,7 +83,6 @@ body,
     gap: 10px;
 }
 
-/* Item buttons in left column */
 .list-button {
     width: 100%;
     height: 60px;
@@ -106,6 +96,7 @@ body,
     padding: 0 20px;
     font-size: 18px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .list-button:hover:not(:disabled) {
@@ -118,7 +109,6 @@ body,
     cursor: not-allowed;
 }
 
-/* Create Order Button */
 .create-order-button {
     width: 100%;
     height: 120px;
@@ -150,14 +140,13 @@ body,
     font-weight: bold;
 }
 
-/* Empty state */
+
 .empty-state {
     font-size: 14px;
     color: #777;
     padding: 10px 0;
 }
 
-/* Order rows in right column */
 .order-row {
     display: grid;
     grid-template-columns: 1fr auto auto auto;
@@ -207,7 +196,6 @@ body,
     color: #d32f2f;
 }
 
-/* Order total - fixed at bottom of scroll area */
 .order-total {
     display: flex;
     justify-content: space-between;
@@ -218,7 +206,6 @@ body,
     flex-shrink: 0;
 }
 
-/* Checkout button - fixed at bottom */
 .confirmation-button {
     width: 100%;
     height: 50px;
@@ -241,7 +228,7 @@ body,
     border-color: rgb(155, 154, 154);
 }
 
-/* Modal overlay */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -255,7 +242,7 @@ body,
     z-index: 1000;
 }
 
-/* Modal box */
+
 .modal {
     width: 300px;
     background-color: white;
@@ -304,4 +291,13 @@ body,
 .modal-actions button:hover {
     background-color: rgb(234, 227, 227);
     border-color: rgb(155, 154, 154);
+}
+
+.order-info {
+    flex-shrink: 0;
+    padding: 5px 0;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #666;
+    border-bottom: 1px solid rgb(185, 198, 200);
 }
