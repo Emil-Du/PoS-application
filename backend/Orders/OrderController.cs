@@ -1,7 +1,4 @@
-using backend.Common;
 using backend.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Orders
@@ -19,7 +16,7 @@ namespace backend.Orders
         }
 
         [HttpPost]
-        public async Task<ActionResult<Order>> OpenNewOrder([FromBody] OrderRequest request)
+        public async Task<ActionResult<OrderResponse>> OpenNewOrder([FromBody] OrderRequest request)
         {
             try
             {
@@ -42,7 +39,7 @@ namespace backend.Orders
         }
 
         [HttpGet("{orderId}")]
-        public async Task<ActionResult<Order>> GetOrderById(int orderId)
+        public async Task<ActionResult<OrderResponse>> GetOrderById(int orderId)
         {
             try
             {
@@ -59,7 +56,7 @@ namespace backend.Orders
             }
         }
 
-        [HttpPatch("{orderId}")]
+        [HttpPost("{orderId}")]
         public async Task<IActionResult> UpdateOrderFields(int orderId, [FromBody] OrderRequest request)
         {
             try
@@ -71,6 +68,10 @@ namespace backend.Orders
             catch (NotFoundException)
             {
                 return NotFound();
+            }
+            catch (OrderNotOpenException)
+            {
+                return Conflict();
             }
             catch
             {
@@ -91,6 +92,10 @@ namespace backend.Orders
             {
                 return NotFound();
             }
+            catch (OrderNotOpenException)
+            {
+                return Conflict();
+            }
             catch
             {
                 return StatusCode(500);
@@ -109,6 +114,10 @@ namespace backend.Orders
             catch (NotFoundException)
             {
                 return NotFound();
+            }
+            catch (OrderNotOpenException)
+            {
+                return Conflict();
             }
             catch
             {
@@ -130,7 +139,7 @@ namespace backend.Orders
         }
 
         [HttpGet("{orderId}/items")]
-        public async Task<IActionResult> GetOrderItems(int orderId)
+        public async Task<ActionResult<IEnumerable<ItemResponse>>> GetOrderItems(int orderId)
         {
             try
             {
@@ -148,7 +157,7 @@ namespace backend.Orders
         }
 
         [HttpPost("{orderId}/items")]
-        public async Task<IActionResult> AddItem(int orderId, [FromBody] ItemRequest request)
+        public async Task<ActionResult<ItemResponse>> AddItem(int orderId, [FromBody] ItemCreateRequest request)
         {
             try
             {
@@ -163,24 +172,32 @@ namespace backend.Orders
             {
                 return NotFound();
             }
+            catch (OrderNotOpenException)
+            {
+                return Conflict();
+            }
             catch
             {
                 return StatusCode(500);
             }
         }
 
-        [HttpPatch("{orderId}/items/{itemId}")]
-        public async Task<IActionResult> UpdateItem(int orderId, int itemId, [FromBody] ItemRequest item)
+        [HttpPost("{orderId}/items/{itemId}")]
+        public async Task<IActionResult> UpdateItem(int orderId, int itemId, [FromBody] ItemUpdateRequest item)
         {
             try
             {
                 await _service.UpdateItemAsync(orderId, itemId, item);
 
-                return StatusCode(204);
+                return Ok();
             }
             catch (NotFoundException)
             {
                 return NotFound();
+            }
+            catch (OrderNotOpenException)
+            {
+                return Conflict();
             }
             catch
             {
@@ -199,6 +216,10 @@ namespace backend.Orders
             catch (NotFoundException)
             {
                 return NotFound();
+            }
+            catch (OrderNotOpenException)
+            {
+                return Conflict();
             }
             catch
             {
