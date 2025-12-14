@@ -66,25 +66,26 @@ public class AppDbContext : DbContext
             {
                 LocationId = 1,
                 CompanyId = 1,
-                Name = "Headquarters",
-                Address = "123 Main St, City",
+                Name = "FOOD",
+                Address = "Street 123",
                 PhoneNumber = "987654321",
-                Email = "hq@company.com"
+                Email = "foodcompany@gmail.com"
             },
             new Location
             {
                 LocationId = 2,
                 CompanyId = 1,
-                Name = "Branch Office",
-                Address = "Smth city",
+                Name = "SERVICES",
+                Address = "Steet321",
                 PhoneNumber = "222333444",
-                Email = "branch@company.com"
+                Email = "servicecompany@gmail.com"
             }
         );
         modelBuilder.Entity<Product>().HasData(
             new Product
             {
                 ProductId = 1,
+                LocationId = 1,
                 Name = "Chicken",
                 UnitPrice = 7m,
                 Currency = Currency.Eur,
@@ -93,7 +94,8 @@ public class AppDbContext : DbContext
             new Product
             {
                 ProductId = 2,
-                Name = "Potato",
+                LocationId = 1,
+                Name = "Fries",
                 UnitPrice = 1m,
                 Currency = Currency.Eur,
                 VatPercent = 21m
@@ -101,11 +103,30 @@ public class AppDbContext : DbContext
             new Product
             {
                 ProductId = 3,
+                LocationId = 1,
                 Name = "Beef",
-                UnitPrice = 5m,
+                UnitPrice = 10m,
                 Currency = Currency.Eur,
                 VatPercent = 21m
-            }
+            },
+             new Product
+             {
+                 ProductId = 4,
+                 LocationId = 2,
+                 Name = "Haircut",
+                 UnitPrice = 20m,
+                 Currency = Currency.Eur,
+                 VatPercent = 21m
+             },
+             new Product
+             {
+                 ProductId = 5,
+                 LocationId = 2,
+                 Name = "Hairdye",
+                 UnitPrice = 40m,
+                 Currency = Currency.Eur,
+                 VatPercent = 21m
+             }
         );
 
         base.OnModelCreating(modelBuilder);
