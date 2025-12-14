@@ -11,6 +11,7 @@ using backend.Reservations;
 using backend.Customers;
 using backend.Orders;
 using backend.Variations;
+using backend.Common;
 
 namespace backend.Database;
 
@@ -34,8 +35,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<RolePermission>()
             .HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
+        modelBuilder.Entity<Product>()
+        .Property(p => p.Currency)
+        .HasConversion<string>();
 
-            
+
+
 
         modelBuilder.Entity<Permission>().HasData(
             Enum.GetValues<PermissionFlag>()
@@ -82,7 +87,7 @@ public class AppDbContext : DbContext
                 ProductId = 1,
                 Name = "Chicken",
                 UnitPrice = 7m,
-                Currency = "eur",
+                Currency = Currency.Eur,
                 VatPercent = 21m
             },
             new Product
@@ -90,7 +95,7 @@ public class AppDbContext : DbContext
                 ProductId = 2,
                 Name = "Potato",
                 UnitPrice = 1m,
-                Currency = "eur",
+                Currency = Currency.Eur,
                 VatPercent = 21m
             },
             new Product
@@ -98,7 +103,7 @@ public class AppDbContext : DbContext
                 ProductId = 3,
                 Name = "Beef",
                 UnitPrice = 5m,
-                Currency = "eur",
+                Currency = Currency.Eur,
                 VatPercent = 21m
             }
         );
