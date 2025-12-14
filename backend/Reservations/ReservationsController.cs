@@ -4,11 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-<<<<<<< HEAD
-[Authorize]
-=======
 //[Authorize]
->>>>>>> main
 public class ReservationsController : ControllerBase
 {
     private readonly IReservationsService _reservationsService;
