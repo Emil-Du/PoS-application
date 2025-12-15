@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Home.css";
 import { orderService } from "../services/orderService";
+import { paymentService } from "../services/paymentService";
 
 interface Item {
     productId: number;
@@ -12,6 +13,7 @@ interface Item {
 
 interface OrderItem extends Item {
     quantity: number;
+    itemId: number;
 }
 
 export default function Home() {
@@ -22,6 +24,9 @@ export default function Home() {
     const [orderId, setOrderId] = useState<number | null>(null);
     const [creatingOrder, setCreatingOrder] = useState<boolean>(false);
     const [loadingItems, setLoadingItems] = useState<boolean>(true);
+    const [paymentMethod, setPaymentMethod] = useState<string>("Card");
+    const [processingPayment, setProcessingPayment] = useState<boolean>(false);
+    const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -30,8 +35,8 @@ export default function Home() {
                 const products = await orderService.getProducts();
                 setItems(products);
             } catch (err) {
-                console.error('Failed to fetch products:', err);
-                alert('Failed to load products. Please refresh the page.');
+                console.error("Failed to fetch products:", err);
+                alert("Failed to load products. Please refresh the page.");
             } finally {
                 setLoadingItems(false);
             }
@@ -43,45 +48,119 @@ export default function Home() {
     const createOrder = async () => {
         try {
             setCreatingOrder(true);
-
             const result = await orderService.createOrder();
-            const newOrderId = result.orderId;
-            setOrderId(newOrderId);
-
-
+            setOrderId(result.orderId);
         } catch (err) {
-            alert('Failed to create order. Please try again.');
-            console.error('Create order error:', err);
+            console.error("Create order error:", err);
+            alert("Failed to create order. Please try again.");
         } finally {
             setCreatingOrder(false);
         }
     };
 
-    const addToOrder = () => {
+    const addToOrder = async () => {
         if (!selectedItem || !orderId) return;
 
-        console.log('Adding item to order:', orderId, selectedItem);
+        try {
+            const existingItem = orderItems.find(
+                i => i.productId === selectedItem.productId
+            );
 
-        setOrderItems(prev => {
-            const existing = prev.find(i => i.productId === selectedItem.productId);
-
-            if (existing) {
-                return prev.map(i =>
-                    i.productId === selectedItem.productId
-                        ? { ...i, quantity: i.quantity + quantity }
-                        : i
+            if (existingItem) {
+                const backendItems = await orderService.getOrderItems(orderId);
+                const backendItem = backendItems.find(
+                    (item: any) => item.itemId === existingItem.itemId
                 );
+
+                const currentQuantity = backendItem ? backendItem.quantity : existingItem.quantity;
+                const newQuantity = currentQuantity + quantity;
+
+                await orderService.updateOrderItem(
+                    orderId,
+                    existingItem.itemId,
+                    existingItem.currency,
+                    newQuantity,
+                    0,
+                    existingItem.vatPercent
+                );
+
+                setOrderItems(prev =>
+                    prev.map(i =>
+                        i.itemId === existingItem.itemId
+                            ? { ...i, quantity: newQuantity }
+                            : i
+                    )
+                );
+            } else {
+                const result = await orderService.addOrderItem(
+                    orderId,
+                    selectedItem.productId,
+                    selectedItem.currency,
+                    quantity,
+                    0,
+                    selectedItem.vatPercent
+                );
+
+                setOrderItems(prev => [
+                    ...prev,
+                    {
+                        ...selectedItem,
+                        quantity,
+                        itemId: result.itemId
+                    }
+                ]);
             }
 
-            return [...prev, { ...selectedItem, quantity }];
-        });
-
-        setSelectedItem(null);
-        setQuantity(1);
+            setSelectedItem(null);
+            setQuantity(1);
+        } catch (err) {
+            console.error("Failed to add/update item:", err);
+            alert("Failed to update order item.");
+        }
     };
 
-    const removeFromOrder = (itemId: number) => {
-        setOrderItems(prev => prev.filter(item => item.productId !== itemId));
+    const removeFromOrder = async (itemId: number) => {
+        if (!orderId) return;
+
+        try {
+            await orderService.deleteOrderItem(orderId, itemId);
+            setOrderItems(prev => prev.filter(item => item.itemId !== itemId));
+        } catch (err) {
+            console.error("Failed to remove item:", err);
+            alert("Failed to remove item from order.");
+        }
+    };
+
+    const handleCheckout = async () => {
+        if (!orderId || orderItems.length === 0) return;
+
+        try {
+            setProcessingPayment(true);
+            setPaymentSuccess(null);
+
+            const currency = orderItems[0]?.currency || "Eur";
+
+            await paymentService.createPayment(
+                orderId,
+                total,
+                paymentMethod,
+                currency
+            );
+
+            setPaymentSuccess(true);
+
+            setTimeout(() => {
+                setOrderId(null);
+                setOrderItems([]);
+                setPaymentSuccess(null);
+                setPaymentMethod("Card");
+            }, 2000);
+        } catch (err) {
+            console.error("Payment failed:", err);
+            setPaymentSuccess(false);
+        } finally {
+            setProcessingPayment(false);
+        }
     };
 
     const total = orderItems.reduce(
@@ -116,7 +195,9 @@ export default function Home() {
                                         disabled={!orderId}
                                     >
                                         <div>{item.name}</div>
-                                        <div>{item.currency} {item.unitPrice.toFixed(2)}</div>
+                                        <div>
+                                            {item.currency} {item.unitPrice.toFixed(2)}
+                                        </div>
                                     </button>
                                 ))
                             )}
@@ -133,7 +214,9 @@ export default function Home() {
                                 disabled={creatingOrder}
                             >
                                 <span className="plus-sign">+</span>
-                                <span>{creatingOrder ? 'Creating...' : 'Create Order'}</span>
+                                <span>
+                                    {creatingOrder ? "Creating..." : "Create Order"}
+                                </span>
                             </button>
                         ) : (
                             <>
@@ -147,7 +230,7 @@ export default function Home() {
                                     )}
 
                                     {orderItems.map(item => (
-                                        <div key={item.productId} className="order-row">
+                                        <div key={item.itemId} className="order-row">
                                             <div className="order-row-name">{item.name}</div>
                                             <div className="order-row-quantity">x{item.quantity}</div>
                                             <div className="order-row-price">
@@ -155,7 +238,7 @@ export default function Home() {
                                             </div>
                                             <button
                                                 className="remove-button"
-                                                onClick={() => removeFromOrder(item.productId)}
+                                                onClick={() => removeFromOrder(item.itemId)}
                                                 title="Remove item"
                                             >
                                                 ×
@@ -166,14 +249,40 @@ export default function Home() {
 
                                 <div className="order-total">
                                     <span>Total</span>
-                                    <span>{orderItems[0]?.currency || 'EUR'} {total.toFixed(2)}</span>
+                                    <span>{orderItems[0]?.currency || "Eur"} {total.toFixed(2)}</span>
                                 </div>
+
+                                <div className="payment-method">
+                                    <label htmlFor="payment-select">Payment Method:</label>
+                                    <select
+                                        id="payment-select"
+                                        value={paymentMethod}
+                                        onChange={(e) => setPaymentMethod(e.target.value)}
+                                        disabled={processingPayment}
+                                    >
+                                        <option value="Card">Card</option>
+                                        <option value="Cash">Cash</option>
+                                    </select>
+                                </div>
+
+                                {paymentSuccess === true && (
+                                    <div className="payment-status success">
+                                        ✓ Payment successful!
+                                    </div>
+                                )}
+
+                                {paymentSuccess === false && (
+                                    <div className="payment-status error">
+                                        ✗ Payment failed. Please try again.
+                                    </div>
+                                )}
 
                                 <button
                                     className="confirmation-button"
-                                    disabled={orderItems.length === 0}
+                                    onClick={handleCheckout}
+                                    disabled={orderItems.length === 0 || processingPayment}
                                 >
-                                    Checkout
+                                    {processingPayment ? "Processing..." : "Checkout"}
                                 </button>
                             </>
                         )}
@@ -193,7 +302,7 @@ export default function Home() {
                             type="number"
                             min={1}
                             value={quantity}
-                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            onChange={e => setQuantity(Number(e.target.value))}
                         />
 
                         <div className="modal-actions">

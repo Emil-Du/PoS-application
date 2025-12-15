@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/[controller]")]
 
 public class RoleController : ControllerBase
 {
@@ -40,7 +40,7 @@ public class RoleController : ControllerBase
 
         if (roleCreateRequest == null)
         {
-                return BadRequest();
+            return BadRequest();
         }
 
         var newRole = await _service.CreateRoleAsync(roleCreateRequest);
@@ -52,7 +52,7 @@ public class RoleController : ControllerBase
     {
         if (roleUpdateRequest == null)
         {
-                return BadRequest();
+            return BadRequest();
         }
 
         var updated = await _service.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
@@ -80,7 +80,7 @@ public class RoleController : ControllerBase
     [HttpPost("{roleId}/assign")]
     public async Task<IActionResult> AssignRole([FromRoute] int roleId, [FromBody] RoleAssignmentRequest request)
     {
-        var updated =await _service.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
+        var updated = await _service.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
         if (!updated) return NotFound();
         return NoContent();
     }

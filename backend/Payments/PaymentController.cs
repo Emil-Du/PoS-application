@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/[controller]")]
 
 public class PaymentController : ControllerBase
 {
@@ -30,7 +30,7 @@ public class PaymentController : ControllerBase
         return Ok(payments);
     }
 
-     [HttpPost("payment")]
+    [HttpPost("payment")]
     public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest request)
     {
         var payment = await _service.CreatePaymentAsync(request);

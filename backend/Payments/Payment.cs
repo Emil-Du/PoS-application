@@ -1,9 +1,12 @@
+using backend.Orders;
+
 namespace backend.Payments;
 
 public class Payment
 {
     public int PaymentId { get; set; }
     public int OrderId { get; set; }
+    public Order Order { get; set; } = null!;
     public decimal Amount { get; set; } = 0;
 
     public String Currency { get; set; } = string.Empty;
