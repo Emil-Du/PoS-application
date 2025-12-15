@@ -1,4 +1,5 @@
 using backend.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Products;
 
@@ -14,5 +15,13 @@ public class ProductRepository : IProductRepository
     public async Task<Product?> GetProductByIdAsync(int productId)
     {
         return await _context.Products.FindAsync(productId);
+    }
+
+    public async Task<IEnumerable<Product>> GetProductsByLocationAsync(int locationId)
+    {
+        return await _context.Products
+        .Include(p => p.Location)
+        .Where(p => p.LocationId == locationId)
+        .ToListAsync();
     }
 }
