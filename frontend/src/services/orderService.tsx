@@ -1,7 +1,14 @@
 const API_BASE_URL = 'http://localhost:5041';
 
 export const orderService = {
-    createOrder: async () => {
+    createOrder: async (
+        operatorId: number,
+        tip: number,
+        discount: number,
+        serviceCharge: number,
+        status: string,
+        currency: string
+    ) => {
         const response = await fetch(`${API_BASE_URL}/api/orders`, {
             method: 'POST',
             headers: {
@@ -9,12 +16,12 @@ export const orderService = {
             },
             credentials: 'include',
             body: JSON.stringify({
-                operatorId: 1,
-                tip: 0,
-                discount: 0,
-                serviceCharge: 0,
-                status: "Opened",
-                currency: "Eur"
+                operatorId,
+                tip,
+                discount,
+                serviceCharge,
+                status,
+                currency
             })
         });
 
@@ -25,14 +32,13 @@ export const orderService = {
         return await response.json();
     },
 
-    getProducts: async () => {
-        const locationId = 1;
-
+    getProducts: async (locationId: number) => {
         const response = await fetch(`${API_BASE_URL}/api/Product/${locationId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include'
         });
 
         if (!response.ok) {
@@ -143,5 +149,21 @@ export const orderService = {
         }
 
         return await response.json();
-    }
+    },
+
+    closeOrder: async (orderId: number) => {
+        const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/close`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create order');
+        }
+
+        return null;
+    },
 };

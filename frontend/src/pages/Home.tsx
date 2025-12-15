@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import "./Home.css";
 import { orderService } from "../services/orderService";
 import { paymentService } from "../services/paymentService";
-
+import { useEmployee } from '../contexts/EmployeeContext';
+import { useNavigate } from "react-router-dom";
 interface Item {
     productId: number;
     name: string;
@@ -17,6 +18,8 @@ interface OrderItem extends Item {
 }
 
 export default function Home() {
+    const { employee } = useEmployee();
+    const navigate = useNavigate();
     const [items, setItems] = useState<Item[]>([]);
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -28,11 +31,17 @@ export default function Home() {
     const [processingPayment, setProcessingPayment] = useState<boolean>(false);
     const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null);
 
+
     useEffect(() => {
+        if (!employee) {
+            navigate("/");
+            return;
+        }
+
         const fetchProducts = async () => {
             try {
                 setLoadingItems(true);
-                const products = await orderService.getProducts();
+                const products = await orderService.getProducts(employee.locationId);
                 setItems(products);
             } catch (err) {
                 console.error("Failed to fetch products:", err);
@@ -43,12 +52,30 @@ export default function Home() {
         };
 
         fetchProducts();
-    }, []);
+    }, [employee, navigate]);
+
 
     const createOrder = async () => {
+        if (!employee) return;
+        if (items.length === 0) {
+            alert("No products available to determine currency.");
+            return;
+        }
+
         try {
             setCreatingOrder(true);
-            const result = await orderService.createOrder();
+
+            const currency = items[0].currency;
+
+            const result = await orderService.createOrder(
+                employee.employeeId,
+                0,                   // tip
+                0,                   // discount
+                0,                   // serviceCharge
+                "Opened",
+                currency
+            );
+
             setOrderId(result.orderId);
         } catch (err) {
             console.error("Create order error:", err);
@@ -57,6 +84,7 @@ export default function Home() {
             setCreatingOrder(false);
         }
     };
+
 
     const addToOrder = async () => {
         if (!selectedItem || !orderId) return;
@@ -146,6 +174,8 @@ export default function Home() {
                 paymentMethod,
                 currency
             );
+
+            await orderService.closeOrder(orderId);
 
             setPaymentSuccess(true);
 
@@ -267,13 +297,13 @@ export default function Home() {
 
                                 {paymentSuccess === true && (
                                     <div className="payment-status success">
-                                        ✓ Payment successful!
+                                        Payment successful!
                                     </div>
                                 )}
 
                                 {paymentSuccess === false && (
                                     <div className="payment-status error">
-                                        ✗ Payment failed. Please try again.
+                                        Payment failed. Please try again.
                                     </div>
                                 )}
 
