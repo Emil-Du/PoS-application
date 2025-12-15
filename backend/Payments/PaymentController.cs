@@ -16,10 +16,10 @@ public class PaymentController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("order/{orderId}/payments")]
-    public async Task<IActionResult> GetPaymentsByOrder(int orderId)
+    [HttpGet("order/{orderId}/payment")]
+    public async Task<IActionResult> GetPaymentByOrder(int orderId)
     {
-        var payments = await _service.GetPaymentsByOrderIdAsync(orderId);
+        var payments = await _service.GetPaymentByOrderIdAsync(orderId);
 
         if (payments == null)
         {
