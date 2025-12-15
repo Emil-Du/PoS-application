@@ -59,10 +59,17 @@ public class EmployeeLoginDTO
 
 public class EmployeeLoginResponseDTO
 {
-    public string AccessToken { get; set; } = string.Empty;
-    public string TokenType { get; set; } = "Bearer";
-    public int ExpiresIn { get; set; }
     public int EmployeeId { get; set; }
-    //public string EmployeeRole { get; set; } = string.Empty;
+    public string FirstName { get; set; } = default!;
+    public string LastName { get; set; } = default!;
+    public int LocationId { get; set; }
 
+    //public string EmployeeRole { get; set; } = default!;
+}
+
+public class EmployeeLoginServiceResponse
+{
+    public EmployeeLoginResponseDTO Employee { get; set; } = default!;
+    public string AccessToken { get; set; } = default!;
+    public int ExpiresIn { get; set; }
 }

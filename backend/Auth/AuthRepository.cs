@@ -87,16 +87,19 @@ public class AuthRepository
         return newEmployee;
     }
 
-    public async Task<int> LoginEmployeeAsync(EmployeeLoginDTO employeeLoginDTO)
+    public async Task<EmployeeLoginResponseDTO> LoginEmployeeAsync(EmployeeLoginDTO employeeLoginDTO)
     {
         var data = await _context.Employees
             .Where(c => c.Email == employeeLoginDTO.Email)
             .Select(c => new
             {
-                Id = c.EmployeeId,
-                Salt = c.Salt,
-                PasswordHash = c.PasswordHash,
-                Status = c.Status
+                c.EmployeeId,
+                c.FirstName,
+                c.LastName,
+                c.LocationId,
+                c.Salt,
+                c.PasswordHash,
+                c.Status
             })
             .FirstOrDefaultAsync();
 
@@ -110,7 +113,13 @@ public class AuthRepository
             throw new InactiveStatusException();
         }
 
-        return data.Id;
+        return new EmployeeLoginResponseDTO
+        {
+            EmployeeId = data.EmployeeId,
+            FirstName = data.FirstName,
+            LastName = data.LastName,
+            LocationId = data.LocationId
+        };
 
     }
 }

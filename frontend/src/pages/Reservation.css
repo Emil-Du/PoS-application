@@ -1,0 +1,221 @@
+.layout {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar-placeholder {
+    top: 0;
+    left: 0;
+    width: 450px;
+    height: 100%;
+    background-color: #ddd;
+}
+
+.reservations-module {
+    width: 100%;
+    height: 100%;
+    border: 4px solid;
+    border-color: rgb(176, 186, 187);
+    background-color: rgb(202, 225, 225);
+    font-size: 30px;
+    padding-left: 40px;
+    padding-right: 40px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.info-and-selection-tab {
+    display: flex;
+    flex-direction: row;
+}
+
+.info-and-selection-tab p {
+    font-size: 30px;
+    margin-top: 50px;
+}
+
+.input-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.column {
+    width: 33%;
+    height: 850px;
+    border: 4px solid;
+    border-color: rgb(185, 198, 200);
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: left; 
+    flex-direction: column;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 30px;
+    border-radius: 5px;
+}
+
+.column p {
+    font-size: 20px;
+}
+
+.calendar {
+    font-size: 17px;
+    margin-top: 50px;
+    margin-bottom: 80px;
+    margin-left: 25%;
+
+    transform: scale(1.3);
+}
+
+.time-slots-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.time-slots-row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.time-slots-row button {
+    width: 50%;
+    height: 50px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.time-slots-row button:hover {
+  background-color: rgb(234, 227, 227);
+  border-color: rgb(155, 154, 154);
+}
+
+.smaller-p {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.scroll-container {
+    height: 35%;
+    width: 102%;
+    display: block;
+    overflow-y: auto;
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
+.staff-button {
+    width: 100%;
+    height: 65px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+
+    text-align: left;
+    padding-left: 70px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+}
+
+.staff-button:hover {
+  background-color: rgb(234, 227, 227);
+  border-color: rgb(155, 154, 154);
+}
+
+.staff-button-name {
+    font-size: 18px;
+}
+
+.staff-button-specialty {
+    font-size: 12px;
+}
+
+.service-button {
+    width: 100%;
+    height: 65px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.service-button:hover {
+  background-color: rgb(234, 227, 227);
+  border-color: rgb(155, 154, 154);
+}
+
+.selected-button {
+  background-color: rgb(218, 205, 205) !important;
+}
+
+input {
+    height: 45px;
+    margin-top: -10px;
+    margin-bottom: 50px;
+    border-radius: 5px;
+    font-size: 18px;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px solid;
+    border-color: rgb(177, 177, 177);
+    padding-left: 20px;
+}
+
+.details {
+    width: 100%;
+    height: 280px;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+}
+
+.details p{
+    font-size: 19px;
+    padding-left: 20px;
+    margin-bottom: 40px;
+}
+
+.details-data {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 25px;
+}
+
+.confirmation-button {
+    width: 100%;
+    height: 60px;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+    margin-top: 70px;
+    font-size: 18px;
+}
+
+.confirmation-button:hover {
+  background-color: rgb(234, 227, 227);
+  border-color: rgb(155, 154, 154);
+}
