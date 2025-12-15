@@ -4,6 +4,7 @@ import { FaEnvelope, FaLock } from "react-icons/fa";
 import { login } from '../services/authService'
 import { useEmployee } from "../contexts/EmployeeContext";
 import { useNavigate } from "react-router-dom";
+import { getRoleIdByEmployeeId, getRoleById } from '../services/roleService';
 
 
 function Login() {
@@ -22,7 +23,16 @@ function Login() {
     try {
       const employeeData = await login(email, password);
 
-      setEmployee(employeeData);
+      const roleId = await getRoleIdByEmployeeId(employeeData.employeeId);
+
+      const role = (await getRoleById(roleId)).name;
+
+      const employeeWithRole = {
+        ...employeeData,
+        role: role
+      };
+
+      setEmployee(employeeWithRole);
 
       navigate("/reservation");
     } 

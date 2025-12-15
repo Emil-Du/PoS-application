@@ -1,35 +1,6 @@
 namespace backend.Auth;
 using backend.Employees;
 
-public class CustomerRegistrationDTO
-{
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-    public string Password {get; set; } = string.Empty;
-}
-
-public class CustomerRegistrationResponseDTO
-{
-    public int CustomerId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-}
-
-public class CustomerLoginDTO
-{
-    public string Email { get; set; } = string.Empty;
-    public string Password {get; set; } = string.Empty;
-}
-
-public class CustomerLoginResponseDTO
-{
-    public string AccessToken { get; set; } = string.Empty;
-    public string TokenType { get; set; } = string.Empty;
-    public int ExpiresIn { get; set; }
-}
-
 public class EmployeeRegistrationDTO
 {
     public string FirstName { get; set; } = string.Empty;

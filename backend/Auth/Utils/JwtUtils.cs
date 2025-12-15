@@ -5,7 +5,7 @@ using System.Text;
 
 public static class JwtUtils
 {
-    public static string GenerateToken(int customerId, IConfiguration configuration)
+    public static string GenerateToken(string role, IConfiguration configuration)
     {
         var key = configuration["Jwt:Key"] ?? throw new Exception("JWT key is missing in configuration.");
 
@@ -14,7 +14,7 @@ public static class JwtUtils
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, customerId.ToString()),
+            new Claim(ClaimTypes.Role, role.ToLower()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // gives each token a unique identifier
         };
 

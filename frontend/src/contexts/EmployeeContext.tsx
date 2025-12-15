@@ -6,11 +6,12 @@ interface Employee {
   firstName: string;
   lastName: string;
   locationId: number;
+  role: string;
 }
 
 interface EmployeeContextType {
   employee: Employee | null;
-  setEmployee: (employee: Employee) => void;
+  setEmployee: (employee: Employee | null) => void;
 }
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(undefined);

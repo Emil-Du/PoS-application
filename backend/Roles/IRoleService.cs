@@ -9,4 +9,5 @@ public interface IRoleService
     Task<bool> DeleteRoleByIdAsync(int roleId);
 
     Task<bool> AssignRoleToEmployeeAsync(int roleId, int employeeId);
+    Task<EmployeeRolesDTO?> GetRoleIdByEmployeeIdAsync(int employeeId);
 }

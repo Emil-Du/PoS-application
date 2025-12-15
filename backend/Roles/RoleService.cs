@@ -56,4 +56,11 @@ public class RoleService : IRoleService
         };
     }
 
+    public async Task<EmployeeRolesDTO?> GetRoleIdByEmployeeIdAsync(int employeeId)
+    {
+        EmployeeRolesDTO? employeeRole = await _repository.GetRoleIdByEmployeeIdAsync(employeeId);
+
+        return employeeRole;
+    }
+
 }

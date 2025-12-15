@@ -1,8 +1,8 @@
 const API_URL = "http://localhost:5041/api/Provider";
 
-export async function getProviders() {
+export async function getProviders(locationId: number) {
 
-  const res = await fetch(`${API_URL}`, {
+  const res = await fetch(`${API_URL}?locationid=${locationId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json"
