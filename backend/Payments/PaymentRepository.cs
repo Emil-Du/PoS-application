@@ -1,6 +1,7 @@
 ﻿namespace backend.Payments;
 
 using backend.Database;
+using Microsoft.EntityFrameworkCore;
 
 public class PaymentRepository : IPaymentRepository
 {
@@ -11,12 +12,22 @@ public class PaymentRepository : IPaymentRepository
         _context = context;
     }
 
-    public async Task<Payment?> GetPaymentsByOrderIdAsync(int orderId)
-    {
-        return await _context.Payments.FindAsync(orderId);
+    public async Task<PaymentResponse?> GetPaymentByOrderIdAsync(int orderId)
+    {   
+        return await _context.Payments
+        .Where(p => p.OrderId == orderId)
+        .Select(p => new PaymentResponse
+        {
+            PaymentId = p.PaymentId,
+            OrderId = p.OrderId,
+            Method = p.Method,
+            Amount = p.Amount,
+            Currency = p.Currency
+        })
+        .FirstOrDefaultAsync(); 
     }
 
-    public async Task<Payment> CreatePaymentAsync(PaymentRequest request)
+    public async Task<PaymentResponse> CreatePaymentAsync(PaymentRequest request)
     {
         var payment = new Payment
         {
@@ -29,7 +40,14 @@ public class PaymentRepository : IPaymentRepository
         _context.Payments.Add(payment);
         await _context.SaveChangesAsync();
 
-        return payment;
+        return new PaymentResponse
+        {
+            PaymentId = payment.PaymentId,
+            OrderId = payment.OrderId,
+            Method = payment.Method,
+            Amount = payment.Amount,
+            Currency = payment.Currency
+        };
     }
 
 }
