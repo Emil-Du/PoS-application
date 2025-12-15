@@ -125,6 +125,23 @@ namespace backend.Orders
             }
         }
 
+        [HttpGet("{orderId}/taxes")]
+        public async Task<ActionResult<(decimal, decimal, decimal)>> GetTaxes(int orderId)
+        {
+            try
+            {
+                return Ok(await _service.GetTaxesForOrderById(orderId));
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{orderId}/receipt")]
         public async Task<IActionResult> GetReceipt(int orderId)
         {

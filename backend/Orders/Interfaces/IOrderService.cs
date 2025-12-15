@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using backend.Common;
 
 namespace backend.Orders;
@@ -18,6 +19,7 @@ public interface IOrderService
     public Task CancelOrderAsync(int orderId);
     // Cancel order response altered to have no return value, because the client already has the contents
     // of the cancelled order and the method will either throw an exception or succeed
+    public Task<(decimal, decimal, decimal)> GetTaxesForOrderById(int orderId);
     public Task<string> GetReceiptAsync(int orderId);
     // Get receipt response altered to a string, because the receipt will be printed in text anyways,
     // so there is no point in returning a full object

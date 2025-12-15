@@ -143,6 +143,26 @@ public class OrderService : IOrderService
         return itemResponses;
     }
 
+    public async Task<(decimal, decimal, decimal)> GetTaxesForOrderById(int orderId)
+    {
+        if (_orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+
+        var items = await _orderRepository.GetItemsByOrderIdAsync(orderId) ?? throw new NotFoundException();
+
+        if (items.Contains(null)) throw new NotFoundException();
+
+        var taxData = ((decimal)0, (decimal)0, (decimal)0);
+        
+        foreach (var item in items)
+        {
+            taxData.Item1 += item.Product.UnitPrice * item.Quantity;
+            taxData.Item2 += item.Product.UnitPrice * item.Quantity * item.Product.VatPercent;
+            taxData.Item3 += item.Product.UnitPrice * item.Quantity * (1 + item.Product.VatPercent);
+        }
+
+        return taxData;
+    }
+
     public async Task<string> GetReceiptAsync(int orderId)
     {
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
@@ -152,7 +172,7 @@ public class OrderService : IOrderService
 
     public async Task<OrderResponse> OpenOrderAsync(OrderRequest request)
     {
-        if (await _employeeRepository.GetEmployeeByIdAsync((int)request.OperatorId) == null) throw new NotFoundException();
+        if (await _employeeRepository.GetEmployeeByIdAsync(request.OperatorId) == null) throw new NotFoundException();
         
         var order = await _orderRepository.AddOrderAsync(new Order()
         {
