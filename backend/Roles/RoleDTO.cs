@@ -6,3 +6,9 @@ public class RoleDTO
     public string Name { get; set; } = string.Empty;
     public List<PermissionFlag> Flags { get; set; } = new();
 }
+
+public class EmployeeRolesDTO
+{
+    public int RoleId { get; set; }
+    public int EmployeeId { get; set; }
+}

@@ -126,4 +126,19 @@ public class RoleRepository : IRoleRepository
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<EmployeeRolesDTO?> GetRoleIdByEmployeeIdAsync(int employeeId)
+    {
+        var entity = await _context.EmployeeRoles
+            .FirstOrDefaultAsync(r => r.EmployeeId == employeeId);
+
+        if (entity == null) return null;
+
+        return new EmployeeRolesDTO
+        {
+            EmployeeId = entity.EmployeeId,
+            RoleId = entity.RoleId
+        };
+    }
+
 }

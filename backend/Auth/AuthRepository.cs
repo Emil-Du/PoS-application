@@ -13,56 +13,9 @@ public class AuthRepository
         {
             _context = context;
         }
-
-    public async Task<bool> CustomerEmailExists(string email)
-    {
-        return await _context.Customers.AnyAsync(c => c.Email == email);
-    }
-
     public async Task<bool> EmployeeEmailExists(string email)
     {
         return await _context.Employees.AnyAsync(c => c.Email == email);
-    }
-
-    public async Task<Customer> RegisterCustomerAsync(CustomerRegistrationDTO customerRegistrationDTO)
-    {
-        var salt = PasswordUtils.GenerateSalt();
-
-        var newCustomer = new Customer
-        {
-            Name = customerRegistrationDTO.Name,
-            Email = customerRegistrationDTO.Email,
-            PhoneNumber = customerRegistrationDTO.PhoneNumber,
-            Salt = salt,
-            PasswordHash = PasswordUtils.HashPassword(customerRegistrationDTO.Password, salt) 
-        };
-
-        _context.Customers.Add(newCustomer);
-
-        await _context.SaveChangesAsync();
-
-        return newCustomer;
-    }
-
-    public async Task<int> LoginCustomerAsync(CustomerLoginDTO customerLoginDTO)
-    {
-        var data = await _context.Customers
-            .Where(c => c.Email == customerLoginDTO.Email)
-            .Select(c => new
-            {
-                Id = c.CustomerId,
-                Salt = c.Salt,
-                PasswordHash = c.PasswordHash
-            })
-            .FirstOrDefaultAsync();
-
-        if (data == null || data.PasswordHash != PasswordUtils.HashPassword(customerLoginDTO.Password, data.Salt))
-        {
-            throw new IncorrectLoginDetailsException();
-        }
-
-        return data.Id;
-
     }
 
     public async Task<Employee> RegisterEmployeeAsync(EmployeeRegistrationDTO employeeRegistrationDTO)

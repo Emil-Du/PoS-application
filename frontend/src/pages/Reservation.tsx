@@ -10,6 +10,7 @@ import { getProviders } from "../services/providerService";
 import { getServices } from "../services/serviceService";
 import { getExactEmployee } from "../services/employeeService";
 import { useEmployee } from '../contexts/EmployeeContext';
+import Navbar from "../components/NavBar";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -43,6 +44,7 @@ export default function Reservation() {
 
         if(!employee){
             navigate("/");
+            return;
         }
         
         interface Provider {
@@ -67,11 +69,11 @@ export default function Reservation() {
 
         const fetchData = async () => {
             try {
-            const providersRes = await getProviders();
+            const providersRes = await getProviders(employee.locationId);
             const filteredProviders = providersRes.data.filter((item: Provider) => item.qualifiedServiceIds.length > 0);
             setStaff(filteredProviders);
 
-            const servicesRes = await getServices();
+            const servicesRes = await getServices(employee.locationId);
             const filteredServices = servicesRes.filter((item: Service) => item.status.toLowerCase() == "available");
             setServices(filteredServices);
             }
@@ -128,7 +130,7 @@ export default function Reservation() {
 
   return (
     <div className="layout">
-        <div className="sidebar-placeholder"></div>
+        <Navbar />
 
         <div className="reservations-module">
             <div className="info-and-selection-tab">
