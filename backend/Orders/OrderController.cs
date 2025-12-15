@@ -126,7 +126,7 @@ namespace backend.Orders
         }
 
         [HttpGet("{orderId}/taxes")]
-        public async Task<ActionResult<(decimal, decimal, decimal)>> GetTaxes(int orderId)
+        public async Task<ActionResult<OrderTaxesResponse>> GetTaxes(int orderId)
         {
             try
             {
@@ -136,10 +136,10 @@ namespace backend.Orders
             {
                 return NotFound();
             }
-            catch
-            {
-                return StatusCode(500);
-            }
+            //catch
+            //{
+            //    return StatusCode(500);
+            //}
         }
 
         [HttpGet("{orderId}/receipt")]

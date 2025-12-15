@@ -143,7 +143,7 @@ public class OrderService : IOrderService
         return itemResponses;
     }
 
-    public async Task<(decimal, decimal, decimal)> GetTaxesForOrderById(int orderId)
+    public async Task<OrderTaxesResponse> GetTaxesForOrderById(int orderId)
     {
         if (_orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
@@ -151,16 +151,27 @@ public class OrderService : IOrderService
 
         if (items.Contains(null)) throw new NotFoundException();
 
-        var taxData = ((decimal)0, (decimal)0, (decimal)0);
+        var products = await _productRepository.GetProductsByItemIdsAsync(items.Select(item => item.ItemId));
         
-        foreach (var item in items)
+        if (products.Contains(null)) throw new NotFoundException();
+        
+        var response = new OrderTaxesResponse()
         {
-            taxData.Item1 += item.Product.UnitPrice * item.Quantity;
-            taxData.Item2 += item.Product.UnitPrice * item.Quantity * item.Product.VatPercent;
-            taxData.Item3 += item.Product.UnitPrice * item.Quantity * (1 + item.Product.VatPercent);
+            Subtotal = decimal.Zero,
+            Tax = decimal.Zero,
+            Total = decimal.Zero
+        };
+
+        using (IEnumerator<Item> item = items.GetEnumerator())
+        using (IEnumerator<Product> product = products.AsEnumerable().GetEnumerator()!)
+        while (item.MoveNext() && product.MoveNext())
+        {
+            response.Subtotal += product.Current.UnitPrice * item.Current.Quantity;
+            response.Tax += product.Current.UnitPrice * item.Current.Quantity * product.Current.VatPercent / 100;
+            response.Total += product.Current.UnitPrice * item.Current.Quantity * (1 + product.Current.VatPercent) / 100;
         }
 
-        return taxData;
+        return response;
     }
 
     public async Task<string> GetReceiptAsync(int orderId)
