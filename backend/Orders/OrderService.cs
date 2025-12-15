@@ -155,7 +155,9 @@ public class OrderService : IOrderService
         
         foreach (var item in items)
         {
-            // Tax logic when taxes are implemented
+            taxData.Item1 += item.Product.UnitPrice * item.Quantity;
+            taxData.Item2 += item.Product.UnitPrice * item.Quantity * item.Product.VatPercent;
+            taxData.Item3 += item.Product.UnitPrice * item.Quantity * (1 + item.Product.VatPercent);
         }
 
         return taxData;
@@ -170,7 +172,7 @@ public class OrderService : IOrderService
 
     public async Task<OrderResponse> OpenOrderAsync(OrderRequest request)
     {
-        if (await _employeeRepository.GetEmployeeByIdAsync((int)request.OperatorId) == null) throw new NotFoundException();
+        if (await _employeeRepository.GetEmployeeByIdAsync(request.OperatorId) == null) throw new NotFoundException();
         
         var order = await _orderRepository.AddOrderAsync(new Order()
         {
