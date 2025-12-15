@@ -1,0 +1,356 @@
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.sidebar-placeholder {
+    width: 200px !important;
+    min-width: 200px;
+    max-width: 200px;
+    flex-shrink: 0;
+    background-color: #ddd;
+}
+
+.module {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    min-height: 0;
+}
+
+.module-header {
+    flex-shrink: 0;
+    margin-bottom: 10px;
+}
+
+.module-header p {
+    margin: 0;
+    font-size: 20px;
+}
+
+.columns {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    min-height: 0;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid rgb(185, 198, 200);
+    border-radius: 5px;
+    background-color: white;
+    padding: 10px;
+    box-sizing: border-box;
+    min-height: 0;
+    max-height: 100%;
+}
+
+.column-large {
+    flex: 2;
+}
+
+.column-small {
+    flex: 1;
+}
+
+.column>p {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.list-button {
+    width: 100%;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.list-button:hover:not(:disabled) {
+    background-color: rgb(234, 227, 227);
+    border-color: rgb(155, 154, 154);
+}
+
+.list-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.create-order-button {
+    width: 100%;
+    height: 120px;
+    margin-top: 20px;
+    border-radius: 5px;
+    border: 2px dashed rgb(177, 177, 177);
+    background-color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.create-order-button:hover:not(:disabled) {
+    background-color: rgb(234, 227, 227);
+    border-color: rgb(155, 154, 154);
+}
+
+.create-order-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.plus-sign {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+
+.empty-state {
+    font-size: 14px;
+    color: #777;
+    padding: 10px 0;
+}
+
+.order-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px;
+    font-size: 16px;
+    border-bottom: 1px solid rgb(177, 177, 177);
+    flex-shrink: 0;
+}
+
+.order-row-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.order-row-quantity {
+    min-width: 40px;
+    text-align: right;
+}
+
+.order-row-price {
+    min-width: 60px;
+    text-align: right;
+}
+
+.remove-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    border: 1px solid rgb(177, 177, 177);
+    background-color: white;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.remove-button:hover {
+    background-color: #ffebee;
+    border-color: #e57373;
+    color: #d32f2f;
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    margin-top: 10px;
+    font-size: 16px;
+    border-top: 2px solid rgb(177, 177, 177);
+    flex-shrink: 0;
+}
+
+.payment-method {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    flex-shrink: 0;
+}
+
+.payment-method label {
+    font-size: 14px;
+    color: #666;
+}
+
+.payment-method select {
+    padding: 6px 10px;
+    font-size: 14px;
+    border: 2px solid rgb(177, 177, 177);
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.payment-method select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.payment-method select:hover:not(:disabled) {
+    border-color: rgb(155, 154, 154);
+}
+
+.payment-status {
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+    flex-shrink: 0;
+}
+
+.payment-status.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 2px solid #4caf50;
+}
+
+.payment-status.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 2px solid #e57373;
+}
+
+.confirmation-button {
+    width: 100%;
+    height: 50px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+    background-color: white;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.confirmation-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+.confirmation-button:hover:not(:disabled) {
+    background-color: rgb(234, 227, 227);
+    border-color: rgb(155, 154, 154);
+}
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+
+.modal {
+    width: 300px;
+    background-color: white;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-title {
+    font-size: 18px;
+    margin: 0 0 8px 0;
+}
+
+.modal-price {
+    font-size: 14px;
+    margin: 0 0 15px 0;
+}
+
+.modal input {
+    height: 35px;
+    padding: 5px 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    border: 2px solid rgb(177, 177, 177);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-actions button {
+    flex: 1;
+    height: 40px;
+    border-radius: 5px;
+    border: 2px solid rgb(177, 177, 177);
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.modal-actions button:hover {
+    background-color: rgb(234, 227, 227);
+    border-color: rgb(155, 154, 154);
+}
+
+.order-info {
+    flex-shrink: 0;
+    padding: 5px 0;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #666;
+    border-bottom: 1px solid rgb(185, 198, 200);
+}
