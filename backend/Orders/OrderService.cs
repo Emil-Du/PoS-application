@@ -143,6 +143,24 @@ public class OrderService : IOrderService
         return itemResponses;
     }
 
+    public async Task<(decimal, decimal, decimal)> GetTaxesForOrderById(int orderId)
+    {
+        if (_orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+
+        var items = await _orderRepository.GetItemsByOrderIdAsync(orderId) ?? throw new NotFoundException();
+
+        if (items.Contains(null)) throw new NotFoundException();
+
+        var taxData = ((decimal)0, (decimal)0, (decimal)0);
+        
+        foreach (var item in items)
+        {
+            // Tax logic when taxes are implemented
+        }
+
+        return taxData;
+    }
+
     public async Task<string> GetReceiptAsync(int orderId)
     {
         if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
