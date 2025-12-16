@@ -6,7 +6,7 @@ namespace backend.Orders;
 public interface IOrderService
 {
     Task<OrderResponse> GetOrderByIdAsync(int orderId);
-    Task<IEnumerable<OrderResponse>> GetOrdersByLocation(int locationId);
+    Task<IEnumerable<OrderResponse>> GetOrdersByLocationAsync(int locationId);
     // Added GetOrdersByLocationAsync, because there was no api contract for getting multiple orders at once
     public Task<OrderResponse> OpenOrderAsync(OrderRequest request);
     // Removed reservationId, as orders don't have such field in the data model
@@ -19,7 +19,7 @@ public interface IOrderService
     public Task CancelOrderAsync(int orderId);
     // Cancel order response altered to have no return value, because the client already has the contents
     // of the cancelled order and the method will either throw an exception or succeed
-    public Task<(decimal, decimal, decimal)> GetTaxesForOrderById(int orderId);
+    public Task<OrderTaxesResponse> GetTaxesForOrderById(int orderId);
     public Task<string> GetReceiptAsync(int orderId);
     // Get receipt response altered to a string, because the receipt will be printed in text anyways,
     // so there is no point in returning a full object

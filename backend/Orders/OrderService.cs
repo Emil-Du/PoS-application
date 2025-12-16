@@ -143,24 +143,35 @@ public class OrderService : IOrderService
         return itemResponses;
     }
 
-    public async Task<(decimal, decimal, decimal)> GetTaxesForOrderById(int orderId)
+    public async Task<OrderTaxesResponse> GetTaxesForOrderById(int orderId)
     {
-        if (_orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
         var items = await _orderRepository.GetItemsByOrderIdAsync(orderId) ?? throw new NotFoundException();
 
         if (items.Contains(null)) throw new NotFoundException();
 
-        var taxData = ((decimal)0, (decimal)0, (decimal)0);
+        var products = _productRepository.GetProductsByItems(items);
         
-        foreach (var item in items)
+        if (products.Contains(null)) throw new NotFoundException();
+        
+        var response = new OrderTaxesResponse()
         {
-            taxData.Item1 += item.Product.UnitPrice * item.Quantity;
-            taxData.Item2 += item.Product.UnitPrice * item.Quantity * item.Product.VatPercent;
-            taxData.Item3 += item.Product.UnitPrice * item.Quantity * (1 + item.Product.VatPercent);
+            Subtotal = decimal.Zero,
+            Tax = decimal.Zero,
+            Total = decimal.Zero
+        };
+
+        using (IEnumerator<Item> item = items.GetEnumerator())
+        using (IEnumerator<Product> product = products.AsEnumerable().GetEnumerator()!)
+        while (item.MoveNext() && product.MoveNext())
+        {
+            response.Subtotal += product.Current.UnitPrice * item.Current.Quantity;
+            response.Tax += product.Current.UnitPrice * item.Current.Quantity * product.Current.VatPercent / 100;
+            response.Total += product.Current.UnitPrice * item.Current.Quantity * (1 + product.Current.VatPercent) / 100;
         }
 
-        return taxData;
+        return response;
     }
 
     public async Task<string> GetReceiptAsync(int orderId)
@@ -242,7 +253,7 @@ public class OrderService : IOrderService
         await _orderRepository.UpdateOrderAsync(order);
     }
 
-    public async Task<IEnumerable<OrderResponse>> GetOrdersByLocation(int locationId)
+    public async Task<IEnumerable<OrderResponse>> GetOrdersByLocationAsync(int locationId)
     {
         var employees = await _employeeRepository.GetEmployeesAsync(new EmployeeQuery() { LocationId = locationId }) ?? throw new NotFoundException();
 
