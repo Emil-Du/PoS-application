@@ -5,6 +5,8 @@
 - All necessary tables are included to support multiple companies and locations in a PoS SaaS (Software as a Service).
 - Table relationships are mostly well-defined.
 - Overall, the document is mostly solid for implementing the system with minor improvements and solving inconsistencies
+- A lot of sequence diagrams
+- Some space was left for creative freedom of UI, because only a few windows were fully defined with wireframes
 
 ## Weaknesses of the documentation:
 - Missing inventory stock management fields in data model
@@ -36,5 +38,7 @@
 - Removed description in GetServices, that came from api contracts, as it wasn't present in domain model and isn't absolutely necessary.
 - Created foreign key from Product to Location
 - Not used many-to-many relationship between Employee and Location(Employee has locationId, so assumed regular many to 1)
-
+- Added Payments table instead of Charge (Payment entries were mentioned in document, but did not appear in data model) and since we did not implement Stripe integration, that information needed to be stored somewhere
+- In Payment APIs implemented one CreatePayment function instead of two that were based on payment method, added method field in PaymentRequest instead
+- Did not implement RemoveEmployeeRole from Role APIs, because employee without a role, has no purpose and to change their role we already have a role assign request 
 …
