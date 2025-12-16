@@ -6,7 +6,7 @@ namespace backend.Orders;
 public interface IOrderService
 {
     Task<OrderResponse> GetOrderByIdAsync(int orderId);
-    Task<IEnumerable<OrderResponse>> GetOrdersByLocation(int locationId);
+    Task<IEnumerable<OrderResponse>> GetOrdersByLocationAsync(int locationId);
     // Added GetOrdersByLocationAsync, because there was no api contract for getting multiple orders at once
     public Task<OrderResponse> OpenOrderAsync(OrderRequest request);
     // Removed reservationId, as orders don't have such field in the data model

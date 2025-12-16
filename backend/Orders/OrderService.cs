@@ -145,13 +145,13 @@ public class OrderService : IOrderService
 
     public async Task<OrderTaxesResponse> GetTaxesForOrderById(int orderId)
     {
-        if (_orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
+        if (await _orderRepository.GetOrderByIdAsync(orderId) == null) throw new NotFoundException();
 
         var items = await _orderRepository.GetItemsByOrderIdAsync(orderId) ?? throw new NotFoundException();
 
         if (items.Contains(null)) throw new NotFoundException();
 
-        var products = await _productRepository.GetProductsByItemIdsAsync(items.Select(item => item.ItemId));
+        var products = _productRepository.GetProductsByItems(items);
         
         if (products.Contains(null)) throw new NotFoundException();
         
@@ -253,7 +253,7 @@ public class OrderService : IOrderService
         await _orderRepository.UpdateOrderAsync(order);
     }
 
-    public async Task<IEnumerable<OrderResponse>> GetOrdersByLocation(int locationId)
+    public async Task<IEnumerable<OrderResponse>> GetOrdersByLocationAsync(int locationId)
     {
         var employees = await _employeeRepository.GetEmployeesAsync(new EmployeeQuery() { LocationId = locationId }) ?? throw new NotFoundException();
 

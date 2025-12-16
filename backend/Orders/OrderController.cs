@@ -15,6 +15,23 @@ namespace backend.Orders
             _service = service;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrders([FromQuery] int locationId)
+        {
+            try
+            {
+                return Ok(await _service.GetOrdersByLocationAsync(locationId));
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<OrderResponse>> OpenNewOrder([FromBody] OrderRequest request)
         {
@@ -136,10 +153,10 @@ namespace backend.Orders
             {
                 return NotFound();
             }
-            //catch
-            //{
-            //    return StatusCode(500);
-            //}
+            catch
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpGet("{orderId}/receipt")]

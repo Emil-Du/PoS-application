@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using backend.Database;
 using backend.Orders;
@@ -17,6 +18,18 @@ public class ProductRepository : IProductRepository
     public async Task<Product?> GetProductByIdAsync(int productId)
     {
         return await _context.Products.FindAsync(productId);
+    }
+
+    public IEnumerable<Product?> GetProductsByItems(IEnumerable<Item> items)
+    {
+        var products = new List<Product?>();
+
+        foreach (var item in items)
+        {
+            products.Add(_context.Products.Find(item.ProductId));
+        }
+
+        return products;
     }
 
     public async Task<IEnumerable<Product>> GetProductsByLocationAsync(int locationId)
