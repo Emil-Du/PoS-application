@@ -129,6 +129,112 @@ public class AppDbContext : DbContext
             }
         );
 
+        modelBuilder.Entity<Employee>().HasData(
+        new Employee
+        {
+            EmployeeId = 1,
+            FirstName = "John",
+            LastName = "Pork",
+            LocationId = 2,
+            PhoneNumber = "+53247865",
+            Email = "john@gmail.com",
+            Status = 0,
+            Salt = "PcXPMJdOXdI8jaO51iElcQ==",
+            PasswordHash = "JcDy7FOzBeRm3MvQpgahatB2YWAGMorZoh/U+s5rWu8=" //string
+        },
+        new Employee
+        {
+            EmployeeId = 2,
+            FirstName = "Mr",
+            LastName = "Bean",
+            LocationId = 2,
+            PhoneNumber = "+532324565",
+            Email = "bean@gmail.com",
+            Status = 0,
+            Salt = "ts6OSzF2JBMKDIFQo4KiCQ==",
+            PasswordHash = "tPUom03r7Y6JKDBnlcqwacCXvKK1GHIWFwkf1A96wtg=" //string
+        },
+        new Employee
+        {
+            EmployeeId = 3,
+            FirstName = "Jazz",
+            LastName = "Singsanong",
+            LocationId = 1,
+            PhoneNumber = "+43278963",
+            Email = "jazz@gmail.com",
+            Status = 0,
+            Salt = "BpclPWmfJoKhQ0n57VcWNA==",
+            PasswordHash = "yotfvuH/qPE5/d8RknKRJM1Km086Pe7IgT2Z0MUqXoE=" //string
+        }
+    );
+
+    modelBuilder.Entity<Service>().HasData(
+            new Service
+            {
+                ServiceId = 1,
+                ProductId = 4,
+                LocationId = 2,
+                Status = ServiceStatus.available,
+                DurationMinutes = 60
+            },
+            new Service
+            {
+                ServiceId = 2,
+                ProductId = 5,
+                LocationId = 2,
+                Status = ServiceStatus.available,
+                DurationMinutes = 60
+            }
+        );
+
+        modelBuilder.Entity<EmployeeServiceQualification>().HasData(
+            new EmployeeServiceQualification
+            {
+                EmployeeId = 1,
+                ServiceId = 1
+            },
+
+            new EmployeeServiceQualification
+            {
+                EmployeeId = 1,
+                ServiceId = 2
+            }
+        );
+
+        modelBuilder.Entity<Role>().HasData(
+            new Role
+            {
+                RoleId = 1,
+                Name = "Employee"
+            },
+
+            new Role
+            {
+                RoleId = 2,
+                Name = "Manager"
+            }
+        );
+
+        modelBuilder.Entity<EmployeeRole>().HasData(
+            new EmployeeRole
+            {
+                EmployeeId = 1,
+                RoleId = 1
+            },
+
+            new EmployeeRole
+            {
+                EmployeeId = 2,
+                RoleId = 2
+            },
+
+            new EmployeeRole
+            {
+                EmployeeId = 3,
+                RoleId = 1
+            }
+        );
+
         base.OnModelCreating(modelBuilder);
     }
 
