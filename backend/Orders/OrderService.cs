@@ -168,7 +168,7 @@ public class OrderService : IOrderService
         {
             response.Subtotal += product.Current.UnitPrice * item.Current.Quantity;
             response.Tax += product.Current.UnitPrice * item.Current.Quantity * product.Current.VatPercent / 100;
-            response.Total += product.Current.UnitPrice * item.Current.Quantity * (1 + product.Current.VatPercent) / 100;
+            response.Total += product.Current.UnitPrice * item.Current.Quantity * (100 + product.Current.VatPercent) / 100;
         }
 
         return response;
