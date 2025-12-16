@@ -34,7 +34,7 @@ function Login() {
 
       setEmployee(employeeWithRole);
 
-      navigate("/reservation");
+      navigate("/reservations");
     } 
     catch (err: any) {
       setError(err.message);
