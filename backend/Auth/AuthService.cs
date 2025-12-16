@@ -23,7 +23,12 @@ public class AuthService : IAuthService
             throw new EmailAlreadyExistsException();
         }
 
-        return await _authRepository.RegisterEmployeeAsync(employeeRegistrationDTO);
+        var newEmployee = await _authRepository.RegisterEmployeeAsync(employeeRegistrationDTO);
+
+        // Assign role to the newly created employee
+        await _roleService.AssignRoleToEmployeeAsync(employeeRegistrationDTO.RoleId, newEmployee.EmployeeId);
+
+        return newEmployee;
     }
 
     public async Task<EmployeeLoginServiceResponse> LoginEmployee(EmployeeLoginDTO employeeLoginDTO)
