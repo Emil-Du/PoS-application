@@ -21,12 +21,14 @@
 - Split payments
 - Discounts
 - Tips
+- Inventory
 
 ## Partially implemented
-- Item variations(backend only)
-- Order refunds(backend only)
+- Taxes(tax calculation in orders)
 - Roles(assigned on login)
 - Merchant business management(retrieved items are based on location)
+- Item variations(backend only)
+- Order refunds(backend only)
 
 ## Fully implemented
 - Order flow
