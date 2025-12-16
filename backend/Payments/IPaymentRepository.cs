@@ -2,7 +2,7 @@
 
 public interface IPaymentRepository
 {
-    Task<Payment?> GetPaymentsByOrderIdAsync(int orderId);
-    Task<Payment> CreatePaymentAsync(PaymentRequest request);
+    Task<PaymentResponse?> GetPaymentByOrderIdAsync(int orderId);
+    Task<PaymentResponse> CreatePaymentAsync(PaymentRequest request);
 
 }

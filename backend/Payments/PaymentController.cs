@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/[controller]")]
 
 public class PaymentController : ControllerBase
 {
@@ -16,10 +16,10 @@ public class PaymentController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("order/{orderId}/payments")]
-    public async Task<IActionResult> GetPaymentsByOrder(int orderId)
+    [HttpGet("order/{orderId}/payment")]
+    public async Task<IActionResult> GetPaymentByOrder(int orderId)
     {
-        var payments = await _service.GetPaymentsByOrderIdAsync(orderId);
+        var payments = await _service.GetPaymentByOrderIdAsync(orderId);
 
         if (payments == null)
         {
@@ -30,7 +30,7 @@ public class PaymentController : ControllerBase
         return Ok(payments);
     }
 
-     [HttpPost("payment")]
+    [HttpPost("payment")]
     public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest request)
     {
         var payment = await _service.CreatePaymentAsync(request);

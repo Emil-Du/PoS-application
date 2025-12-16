@@ -1,35 +1,6 @@
 namespace backend.Auth;
 using backend.Employees;
 
-public class CustomerRegistrationDTO
-{
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-    public string Password {get; set; } = string.Empty;
-}
-
-public class CustomerRegistrationResponseDTO
-{
-    public int CustomerId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-}
-
-public class CustomerLoginDTO
-{
-    public string Email { get; set; } = string.Empty;
-    public string Password {get; set; } = string.Empty;
-}
-
-public class CustomerLoginResponseDTO
-{
-    public string AccessToken { get; set; } = string.Empty;
-    public string TokenType { get; set; } = string.Empty;
-    public int ExpiresIn { get; set; }
-}
-
 public class EmployeeRegistrationDTO
 {
     public string FirstName { get; set; } = string.Empty;
@@ -59,10 +30,17 @@ public class EmployeeLoginDTO
 
 public class EmployeeLoginResponseDTO
 {
-    public string AccessToken { get; set; } = string.Empty;
-    public string TokenType { get; set; } = "Bearer";
-    public int ExpiresIn { get; set; }
     public int EmployeeId { get; set; }
-    //public string EmployeeRole { get; set; } = string.Empty;
+    public string FirstName { get; set; } = default!;
+    public string LastName { get; set; } = default!;
+    public int LocationId { get; set; }
 
+    //public string EmployeeRole { get; set; } = default!;
+}
+
+public class EmployeeLoginServiceResponse
+{
+    public EmployeeLoginResponseDTO Employee { get; set; } = default!;
+    public string AccessToken { get; set; } = default!;
+    public int ExpiresIn { get; set; }
 }

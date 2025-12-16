@@ -13,48 +13,8 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost("RegisterCustomer")]
-    public async Task<IActionResult> RegisterCustomer([FromBody] CustomerRegistrationDTO customerRegistrationDTO)
-    {
-        try
-        {
-            var response_details = await _authService.RegisterCustomer(customerRegistrationDTO);
-
-            var responseDTO = new CustomerRegistrationResponseDTO
-            {
-                CustomerId = response_details.CustomerId,
-                Name = response_details.Name,
-                Email = response_details.Email,
-                PhoneNumber = response_details.PhoneNumber
-            };  
-            
-            return Ok(responseDTO);
-        }
-        catch (EmailAlreadyExistsException e)
-        {   
-            return StatusCode(409, e.Message);
-        }
-
-    }
-
-    [HttpPost("LoginCustomer")]
-    public async Task<IActionResult> LoginCustomer([FromBody] CustomerLoginDTO customerLoginDTO)
-    {
-        try
-        {
-            var responseDTO = await _authService.LoginCustomer(customerLoginDTO);
-            
-            return Ok(responseDTO);
-        }
-        catch (IncorrectLoginDetailsException e)
-        {   
-            return StatusCode(401, e.Message);
-        }
-
-    }
-
     [HttpPost("RegisterEmployee")]
-    [Authorize]
+    [Authorize(Roles = "manager")]
     public async Task<IActionResult> RegisterEmployee([FromBody] EmployeeRegistrationDTO employeeRegistrationDTO)
     {
         try
@@ -85,22 +45,22 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var responseDTO = await _authService.LoginEmployee(employeeLoginDTO);
+            var serviceResponse = await _authService.LoginEmployee(employeeLoginDTO);
 
             Response.Cookies.Append(
                 "accessToken",
-                responseDTO.AccessToken,
+                serviceResponse.AccessToken,
                 new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = false,     // true: HTTPS; false: HTTP, LOCALHOST
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTimeOffset.UtcNow.AddSeconds(responseDTO.ExpiresIn),
+                    Expires = DateTimeOffset.UtcNow.AddSeconds(serviceResponse.ExpiresIn),
                     Path = "/"
                 }
             );
 
-            return Ok(responseDTO.EmployeeId);
+            return Ok(serviceResponse.Employee);
         }
         catch (IncorrectLoginDetailsException e)
         {   
@@ -112,4 +72,24 @@ public class AuthController : ControllerBase
         }
 
     }
+
+    [HttpPost("LogoutEmployee")]
+    public IActionResult LogoutEmployee()
+    {
+        Response.Cookies.Append(
+            "accessToken",
+            "",
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddDays(-1),
+                Path = "/"
+            }
+        );
+
+        return Ok();
+    }
+
 }

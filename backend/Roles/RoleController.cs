@@ -1,5 +1,6 @@
 ﻿namespace backend.Roles;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -22,6 +23,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet("{roleId}")]
+    [Authorize(Roles = "manager,employee")]
     public async Task<IActionResult> GetRoleById(int roleId)
     {
         var role = await _service.GetRoleByIdAsync(roleId);
@@ -48,6 +50,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpPatch("{roleId}")]
+    [Authorize(Roles = "manager")]
     public async Task<IActionResult> UpdateRole(int roleId, [FromBody] RoleUpdateRequest roleUpdateRequest)
     {
         if (roleUpdateRequest == null)
@@ -65,6 +68,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpDelete("{roleId}")]
+    [Authorize(Roles = "manager")]
     public async Task<IActionResult> DeleteRole(int roleId)
     {
         var deleted = await _service.DeleteRoleByIdAsync(roleId);
@@ -83,6 +87,19 @@ public class RoleController : ControllerBase
         var updated =await _service.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
         if (!updated) return NotFound();
         return NoContent();
+    }
+
+    [HttpGet("RoleIdByEmployeeId")]
+    [Authorize(Roles = "manager,employee")]
+    public async Task<IActionResult> GetRoleIdByEmployeeId([FromQuery] int employeeId)
+    {
+        EmployeeRolesDTO? role = await _service.GetRoleIdByEmployeeIdAsync(employeeId);
+
+        
+        if (role == null)
+            return NotFound($"No role found for employeeId: {employeeId}");
+
+        return Ok(role.RoleId);
     }
 
 }

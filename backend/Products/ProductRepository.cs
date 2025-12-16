@@ -19,8 +19,11 @@ public class ProductRepository : IProductRepository
         return await _context.Products.FindAsync(productId);
     }
 
-    public async Task<IEnumerable<Product?>> GetProductsByItemIdsAsync(IEnumerable<int> itemIds)
+    public async Task<IEnumerable<Product>> GetProductsByLocationAsync(int locationId)
     {
-        return await _context.Products.Where(product => itemIds.Contains(product.ProductId)).ToListAsync();
+        return await _context.Products
+        .Include(p => p.Location)
+        .Where(p => p.LocationId == locationId)
+        .ToListAsync();
     }
 }
