@@ -1,0 +1,207 @@
+.employees-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.search-bar {
+  width: 100%;
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 500px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.employees-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 80px 2fr 2.5fr 1.5fr 120px;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  align-items: center;
+}
+
+.table-header {
+  font-weight: 600;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table-row {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: #f8f9fa;
+}
+
+.col-id {
+  text-align: left;
+}
+
+.col-name {
+  text-align: left;
+  font-weight: 500;
+}
+
+.col-email {
+  text-align: left;
+  color: #666;
+}
+
+.col-phone {
+  text-align: left;
+  color: #666;
+}
+
+.col-status {
+  text-align: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.pagination-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 1024px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 60px 1.5fr 2fr 1.5fr 100px;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .col-email,
+  .col-phone {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    padding: 1rem;
+  }
+
+  .col-id::before {
+    content: "ID: ";
+    font-weight: 600;
+  }
+
+  .col-name::before {
+    content: "Name: ";
+    font-weight: 600;
+  }
+
+  .col-email::before {
+    content: "Email: ";
+    font-weight: 600;
+  }
+
+  .col-phone::before {
+    content: "Phone: ";
+    font-weight: 600;
+  }
+
+  .col-status::before {
+    content: "Status: ";
+    font-weight: 600;
+  }
+
+  .col-status {
+    text-align: left;
+  }
+}
