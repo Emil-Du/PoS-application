@@ -5,7 +5,7 @@ import { login } from '../services/authService'
 import { useEmployee } from "../contexts/EmployeeContext";
 import { useNavigate } from "react-router-dom";
 import { getRoleIdByEmployeeId, getRoleById } from '../services/roleService';
-
+import { getServices } from "../services/serviceService";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -27,14 +27,17 @@ function Login() {
 
       const role = (await getRoleById(roleId)).name;
 
-      const employeeWithRole = {
+      const isFoodLocation = (await getServices(employeeData.locationId)).length === 0
+
+      const employeeWithRoleAndLocationType = {
         ...employeeData,
-        role: role
+        role: role,
+        isFoodLocationEmployee: isFoodLocation
       };
 
-      setEmployee(employeeWithRole);
+      setEmployee(employeeWithRoleAndLocationType);
 
-      navigate("/reservations");
+      isFoodLocation ? navigate("/home") : navigate("/reservations");
     } 
     catch (err: any) {
       setError(err.message);

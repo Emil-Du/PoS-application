@@ -17,3 +17,28 @@ export async function CreateReservation(serviceId: number, locationId: number, p
 
   return res.json();
 }
+
+export async function GetReservations(params: {serviceId?: number, locationId?: number, providerId?: number, customerId?: number, from?: number, to?: number, status?: string} ) {
+
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      query.append(key, value.toString());
+    }
+  });
+
+  const res = await fetch(`${API_URL}/Reservations?${query.toString()}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+
+  return res.json();
+}

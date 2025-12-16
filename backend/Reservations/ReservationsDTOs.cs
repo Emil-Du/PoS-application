@@ -34,8 +34,10 @@ public class GetReservationsDTO
     public int? CustomerId { get; set; }
     public int? ServiceId { get; set; }
     public int? ProviderId { get; set; }
+    public int? LocationId { get; set; }
     public long? From { get; set; }
     public long? To { get; set; }
+    public ReservationStatus? Status { get; set; }
 
 }
 

@@ -24,12 +24,13 @@
     flex-direction: row;
     gap: 1rem;
     flex-wrap: wrap;
+    height: 65%;
 }
 
 .column {
     flex: 1 1 30%;
     min-width: 300px;
-    height: 70vh;
+    height: 100%;
     border: 0.25rem solid rgb(185,198,200);
     background-color: #fff;
     display: flex;
@@ -190,6 +191,19 @@ input {
 .confirmation-button:hover {
     background-color: rgb(234,227,227);
     border-color: rgb(155,154,154);
+}
+
+button:disabled {
+    background-color: rgb(240,240,240) !important;
+    color: #999 !important;
+    border-color: rgb(200,200,200) !important;
+    cursor: default !important;
+}
+
+button:disabled:hover {
+    background-color: rgb(240,240,240) !important;
+    border-color: rgb(200,200,200) !important;
+    cursor: default !important;
 }
 
 @media (max-width: 1200px) {
