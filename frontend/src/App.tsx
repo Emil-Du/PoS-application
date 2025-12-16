@@ -4,6 +4,7 @@ import { EmployeeProvider } from "./contexts/EmployeeContext"
 import Login from "./pages/Login";
 import Reservation from "./pages/Reservation";
 import Home from "./pages/Home";
+import Orders from "./pages/Orders";
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
           />
           <Route
             path="/home" element={<Home />}
+          />
+          <Route
+            path="/orders" element={ <Orders />}
           />
         </Routes>
       </EmployeeProvider>

@@ -24,6 +24,7 @@ export default function Navbar() {
             <button onClick={() => navigate("/home")}>Home</button>
             <button onClick={() => navigate("/reservations")}>Reservations</button>
             <button onClick={() => navigate("/inventory")}>Inventory</button>
+            <button onClick={() => navigate("/orders")}>Orders</button>
             <button hidden={isEmployee} onClick={() => navigate("/discounts-taxes")}>
                 Discounts & Taxes
             </button>
