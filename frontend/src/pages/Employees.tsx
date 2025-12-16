@@ -70,6 +70,16 @@ export default function Employees() {
       return;
     }
 
+    if (employee.role == "employee") {
+            if (employee.isFoodLocationEmployee) {
+              navigate("/home");
+              return;
+            }
+            else navigate("/reservations");
+
+            return;
+        }
+    
     const fetchData = async () => {
       try {
         setLoading(true);
