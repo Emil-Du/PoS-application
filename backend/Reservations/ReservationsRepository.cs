@@ -38,6 +38,12 @@ public class ReservationsRepository
         if (getReservationsDTO.To.HasValue)
             query = query.Where(r => r.AppointmentTime <= getReservationsDTO.To.Value);
 
+        if (getReservationsDTO.Status.HasValue)
+            query = query.Where(r => r.Status == getReservationsDTO.Status.Value);
+
+        if (getReservationsDTO.LocationId.HasValue)
+            query = query.Where(r => r.LocationId == getReservationsDTO.LocationId.Value);
+
         var matchingReservations = await query.ToListAsync();
 
         return new GetReservationsResponseDTO
