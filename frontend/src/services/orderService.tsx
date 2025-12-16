@@ -166,4 +166,23 @@ export const orderService = {
 
         return null;
     },
+
+    getTotals: async (orderId: number) => {
+        const response = await fetch(
+            `${API_BASE_URL}/api/orders/${orderId}/taxes`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch order totals');
+        }
+
+        return await response.json();
+    }
 };
