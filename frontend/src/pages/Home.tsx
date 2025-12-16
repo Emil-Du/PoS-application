@@ -49,6 +49,11 @@ export default function Home() {
             return;
         }
 
+        if (!employee.isFoodLocationEmployee) {
+            navigate("/reservations");
+            return;
+        }
+
         const fetchProducts = async () => {
             try {
                 setLoadingItems(true);

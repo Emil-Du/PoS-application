@@ -1,10 +1,11 @@
 using backend.Reservations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using backend.Roles;
 
 [ApiController]
 [Route("api/[controller]")]
-//[Authorize]
+[Authorize(Roles = Roles.SuperAdmin + "," + Roles.Manager + "," + Roles.Employee)]
 public class ReservationsController : ControllerBase
 {
     private readonly IReservationsService _reservationsService;

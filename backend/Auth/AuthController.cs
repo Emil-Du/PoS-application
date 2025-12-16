@@ -1,6 +1,7 @@
 using backend.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using backend.Roles;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -14,7 +15,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("RegisterEmployee")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.SuperAdmin + "," + Roles.Manager)]
     public async Task<IActionResult> RegisterEmployee([FromBody] EmployeeRegistrationDTO employeeRegistrationDTO)
     {
         try
@@ -74,6 +75,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("LogoutEmployee")]
+    [Authorize(Roles = Roles.SuperAdmin + "," + Roles.Manager + "," + Roles.Employee)]
     public IActionResult LogoutEmployee()
     {
         Response.Cookies.Append(
