@@ -1,207 +1,229 @@
-.reservations-module {
-    flex: 1;
-    height: 100%;
-    border: 0.25rem solid rgb(176,186,187);
-    background-color: rgb(202,225,225);
-    font-size: 1.875rem;
-    padding: 2rem 2rem;
-    display: flex;
-    flex-direction: column;
+/* Reset defaults */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
+html,
+body {
+    height: 100%;
+    font-family: sans-serif;
+}
+
+.reservations-module {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 1.5rem;
+    border: 0.25rem solid rgb(176, 186, 187);
+    background-color: rgb(202, 225, 225);
+    font-size: clamp(1rem, 1.5vw, 1.875rem);
+}
+
+/* Top info section */
 .info-and-selection-tab {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .info-and-selection-tab p {
-    font-size: 1.875rem;
-    margin-top: 3rem;
+    font-size: clamp(1rem, 1.5vw, 1.875rem);
+    margin-top: 0.5rem;
 }
 
+/* Main columns container */
 .input-columns {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
     flex-wrap: wrap;
+    gap: 1rem;
+    flex: 1;
+    /* take remaining vertical space */
+    align-items: stretch;
 }
 
+/* Each column scales with container */
 .column {
     flex: 1 1 30%;
-    min-width: 300px;
-    height: 70vh;
-    border: 0.25rem solid rgb(185,198,200);
-    background-color: #fff;
+    min-width: 250px;
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.25rem 2rem 1.25rem;
+    gap: 0.75rem;
+    padding: 1rem;
     border-radius: 0.5rem;
-    box-sizing: border-box;
+    border: 0.25rem solid rgb(185, 198, 200);
+    background-color: #fff;
 }
 
-.column p {
-    padding-top: 1.5rem;
-    font-size: 1.25rem;
-    padding-bottom: 2.5rem;
+/* Column inner content scales proportionally */
+.column>* {
+    flex-shrink: 1;
 }
 
+/* Calendar scales */
 .calendar {
-    font-size: 1.0625rem;
-    margin: 0 auto 3rem auto;
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(0.8rem, 1vw, 1.0625rem);
+    margin: 0 auto;
 }
 
+/* Time slots scale and wrap */
 .time-slots-column {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .time-slots-row {
     display: flex;
-    gap: 1rem;
+    gap: 0.25rem;
+    flex-wrap: wrap;
 }
 
 .time-slots-row button {
-    flex: 1;
-    height: 3rem;
-    font-size: 1.125rem;
-    border-radius: 0.3125rem;
-    border: 2px solid rgb(177,177,177);
+    flex: 1 1 auto;
+    font-size: clamp(0.7rem, 0.9vw, 1rem);
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    border: 2px solid rgb(177, 177, 177);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.375rem;
+    background-color: #fff;
 }
 
 .time-slots-row button:hover {
-    background-color: rgb(234,227,227);
-    border-color: rgb(155,154,154);
+    background-color: rgb(234, 227, 227);
+    border-color: rgb(155, 154, 154);
 }
 
 .smaller-p {
-    font-size: 0.8125rem;
-    margin-bottom: 1.25rem;
-}
-
-.scroll-container {
-    height: 35%;
-    width: 100%;
-    overflow-y: auto;
-    margin-bottom: 3rem;
-}
-
-.staff-button {
-    width: 100%;
-    height: 4rem;
-    margin-bottom: 0.625rem;
-    border-radius: 0.3125rem;
-    border: 2px solid rgb(177,177,177);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: left;
-    padding-left: 4.375rem;
-    font-size: 1.125rem;
-}
-
-.staff-button:hover {
-    background-color: rgb(234,227,227);
-    border-color: rgb(155,154,154);
-}
-
-.staff-button-name {
-    font-size: 1.125rem;
-}
-
-.staff-button-specialty {
-    font-size: 0.75rem;
-}
-
-.service-button {
-    width: 100%;
-    height: 4rem;
-    margin-bottom: 0.625rem;
-    border-radius: 0.3125rem;
-    border: 2px solid rgb(177,177,177);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 1.125rem;
-    padding: 0 1.875rem;
-}
-
-.service-button:hover {
-    background-color: rgb(234,227,227);
-    border-color: rgb(155,154,154);
-}
-
-.selected-button {
-    background-color: rgb(218,205,205) !important;
-}
-
-input {
-    height: 2.8125rem;
-    margin: 0 0 3rem 0;
-    border-radius: 0.3125rem;
-    font-size: 1.125rem;
-    padding-left: 1.25rem;
-    width: 100%;
-    box-sizing: border-box;
-    border: 2px solid rgb(177,177,177);
+    font-size: clamp(0.7rem, 0.8vw, 0.8125rem);
 }
 
 .details {
     width: 100%;
     flex-shrink: 0;
     flex-grow: 0;
-    max-height: 35%;
+    max-height: clamp(150px, 35vh, 300px);
+    /* scales between 150px and 300px */
     border-radius: 0.3125rem;
-    border: 2px solid rgb(177,177,177);
+    border: 2px solid rgb(177, 177, 177);
     box-sizing: border-box;
     padding: 1rem;
     overflow-y: auto;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .details p {
-    font-size: 1.1875rem;
-    margin-bottom: 0rem;
-    padding-top: 0rem;
+    font-size: clamp(0.9rem, 1vw, 1.1875rem);
+    margin-bottom: 0;
+    padding-top: 0;
 }
 
 .details-data {
     display: flex;
     justify-content: space-between;
-    font-size: 1.125rem;
+    font-size: clamp(0.9rem, 1vw, 1.125rem);
     margin-bottom: 1rem;
 }
 
+
+/* Buttons */
+.staff-button,
+.service-button {
+    width: 100%;
+    height: auto;
+    min-height: 2.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.25rem;
+    border: 2px solid rgb(177, 177, 177);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: clamp(0.7rem, 0.9vw, 1rem);
+    padding: 0.25rem 0.75rem;
+    background-color: #fff;
+}
+
+.staff-button {
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    padding-left: 1.5rem;
+}
+
+.staff-button:hover,
+.service-button:hover {
+    background-color: rgb(234, 227, 227);
+    border-color: rgb(155, 154, 154);
+}
+
+.selected-button {
+    background-color: rgb(218, 205, 205) !important;
+}
+
+/* Inputs scale */
+input {
+    width: 100%;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    border: 2px solid rgb(177, 177, 177);
+    font-size: clamp(0.7rem, 0.9vw, 1rem);
+    margin-bottom: 0.75rem;
+}
+
+/* Confirmation button at bottom */
 .confirmation-button {
     width: 100%;
-    height: 3.75rem;
-    border-radius: 0.3125rem;
-    border: 2px solid rgb(177,177,177);
-    font-size: 1.125rem;
-    margin-top: 4rem;
+    height: auto;
+    min-height: 2.5rem;
+    border-radius: 0.25rem;
+    border: 2px solid rgb(177, 177, 177);
+    font-size: clamp(0.7rem, 0.9vw, 1rem);
+    margin-top: auto;
+    /* pushes to bottom of column */
+    background-color: #fff;
 }
 
 .confirmation-button:hover {
-    background-color: rgb(234,227,227);
-    border-color: rgb(155,154,154);
+    background-color: rgb(234, 227, 227);
+    border-color: rgb(155, 154, 154);
 }
 
+/* Responsive adjustments */
 @media (max-width: 1200px) {
     .input-columns {
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
     }
+
     .column {
         width: 100%;
-        height: auto;
     }
+}
+
+@media (max-width: 768px) {
+    .reservations-module {
+        padding: 1rem;
+        font-size: clamp(0.7rem, 1.2vw, 1.5rem);
+    }
+
+    .staff-button,
+    .service-button {
+        padding-left: 1rem;
+        font-size: clamp(0.7rem, 1vw, 0.9rem);
+    }
+
+    .time-slots-row button {
+        height: auto;
+        font-size: clamp(0.7rem, 0.9vw, 0.9rem);
+    }
+
     .calendar {
-        margin-left: 0;
+        max-width: 100%;
     }
 }

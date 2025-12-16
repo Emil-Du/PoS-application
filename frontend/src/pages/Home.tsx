@@ -4,6 +4,9 @@ import { orderService } from "../services/orderService";
 import { paymentService } from "../services/paymentService";
 import { useEmployee } from '../contexts/EmployeeContext';
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/NavBar";
+
+
 interface Item {
     productId: number;
     name: string;
@@ -15,6 +18,12 @@ interface Item {
 interface OrderItem extends Item {
     quantity: number;
     itemId: number;
+}
+
+interface OrderTotals {
+    subtotal: number;
+    tax: number;
+    total: number;
 }
 
 export default function Home() {
@@ -30,6 +39,8 @@ export default function Home() {
     const [paymentMethod, setPaymentMethod] = useState<string>("Card");
     const [processingPayment, setProcessingPayment] = useState<boolean>(false);
     const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null);
+    const [orderTotals, setOrderTotals] = useState<OrderTotals | null>(null);
+    const [loadingTotals, setLoadingTotals] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -53,6 +64,28 @@ export default function Home() {
 
         fetchProducts();
     }, [employee, navigate]);
+
+    useEffect(() => {
+        const fetchTotals = async () => {
+            if (!orderId || orderItems.length === 0) {
+                setOrderTotals(null);
+                return;
+            }
+
+            try {
+                setLoadingTotals(true);
+                const totals = await orderService.getTotals(orderId);
+                setOrderTotals(totals);
+            } catch (err) {
+                console.error("Failed to fetch totals:", err);
+                setOrderTotals(null);
+            } finally {
+                setLoadingTotals(false);
+            }
+        };
+
+        fetchTotals();
+    }, [orderId, orderItems]);
 
 
     const createOrder = async () => {
@@ -160,7 +193,7 @@ export default function Home() {
     };
 
     const handleCheckout = async () => {
-        if (!orderId || orderItems.length === 0) return;
+        if (!orderId || orderItems.length === 0 || !orderTotals) return;
 
         try {
             setProcessingPayment(true);
@@ -170,7 +203,7 @@ export default function Home() {
 
             await paymentService.createPayment(
                 orderId,
-                total,
+                orderTotals.total,
                 paymentMethod,
                 currency
             );
@@ -184,6 +217,7 @@ export default function Home() {
                 setOrderItems([]);
                 setPaymentSuccess(null);
                 setPaymentMethod("Card");
+                setOrderTotals(null);
             }, 2000);
         } catch (err) {
             console.error("Payment failed:", err);
@@ -193,14 +227,9 @@ export default function Home() {
         }
     };
 
-    const total = orderItems.reduce(
-        (sum, item) => sum + item.unitPrice * item.quantity,
-        0
-    );
-
     return (
         <div className="layout">
-            <div className="sidebar-placeholder"></div>
+            <Navbar />
 
             <div className="module">
                 <div className="module-header">
@@ -277,10 +306,30 @@ export default function Home() {
                                     ))}
                                 </div>
 
-                                <div className="order-total">
-                                    <span>Total</span>
-                                    <span>{orderItems[0]?.currency || "Eur"} {total.toFixed(2)}</span>
-                                </div>
+                                {orderTotals && (
+                                    <>
+                                        <div className="order-subtotals">
+                                            <div>
+                                                <span>Subtotal:</span>
+                                                <span>{orderItems[0]?.currency || "Eur"} {orderTotals.subtotal.toFixed(2)}</span>
+                                            </div>
+                                            <div>
+                                                <span>Tax:</span>
+                                                <span>{orderItems[0]?.currency || "Eur"} {orderTotals.tax.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                        <div className="order-total">
+                                            <span>Total</span>
+                                            <span>{orderItems[0]?.currency || "Eur"} {orderTotals.total.toFixed(2)}</span>
+                                        </div>
+                                    </>
+                                )}
+
+                                {loadingTotals && (
+                                    <div className="order-total">
+                                        <span>Loading totals...</span>
+                                    </div>
+                                )}
 
                                 <div className="payment-method">
                                     <label htmlFor="payment-select">Payment Method:</label>
@@ -310,7 +359,7 @@ export default function Home() {
                                 <button
                                     className="confirmation-button"
                                     onClick={handleCheckout}
-                                    disabled={orderItems.length === 0 || processingPayment}
+                                    disabled={orderItems.length === 0 || processingPayment || !orderTotals}
                                 >
                                     {processingPayment ? "Processing..." : "Checkout"}
                                 </button>
