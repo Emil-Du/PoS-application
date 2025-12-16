@@ -66,7 +66,7 @@ public class AppDbContext : DbContext
             {
                 LocationId = 1,
                 CompanyId = 1,
-                Name = "Headquarters",
+                Name = "FOOD",
                 Address = "123 Main St, City",
                 PhoneNumber = "987654321",
                 Email = "hq@company.com"
@@ -75,7 +75,7 @@ public class AppDbContext : DbContext
             {
                 LocationId = 2,
                 CompanyId = 1,
-                Name = "Branch Office",
+                Name = "SERVICES",
                 Address = "Smth city",
                 PhoneNumber = "222333444",
                 Email = "branch@company.com"
@@ -85,6 +85,7 @@ public class AppDbContext : DbContext
             new Product
             {
                 ProductId = 1,
+                LocationId = 1,
                 Name = "Chicken",
                 UnitPrice = 7m,
                 Currency = Currency.Eur,
@@ -93,7 +94,8 @@ public class AppDbContext : DbContext
             new Product
             {
                 ProductId = 2,
-                Name = "Potato",
+                LocationId = 1,
+                Name = "Fries",
                 UnitPrice = 1m,
                 Currency = Currency.Eur,
                 VatPercent = 21m
@@ -101,8 +103,27 @@ public class AppDbContext : DbContext
             new Product
             {
                 ProductId = 3,
+                LocationId = 1,
                 Name = "Beef",
                 UnitPrice = 5m,
+                Currency = Currency.Eur,
+                VatPercent = 21m
+            },
+            new Product
+            {
+                ProductId = 4,
+                LocationId = 2,
+                Name = "Haircut",
+                UnitPrice = 20m,
+                Currency = Currency.Eur,
+                VatPercent = 21m
+            },
+            new Product
+            {
+                ProductId = 5,
+                LocationId = 2,
+                Name = "Hair dye",
+                UnitPrice = 40m,
                 Currency = Currency.Eur,
                 VatPercent = 21m
             }
