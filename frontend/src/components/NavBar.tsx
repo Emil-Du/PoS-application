@@ -3,6 +3,7 @@ import { useEmployee } from "../contexts/EmployeeContext";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/authService";
 
+
 export default function Navbar() {
     const { employee, setEmployee } = useEmployee();
 
@@ -12,6 +13,7 @@ export default function Navbar() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
+        sessionStorage.removeItem('currentOrder');
         await logout();
         setEmployee(null);
         navigate("/");

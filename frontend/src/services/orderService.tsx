@@ -161,7 +161,23 @@ export const orderService = {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to create order');
+            throw new Error('Failed to close order');
+        }
+
+        return null;
+    },
+
+    cancelOrder: async (orderId: number) => {
+        const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/cancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to cancel order');
         }
 
         return null;
