@@ -1,5 +1,5 @@
 # Documentation Review
-
+# Evaluation: 9/10
 ## Strengths of the documentation:
 - Most of the functionality required for a PoS system is well designed.
 - All necessary tables are included to support multiple companies and locations in a PoS SaaS (Software as a Service).
