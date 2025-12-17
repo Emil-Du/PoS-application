@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEmployee } from "../contexts/EmployeeContext";
-import { getEmployeesByLocation } from "../services/employeeService";
+import { getEmployeesByLocation, updateEmployee, type UpdateEmployeeData } from "../services/employeeService";
 import { registerEmployee, type RegisterEmployeeData } from "../services/authService";
 import Navbar from "../components/NavBar";
 import "./Employees.css";
@@ -36,6 +36,7 @@ export default function Employees() {
   // New states for employee management
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
   const [isAddingNew, setIsAddingNew] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   // Hardcoded roles: 1 = Employee, 2 = Manager
@@ -43,6 +44,16 @@ export default function Employees() {
     { roleId: 1, name: "Employee" },
     { roleId: 2, name: "Manager" }
   ];
+
+  // Edit form states
+  const [editFormData, setEditFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    locationId: 0,
+    status: "Active"
+  });
 
   // Form states
   const [formData, setFormData] = useState({
@@ -141,11 +152,13 @@ export default function Employees() {
   const handleEmployeeClick = (emp: EmployeeData) => {
     setSelectedEmployee(emp);
     setIsAddingNew(false);
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
     setIsAddingNew(false);
     setSelectedEmployee(null);
+    setIsEditing(false);
     setFormData({
       firstName: "",
       lastName: "",
@@ -162,6 +175,77 @@ export default function Employees() {
       password: "",
       roleId: ""
     });
+  };
+
+  const handleEditClick = () => {
+    if (!selectedEmployee) return;
+
+    setIsEditing(true);
+    setEditFormData({
+      firstName: selectedEmployee.firstName,
+      lastName: selectedEmployee.lastName,
+      email: selectedEmployee.email,
+      phoneNumber: selectedEmployee.phoneNumber,
+      locationId: selectedEmployee.locationId,
+      status: selectedEmployee.status
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      locationId: 0,
+      status: "Active"
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!selectedEmployee) return;
+
+    try {
+      setSubmitting(true);
+
+      const updateData: UpdateEmployeeData = {
+        firstName: editFormData.firstName,
+        lastName: editFormData.lastName,
+        email: editFormData.email,
+        phoneNumber: editFormData.phoneNumber,
+        locationId: editFormData.locationId,
+        status: editFormData.status
+      };
+
+      await updateEmployee(selectedEmployee.employeeId, updateData);
+
+      // Refresh employee list
+      const response = await getEmployeesByLocation(employee!.locationId, page, 25, searchTerm || undefined);
+      setEmployees(response.data || []);
+      const calculatedTotalPages = Math.ceil(response.total / response.pageSize) || 1;
+      setTotalPages(calculatedTotalPages);
+      setTotalCount(response.total || 0);
+
+      // Update selected employee with new data
+      const updatedEmployee: EmployeeData = {
+        ...selectedEmployee,
+        firstName: editFormData.firstName,
+        lastName: editFormData.lastName,
+        email: editFormData.email,
+        phoneNumber: editFormData.phoneNumber,
+        locationId: editFormData.locationId,
+        status: editFormData.status
+      };
+
+      setSelectedEmployee(updatedEmployee);
+      setIsEditing(false);
+    } catch (err: any) {
+      console.error("Failed to update employee:", err);
+      alert(err.message || "Failed to update employee. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const validateForm = (): boolean => {
@@ -459,31 +543,115 @@ export default function Employees() {
               </div>
             ) : selectedEmployee ? (
               <div className="employee-card">
-                <h3>Employee Details</h3>
-                <div className="employee-info">
-                  <div className="info-row">
-                    <span className="info-label">ID:</span>
-                    <span className="info-value">{selectedEmployee.employeeId}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">Name:</span>
-                    <span className="info-value">{selectedEmployee.firstName} {selectedEmployee.lastName}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">Email:</span>
-                    <span className="info-value">{selectedEmployee.email}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">Phone:</span>
-                    <span className="info-value">{selectedEmployee.phoneNumber}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="info-label">Status:</span>
-                    <span className={`status-badge ${selectedEmployee.status.toLowerCase()}`}>
-                      {selectedEmployee.status}
-                    </span>
-                  </div>
-                </div>
+                {isEditing ? (
+                  <>
+                    <h3>Edit Employee</h3>
+                    <form onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}>
+                      <div className="form-group">
+                        <label>First Name *</label>
+                        <input
+                          type="text"
+                          value={editFormData.firstName}
+                          onChange={(e) => setEditFormData({ ...editFormData, firstName: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Last Name *</label>
+                        <input
+                          type="text"
+                          value={editFormData.lastName}
+                          onChange={(e) => setEditFormData({ ...editFormData, lastName: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Email *</label>
+                        <input
+                          type="email"
+                          value={editFormData.email}
+                          onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Phone Number *</label>
+                        <input
+                          type="tel"
+                          value={editFormData.phoneNumber}
+                          onChange={(e) => setEditFormData({ ...editFormData, phoneNumber: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Status *</label>
+                        <select
+                          value={editFormData.status}
+                          onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                        >
+                          <option value="Active">Active</option>
+                          <option value="Inactive">Inactive</option>
+                        </select>
+                      </div>
+
+                      <div className="form-group">
+                        <label>Location</label>
+                        <input
+                          type="text"
+                          value={`Location ${editFormData.locationId}`}
+                          disabled
+                          className="disabled-input"
+                        />
+                      </div>
+
+                      <div className="form-actions">
+                        <button type="button" onClick={handleCancelEdit} className="cancel-button">
+                          Cancel
+                        </button>
+                        <button type="submit" className="save-button" disabled={submitting}>
+                          {submitting ? "Saving..." : "Save Changes"}
+                        </button>
+                      </div>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    <h3>Employee Details</h3>
+                    <div className="employee-info">
+                      <div className="info-row">
+                        <span className="info-label">ID:</span>
+                        <span className="info-value">{selectedEmployee.employeeId}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Name:</span>
+                        <span className="info-value">{selectedEmployee.firstName} {selectedEmployee.lastName}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Email:</span>
+                        <span className="info-value">{selectedEmployee.email}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Phone:</span>
+                        <span className="info-value">{selectedEmployee.phoneNumber}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Location:</span>
+                        <span className="info-value">{selectedEmployee.locationId}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Status:</span>
+                        <span className={`status-badge ${selectedEmployee.status.toLowerCase()}`}>
+                          {selectedEmployee.status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="form-actions">
+                      <button onClick={handleEditClick} className="save-button">
+                        Edit Employee
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <div className="employee-card empty">
