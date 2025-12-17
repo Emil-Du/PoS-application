@@ -7,6 +7,7 @@ interface Employee {
   lastName: string;
   locationId: number;
   role: string;
+  isFoodLocationEmployee: boolean;
 }
 
 interface EmployeeContextType {

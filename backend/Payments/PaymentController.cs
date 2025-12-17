@@ -1,5 +1,6 @@
 ﻿namespace backend.Payments;
 
+using backend.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -33,9 +34,24 @@ public class PaymentController : ControllerBase
     [HttpPost("payment")]
     public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest request)
     {
-        var payment = await _service.CreatePaymentAsync(request);
+        try
+        {
+            var payment = await _service.CreatePaymentAsync(request);
 
-        return Ok(payment);
+            return Ok(payment);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+        catch (OrderNotOpenException)
+        {
+            return BadRequest("Order is not open.");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
 }

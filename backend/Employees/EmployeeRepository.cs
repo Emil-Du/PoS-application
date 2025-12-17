@@ -16,6 +16,11 @@ namespace backend.Employees
         {
             var dbQuery = _context.Employees.AsQueryable();
 
+            if (query.LocationId.HasValue)
+            {
+                dbQuery = dbQuery.Where(emp => emp.LocationId == query.LocationId.Value);
+            }
+
             if (!string.IsNullOrWhiteSpace(query.Search))
             {
                 dbQuery = dbQuery.Where(emp =>
@@ -35,6 +40,11 @@ namespace backend.Employees
         public async Task<int> GetTotalCountAsync(EmployeeQuery query)
         {
             var dbQuery = _context.Employees.AsQueryable();
+
+            if (query.LocationId.HasValue)
+            {
+                dbQuery = dbQuery.Where(emp => emp.LocationId == query.LocationId.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(query.Search))
             {

@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Calendar from 'react-calendar'
 import { FaRegClock } from "react-icons/fa";
 import 'react-calendar/dist/Calendar.css';
-import "./ReservationTest.css";
-import { CreateReservation } from '../services/reservationService'
+import "./Reservation.css";
+import { CreateReservation, GetReservations } from '../services/reservationService'
 import { getCustomer, registerCustomer } from '../services/customerService'
 import { getProviders } from "../services/providerService";
 import { getServices } from "../services/serviceService";
@@ -30,6 +30,7 @@ export default function Reservation() {
     const [staff, setStaff] = useState<Array<any>>([]);
     const [services, setServices] = useState<Array<any>>([]);
     const navigate = useNavigate();
+    const [unavailableTimes, setUnavailableTimes] = useState<string[]>([]);
 
 
     const isDisabledConfirmation =
@@ -44,6 +45,11 @@ export default function Reservation() {
 
         if (!employee) {
             navigate("/");
+            return;
+        }
+
+        if (employee.isFoodLocationEmployee) {
+            navigate("/home");
             return;
         }
 
@@ -85,6 +91,67 @@ export default function Reservation() {
         fetchData();
     }, []);
 
+        interface Reservation {
+        id: number;
+        serviceId: number;
+        locationId: number;
+        providerId: number;
+        customerId: number;
+        reservationTime: number;
+        appointmentTime: number;
+        status: string;
+    }
+
+    useEffect(() => {
+        if (!date || date instanceof Array || !(date instanceof Date) || !employee) {
+            setUnavailableTimes([]);
+            return;
+        }
+
+        const fetchUnavailableTimes = async () => {
+            try {
+                const [hours, minutes] = time.split(":").map(Number);
+
+                const appointmentDateTime = new Date(date);
+                appointmentDateTime.setHours(hours, minutes, 0, 0);
+
+                const selectedDateTime = Math.floor(appointmentDateTime.getTime() / 1000)
+                
+                const dayStart = new Date(date);
+                dayStart.setHours(0, 0, 0, 0);
+
+                const nextDayStart = new Date(dayStart);
+                nextDayStart.setDate(dayStart.getDate() + 1);
+
+                const employeeReservations = await GetReservations({locationId: employee.locationId, providerId: providerId ?? undefined, status: 'Active', from: Math.floor(dayStart.getTime() / 1000), to: Math.floor(nextDayStart.getTime() / 1000)});
+
+                const isBooked = employeeReservations.reservations.some((r: Reservation) => 
+                    r.providerId === providerId &&
+                    r.appointmentTime === selectedDateTime
+                );
+
+                if(isBooked) setTime("[Not selected]");
+                
+                const bookedTimes = employeeReservations.reservations
+                    .filter((r: Reservation) => r.providerId === providerId)
+                    .map((r: Reservation) => {
+                        const d = new Date(r.appointmentTime * 1000);
+                        const hours = d.getHours();
+                        const minutes = d.getMinutes().toString().padStart(2, "0");
+                        return `${hours}:${minutes}`;
+                    });
+
+                setUnavailableTimes(bookedTimes);
+
+            } catch (err) {
+                setUnavailableTimes([]);
+            }
+        };
+
+        fetchUnavailableTimes();
+    }, [providerId, date]);
+
+
     const createReservation = async () => {
         if (!date || date instanceof Array || !(date instanceof Date)) return;
 
@@ -122,9 +189,6 @@ export default function Reservation() {
         setCustomerPhone("");
         setProviderId(null);
         setServiceId(null);
-
-        // or go to dashboard
-        //navigate("/dashboard");
     };
 
 
@@ -147,20 +211,20 @@ export default function Reservation() {
 
                         <div className="time-slots-column">
                             <div className="time-slots-row">
-                                <button onClick={() => setTime("8:00")} className={time === "8:00" ? "selected-button" : ""}> <FaRegClock /> 8:00</button>
-                                <button onClick={() => setTime("9:00")} className={time === "9:00" ? "selected-button" : ""}> <FaRegClock /> 9:00</button>
+                                <button disabled={unavailableTimes.includes("8:00")} onClick={() => setTime("8:00")} className={time === "8:00" ? "selected-button" : ""}> <FaRegClock /> 8:00</button>
+                                <button disabled={unavailableTimes.includes("9:00")} onClick={() => setTime("9:00")} className={time === "9:00" ? "selected-button" : ""}> <FaRegClock /> 9:00</button>
                             </div>
                             <div className="time-slots-row">
-                                <button onClick={() => setTime("10:00")} className={time === "10:00" ? "selected-button" : ""}> <FaRegClock /> 10:00</button>
-                                <button onClick={() => setTime("11:00")} className={time === "11:00" ? "selected-button" : ""}> <FaRegClock /> 11:00</button>
+                                <button disabled={unavailableTimes.includes("10:00")} onClick={() => setTime("10:00")} className={time === "10:00" ? "selected-button" : ""}> <FaRegClock /> 10:00</button>
+                                <button disabled={unavailableTimes.includes("11:00")} onClick={() => setTime("11:00")} className={time === "11:00" ? "selected-button" : ""}> <FaRegClock /> 11:00</button>
                             </div>
                             <div className="time-slots-row">
-                                <button onClick={() => setTime("13:00")} className={time === "13:00" ? "selected-button" : ""}> <FaRegClock /> 13:00</button>
-                                <button onClick={() => setTime("14:00")} className={time === "14:00" ? "selected-button" : ""}> <FaRegClock /> 14:00</button>
+                                <button disabled={unavailableTimes.includes("13:00")} onClick={() => setTime("13:00")} className={time === "13:00" ? "selected-button" : ""}> <FaRegClock /> 13:00</button>
+                                <button disabled={unavailableTimes.includes("14:00")} onClick={() => setTime("14:00")} className={time === "14:00" ? "selected-button" : ""}> <FaRegClock /> 14:00</button>
                             </div>
                             <div className="time-slots-row">
-                                <button onClick={() => setTime("15:00")} className={time === "15:00" ? "selected-button" : ""}> <FaRegClock /> 15:00</button>
-                                <button onClick={() => setTime("16:00")} className={time === "16:00" ? "selected-button" : ""}> <FaRegClock /> 16:00</button>
+                                <button disabled={unavailableTimes.includes("15:00")} onClick={() => setTime("15:00")} className={time === "15:00" ? "selected-button" : ""}> <FaRegClock /> 15:00</button>
+                                <button disabled={unavailableTimes.includes("16:00")} onClick={() => setTime("16:00")} className={time === "16:00" ? "selected-button" : ""}> <FaRegClock /> 16:00</button>
                             </div>
                         </div>
                     </div>
