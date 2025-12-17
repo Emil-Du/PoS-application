@@ -28,10 +28,11 @@
 - Roles(assigned on login)
 - Merchant business management(retrieved items are based on location)
 - Item variations(backend only)
-- Order refunds(backend only)
+- Order history(can check, but cannot edit)
 
 ## Fully implemented
 - Order flow
+- Employee management
 - Reservation flow(with employee qualification checking)
 - Login
 
