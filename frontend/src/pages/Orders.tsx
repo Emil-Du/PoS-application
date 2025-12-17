@@ -85,7 +85,7 @@ export default function Orders() {
     try {
       const fetchedItems = await orderService.getOrderItems(order.orderId);
       const products = await orderService.getProducts(employee.locationId);
-      const totals = await orderService.getTotals(order.orderId); // ✅
+      const totals = await orderService.getTotals(order.orderId);
 
       const mappedItems: OrderItem[] = fetchedItems.map((item: any) => {
         const product = products.find((p: any) => p.productId === item.productId);
@@ -97,7 +97,7 @@ export default function Orders() {
             productID: item.productId,
             name: product?.name || `Product #${item.productId}`,
             unitPrice: Number(product?.unitPrice ?? 0),
-            vatPercentage: Number(product?.vatPercent ?? 0), // ✅ FIX
+            vatPercentage: Number(product?.vatPercent ?? 0),
           },
         };
       });
@@ -105,7 +105,7 @@ export default function Orders() {
 
       setSelectedOrder(order);
       setItems(mappedItems);
-      setOrderTotals(totals); // ✅
+      setOrderTotals(totals);
     } catch (err) {
       console.error("Failed to load order details:", err);
       setItems([]);

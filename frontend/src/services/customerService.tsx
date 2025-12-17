@@ -1,7 +1,7 @@
 const API_URL = "http://localhost:5041/api/customer";
 
 export async function getCustomer(name: string, phoneNumber: string) {
-  const res = await fetch(`${API_URL}?name=${name}?phoneNumber=${phoneNumber}`, {
+  const res = await fetch(`${API_URL}?Name=${name}&PhoneNumber=${phoneNumber}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json"

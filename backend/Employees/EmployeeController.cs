@@ -6,7 +6,6 @@ namespace backend.Employees
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager)]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _service;
@@ -19,6 +18,7 @@ namespace backend.Employees
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager + "," + Roles.Roles.Employee)]
         public async Task<ActionResult<PaginatedResponse<EmployeeResponse>>> GetEmployees([FromQuery] EmployeeQuery query)
         {
             var employees = await _service.GetEmployeesAsync(query);
@@ -26,6 +26,7 @@ namespace backend.Employees
         }
 
         [HttpGet("{employeeId}")]
+        [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager + "," + Roles.Roles.Employee)]
         public async Task<ActionResult<EmployeeResponse>> GetEmployeeById([FromRoute] int employeeId)
         {
             var response = await _service.GetEmployeeByIdAsync(employeeId);
@@ -40,6 +41,7 @@ namespace backend.Employees
 
 
         [HttpPost]
+        [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager)]
         public async Task<ActionResult<EmployeeResponse>> CreateEmployee([FromBody] EmployeeRequest request)
         {
             var createdEmployee = await _service.CreateEmployeeAsync(request);
@@ -52,6 +54,7 @@ namespace backend.Employees
         }
 
         [HttpPatch("{employeeId}")]
+        [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager)]
         public async Task<IActionResult> UpdateEmployeeById([FromRoute] int employeeId, [FromBody] EmployeeRequest request)
         {
             var updated = await _service.UpdateEmployeeByIdAsync(employeeId, request);

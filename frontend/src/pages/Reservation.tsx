@@ -271,13 +271,13 @@ export default function Reservation() {
 
                         <div className="smaller-p">Contact Phone Number</div>
                         <input type="text" placeholder="Enter phone number..." value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
-                        <div className="details">
+                        <div className="detailss">
                             <p>APPOINTMENT DETAILS</p>
 
-                            <div className="details-data"> <div>Date:</div> <div>{date instanceof Date ? date.toLocaleDateString() : ""}</div> </div>
-                            <div className="details-data"> <div>Time:</div> <div>{time}</div> </div>
-                            <div className="details-data"> <div>Staff:</div> <div>{provider}</div> </div>
-                            <div className="details-data"> <div>Service:</div> <div>{service}</div> </div>
+                            <div className="detailss-data"> <div>Date:</div> <div>{date instanceof Date ? date.toLocaleDateString() : ""}</div> </div>
+                            <div className="detailss-data"> <div>Time:</div> <div>{time}</div> </div>
+                            <div className="detailss-data"> <div>Staff:</div> <div>{provider}</div> </div>
+                            <div className="detailss-data"> <div>Service:</div> <div>{service}</div> </div>
                         </div>
 
                         <button className="confirmation-button" disabled={isDisabledConfirmation} onClick={createReservation}>Confirm Reservation</button>
