@@ -41,11 +41,51 @@ export default function Home() {
     const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null);
     const [orderTotals, setOrderTotals] = useState<OrderTotals | null>(null);
     const [loadingTotals, setLoadingTotals] = useState<boolean>(false);
+    const [cancellingOrder, setCancellingOrder] = useState<boolean>(false);
 
 
     useEffect(() => {
         if (!employee) {
             navigate("/");
+        }
+    }, [employee, navigate]);
+
+
+    useEffect(() => {
+        const savedOrder = sessionStorage.getItem('currentOrder');
+        if (savedOrder) {
+            try {
+                const parsed = JSON.parse(savedOrder);
+                setOrderId(parsed.orderId);
+                setOrderItems(parsed.orderItems);
+                setPaymentMethod(parsed.paymentMethod);
+            } catch (err) {
+                console.error('Failed to parse saved order:', err);
+                sessionStorage.removeItem('currentOrder');
+            }
+        }
+    }, []);
+
+
+    useEffect(() => {
+        if (orderId) {
+            sessionStorage.setItem('currentOrder', JSON.stringify({
+                orderId,
+                orderItems,
+                paymentMethod
+            }));
+        } else {
+            sessionStorage.removeItem('currentOrder');
+        }
+    }, [orderId, orderItems, paymentMethod]);
+
+
+
+    useEffect(() => {
+        if (!employee) return;
+
+        if (!employee.isFoodLocationEmployee) {
+            navigate("/reservations");
             return;
         }
 
@@ -63,7 +103,7 @@ export default function Home() {
         };
 
         fetchProducts();
-    }, [employee, navigate]);
+    }, [employee]);
 
     useEffect(() => {
         const fetchTotals = async () => {
@@ -192,6 +232,29 @@ export default function Home() {
         }
     };
 
+    const handleCancelOrder = async () => {
+        if (!orderId) return;
+
+        const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+        if (!confirmCancel) return;
+
+        try {
+            setCancellingOrder(true);
+            await orderService.cancelOrder(orderId);
+
+            setOrderId(null);
+            setOrderItems([]);
+            setOrderTotals(null);
+            setPaymentMethod("Card");
+            setPaymentSuccess(null);
+        } catch (err) {
+            console.error("Failed to cancel order:", err);
+            alert("Failed to cancel order. Please try again.");
+        } finally {
+            setCancellingOrder(false);
+        }
+    };
+
     const handleCheckout = async () => {
         if (!orderId || orderItems.length === 0 || !orderTotals) return;
 
@@ -249,7 +312,7 @@ export default function Home() {
                                 items.map(item => (
                                     <button
                                         key={item.productId}
-                                        className="list-button"
+                                        className="list-buttons"
                                         onClick={() => setSelectedItem(item)}
                                         disabled={!orderId}
                                     >
@@ -289,7 +352,7 @@ export default function Home() {
                                     )}
 
                                     {orderItems.map(item => (
-                                        <div key={item.itemId} className="order-row">
+                                        <div key={item.itemId} className="order-rows">
                                             <div className="order-row-name">{item.name}</div>
                                             <div className="order-row-quantity">x{item.quantity}</div>
                                             <div className="order-row-price">
@@ -356,13 +419,23 @@ export default function Home() {
                                     </div>
                                 )}
 
-                                <button
-                                    className="confirmation-button"
-                                    onClick={handleCheckout}
-                                    disabled={orderItems.length === 0 || processingPayment || !orderTotals}
-                                >
-                                    {processingPayment ? "Processing..." : "Checkout"}
-                                </button>
+                                <div className="button-group">
+                                    <button
+                                        className="confirmation-button"
+                                        onClick={handleCheckout}
+                                        disabled={orderItems.length === 0 || processingPayment || !orderTotals || cancellingOrder}
+                                    >
+                                        {processingPayment ? "Processing..." : "Checkout"}
+                                    </button>
+
+                                    <button
+                                        className="cancel-order-button"
+                                        onClick={handleCancelOrder}
+                                        disabled={cancellingOrder || processingPayment}
+                                    >
+                                        {cancellingOrder ? "Cancelling..." : "Cancel Order"}
+                                    </button>
+                                </div>
                             </>
                         )}
                     </div>

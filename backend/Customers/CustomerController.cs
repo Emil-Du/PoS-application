@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Customers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager + "," + Roles.Roles.Employee)]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _service;

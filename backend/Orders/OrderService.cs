@@ -29,7 +29,7 @@ public class OrderService : IOrderService
         var order = await _orderRepository.GetOrderByIdAsync(orderId) ?? throw new NotFoundException();
 
         if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
-        
+
         if (await _productRepository.GetProductByIdAsync(request.ProductId) == null) throw new NotFoundException();
 
         //var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
@@ -65,7 +65,7 @@ public class OrderService : IOrderService
 
         if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
 
-        order.Status = OrderStatus.Closed;
+        order.Status = OrderStatus.Cancelled;
 
         await _orderRepository.UpdateOrderAsync(order);
     }
@@ -159,9 +159,9 @@ public class OrderService : IOrderService
         if (items.Contains(null)) throw new NotFoundException();
 
         var products = _productRepository.GetProductsByItems(items);
-        
+
         if (products.Contains(null)) throw new NotFoundException();
-        
+
         var response = new OrderTaxesResponse()
         {
             Subtotal = decimal.Zero,
@@ -171,12 +171,12 @@ public class OrderService : IOrderService
 
         using (IEnumerator<Item> item = items.GetEnumerator())
         using (IEnumerator<Product> product = products.AsEnumerable().GetEnumerator()!)
-        while (item.MoveNext() && product.MoveNext())
-        {
-            response.Subtotal += product.Current.UnitPrice * item.Current.Quantity;
-            response.Tax += product.Current.UnitPrice * item.Current.Quantity * product.Current.VatPercent / 100;
-            response.Total += product.Current.UnitPrice * item.Current.Quantity * (100 + product.Current.VatPercent) / 100;
-        }
+            while (item.MoveNext() && product.MoveNext())
+            {
+                response.Subtotal += product.Current.UnitPrice * item.Current.Quantity;
+                response.Tax += product.Current.UnitPrice * item.Current.Quantity * product.Current.VatPercent / 100;
+                response.Total += product.Current.UnitPrice * item.Current.Quantity * (100 + product.Current.VatPercent) / 100;
+            }
 
         return response;
     }
@@ -191,7 +191,7 @@ public class OrderService : IOrderService
     public async Task<OrderResponse> OpenOrderAsync(OrderRequest request)
     {
         if (await _employeeRepository.GetEmployeeByIdAsync(request.OperatorId) == null) throw new NotFoundException();
-        
+
         var order = await _orderRepository.AddOrderAsync(new Order()
         {
             OperatorId = request.OperatorId,
@@ -199,7 +199,7 @@ public class OrderService : IOrderService
             ServiceCharge = request.ServiceCharge,
             Discount = request.Discount
         });
-        
+
         return new OrderResponse
         {
             OrderId = order.OrderId,
@@ -234,7 +234,7 @@ public class OrderService : IOrderService
         //var variations = await Task.WhenAll(request.VariationIds.Select(_variationRepository.GetVariationByIdAsync));
         //
         //if (variations.Contains(null)) throw new NotFoundException();
-        
+
         //item.Variations = variations!;
         item.Currency = request.Currency;
 

@@ -1,6 +1,64 @@
 const API_BASE_URL = 'http://localhost:5041';
 
+export interface OrderQuery {
+  page?: number;
+  pageSize?: number;
+  status?: string;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  totalCount: number;
+}
+
 export const orderService = {
+    getOrders: async (locationId: number) => {
+        const response = await fetch(`${API_BASE_URL}/api/orders?locationId=${locationId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+        });
+
+        if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+        }
+
+        return await response.json();
+    },
+
+    getOrderById: async (orderId: number) => {
+        const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch order");
+        }
+
+        return response.json();
+    },
+
+    updateOrder: async (
+        orderId: number,
+        request: { status?: string; discount?: number; tip?: number; serviceCharge?: number }
+        ) => {
+        const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(request),
+        });
+
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || "Failed to update order");
+        }
+
+        return res.json();
+    },
+
     createOrder: async (
         operatorId: number,
         tip: number,
@@ -161,7 +219,23 @@ export const orderService = {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to create order');
+            throw new Error('Failed to close order');
+        }
+
+        return null;
+    },
+
+    cancelOrder: async (orderId: number) => {
+        const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/cancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to cancel order');
         }
 
         return null;

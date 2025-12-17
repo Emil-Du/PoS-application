@@ -48,6 +48,11 @@ export default function Reservation() {
             return;
         }
 
+        if (employee.isFoodLocationEmployee) {
+            navigate("/home");
+            return;
+        }
+
         interface Provider {
             providerId: number;
             employeeId: number;

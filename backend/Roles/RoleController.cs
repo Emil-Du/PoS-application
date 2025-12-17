@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-
+[Authorize(Roles = Roles.SuperAdmin + "," + Roles.Manager + "," + Roles.Employee)]
 public class RoleController : ControllerBase
 {
     private readonly IRoleService _service;
@@ -42,7 +42,7 @@ public class RoleController : ControllerBase
 
         if (roleCreateRequest == null)
         {
-                return BadRequest();
+            return BadRequest();
         }
 
         var newRole = await _service.CreateRoleAsync(roleCreateRequest);
@@ -55,7 +55,7 @@ public class RoleController : ControllerBase
     {
         if (roleUpdateRequest == null)
         {
-                return BadRequest();
+            return BadRequest();
         }
 
         var updated = await _service.UpdateRoleByIdAsync(roleId, roleUpdateRequest);
@@ -84,7 +84,7 @@ public class RoleController : ControllerBase
     [HttpPost("{roleId}/assign")]
     public async Task<IActionResult> AssignRole([FromRoute] int roleId, [FromBody] RoleAssignmentRequest request)
     {
-        var updated =await _service.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
+        var updated = await _service.AssignRoleToEmployeeAsync(roleId, request.EmployeeId);
         if (!updated) return NotFound();
         return NoContent();
     }
@@ -95,7 +95,7 @@ public class RoleController : ControllerBase
     {
         EmployeeRolesDTO? role = await _service.GetRoleIdByEmployeeIdAsync(employeeId);
 
-        
+
         if (role == null)
             return NotFound($"No role found for employeeId: {employeeId}");
 

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using backend.Common;
+using Microsoft.AspNetCore.Authorization;
 namespace backend.Providers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager + "," + Roles.Roles.Employee)]
     public class ProviderController : ControllerBase
     {
         private readonly IProviderService _service;

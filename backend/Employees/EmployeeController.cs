@@ -1,11 +1,12 @@
-using backend.Employees;
 using backend.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
-namespace backend.Customers
+namespace backend.Employees
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager)]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _service;

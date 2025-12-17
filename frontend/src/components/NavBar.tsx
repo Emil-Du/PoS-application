@@ -3,6 +3,7 @@ import { useEmployee } from "../contexts/EmployeeContext";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/authService";
 
+
 export default function Navbar() {
     const { employee, setEmployee } = useEmployee();
 
@@ -12,6 +13,7 @@ export default function Navbar() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
+        sessionStorage.removeItem('currentOrder');
         await logout();
         setEmployee(null);
         navigate("/");
@@ -23,10 +25,7 @@ export default function Navbar() {
             <div className="nav-divider" />
             <button hidden={!employee.isFoodLocationEmployee} onClick={() => navigate("/home")}>Home</button>
             <button hidden={employee.isFoodLocationEmployee} onClick={() => navigate("/reservations")}>Reservations</button>
-            <button hidden={!employee.isFoodLocationEmployee} onClick={() => navigate("/inventory")}>Inventory</button>
-            <button hidden={isEmployee} onClick={() => navigate("/discounts-taxes")}>
-                Discounts & Taxes
-            </button>
+            <button hidden={!employee.isFoodLocationEmployee} onClick={() => navigate("/orders")}>Orders</button>
             <button hidden={isEmployee} onClick={() => navigate("/employees")}>
                 Employees
             </button>

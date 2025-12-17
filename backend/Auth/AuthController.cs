@@ -1,6 +1,7 @@
 using backend.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using backend.Roles;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -14,7 +15,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("RegisterEmployee")]
-    [Authorize(Roles = "manager")]
+    [Authorize(Roles = Roles.SuperAdmin + "," + Roles.Manager)]
     public async Task<IActionResult> RegisterEmployee([FromBody] EmployeeRegistrationDTO employeeRegistrationDTO)
     {
         try
@@ -29,12 +30,12 @@ public class AuthController : ControllerBase
                 LocationId = response_details.LocationId,
                 Email = response_details.Email,
                 PhoneNumber = response_details.PhoneNumber
-            };  
-            
+            };
+
             return Ok(responseDTO);
         }
         catch (EmailAlreadyExistsException e)
-        {   
+        {
             return StatusCode(409, e.Message);
         }
 
@@ -63,17 +64,18 @@ public class AuthController : ControllerBase
             return Ok(serviceResponse.Employee);
         }
         catch (IncorrectLoginDetailsException e)
-        {   
+        {
             return StatusCode(401, e.Message);
         }
         catch (InactiveStatusException e)
-        {   
+        {
             return StatusCode(403, e.Message);
         }
 
     }
 
     [HttpPost("LogoutEmployee")]
+    [Authorize(Roles = Roles.SuperAdmin + "," + Roles.Manager + "," + Roles.Employee)]
     public IActionResult LogoutEmployee()
     {
         Response.Cookies.Append(
