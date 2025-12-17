@@ -236,12 +236,19 @@ public class OrderService : IOrderService
         //if (variations.Contains(null)) throw new NotFoundException();
 
         //item.Variations = variations!;
+
         item.Currency = request.Currency;
 
         if (item.Quantity != request.Quantity)
         {
-            var usedStockList = item.
-            order.StockUsages
+            var usedStockList = (await _productRepository.GetProductByIdAsync(item.ProductId) ?? throw new NotFoundException())
+                .Requirements
+                .Select(stockUsage =>
+                {
+                    if (stockUsage.Count * request.Quantity > stockUsage.Stock.Count - order.StockUsages.Where()) throw new OrderExceedsStockException();
+                    
+                    return stockUsage.Count * request.Quantity;
+                });
         }
 
         item.Discount = request.Discount;
