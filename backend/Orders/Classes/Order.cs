@@ -1,5 +1,6 @@
 using backend.Common;
 using backend.Employees;
+using backend.Mappings;
 
 namespace backend.Orders;
 
@@ -13,6 +14,6 @@ public class Order
     public decimal ServiceCharge { get; set; }
     public decimal Discount { get; set; }
     public Currency Currency { get; set; }
-    public ICollection<Item> Items { get; set; } = [];
+    public ICollection<OrderStockUsage> StockUsages { get; set; } = null!;
 }
 

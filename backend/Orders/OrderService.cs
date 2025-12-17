@@ -1,6 +1,7 @@
 using backend.Common;
 using backend.Employees;
 using backend.Exceptions;
+using backend.Inventory;
 using backend.Mappings;
 using backend.Products;
 using backend.Variations;
@@ -13,14 +14,14 @@ public class OrderService : IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IVariationRepository _variationRepository;
+    private readonly IInventoryRepository _inventoryRepository;
 
-    public OrderService(IOrderRepository repository, IEmployeeRepository employeeRepository, IProductRepository productRepository, IVariationRepository variationRepository)
+    public OrderService(IOrderRepository repository, IEmployeeRepository employeeRepository, IProductRepository productRepository, IInventoryRepository inventoryRepository)
     {
         _orderRepository = repository;
         _employeeRepository = employeeRepository;
         _productRepository = productRepository;
-        _variationRepository = variationRepository;
+        _inventoryRepository = inventoryRepository;
     }
 
     public async Task<ItemResponse> AddItemAsync(int orderId, ItemCreateRequest request)
@@ -76,6 +77,12 @@ public class OrderService : IOrderService
         if (order.Status != OrderStatus.Opened) throw new OrderNotOpenException();
 
         order.Status = OrderStatus.Closed;
+
+        foreach (var stockUsage in order.StockUsages)
+        {
+            if (stockUsage.Stock.Count < stockUsage.Count) throw new OrderExceedsStockException();
+            stockUsage.Stock.Count -= stockUsage.Count;
+        }
 
         await _orderRepository.UpdateOrderAsync(order);
     }
@@ -230,7 +237,13 @@ public class OrderService : IOrderService
         
         //item.Variations = variations!;
         item.Currency = request.Currency;
-        item.Quantity = request.Quantity;
+
+        if (item.Quantity != request.Quantity)
+        {
+            var usedStockList = item.
+            order.StockUsages
+        }
+
         item.Discount = request.Discount;
         item.VATPercentage = request.VATPercentage;
 

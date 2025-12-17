@@ -1,5 +1,6 @@
 using backend.Common;
 using backend.Locations;
+using backend.Mappings;
 namespace backend.Products;
 
 public class Product
@@ -12,4 +13,5 @@ public class Product
     public decimal UnitPrice { get; set; }
     public required Currency Currency { get; set; }
     public decimal VatPercent { get; set; }
+    public IEnumerable<ProductStockRequirement> Requirements { get; set; } = default!;
 }

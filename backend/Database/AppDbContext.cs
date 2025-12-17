@@ -12,6 +12,7 @@ using backend.Customers;
 using backend.Orders;
 using backend.Variations;
 using backend.Common;
+using backend.Inventory;
 
 namespace backend.Database;
 
@@ -255,5 +256,6 @@ public class AppDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-
+    public DbSet<Stock> StockList { get; set; }
+    public DbSet<ProductStockRequirement> ProductStockRequirements { get; set; }
 }

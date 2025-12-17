@@ -9,5 +9,6 @@ public enum PermissionFlag
     canAddDiscounts,
     canAddCustomers,
     canAddProducts,
-    canChangeProducts
+    canChangeProducts,
+    canEditInventory
 }
