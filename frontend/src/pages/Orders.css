@@ -6,6 +6,7 @@
   width: 35%;
 }
 
+
 .orders-filter {
   display: flex;
   justify-content: right;
@@ -34,7 +35,7 @@
 }
 
 .orders-module {
-  width: 100%;
+  width: 75%;
   height: 100%;
   border: 4px solid rgb(176, 186, 187);
   background-color: rgb(202, 225, 225);

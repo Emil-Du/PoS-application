@@ -2,10 +2,10 @@
 
 using backend.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 [ApiController]
 [Route("api/[controller]")]
-
+[Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager + "," + Roles.Roles.Employee)]
 public class PaymentController : ControllerBase
 {
     private readonly IPaymentService _service;

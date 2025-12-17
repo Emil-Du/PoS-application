@@ -25,11 +25,7 @@ export default function Navbar() {
             <div className="nav-divider" />
             <button hidden={!employee.isFoodLocationEmployee} onClick={() => navigate("/home")}>Home</button>
             <button hidden={employee.isFoodLocationEmployee} onClick={() => navigate("/reservations")}>Reservations</button>
-            <button hidden={!employee.isFoodLocationEmployee} onClick={() => navigate("/inventory")}>Inventory</button>
             <button hidden={!employee.isFoodLocationEmployee} onClick={() => navigate("/orders")}>Orders</button>
-            <button hidden={isEmployee} onClick={() => navigate("/discounts-taxes")}>
-                Discounts & Taxes
-            </button>
             <button hidden={isEmployee} onClick={() => navigate("/employees")}>
                 Employees
             </button>

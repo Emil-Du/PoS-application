@@ -77,68 +77,68 @@ export default function Orders() {
   }, [employee, navigate]);
 
   const handleSelectOrder = async (order: OrderSummary) => {
-  if (!employee) return;
-  setItems([]);
-  setOrderTotals(null);
-  setSelectedOrder(order);
-
-  try {
-    const fetchedItems = await orderService.getOrderItems(order.orderId);
-    const products = await orderService.getProducts(employee.locationId);
-    const totals = await orderService.getTotals(order.orderId); // ✅
-
-    const mappedItems: OrderItem[] = fetchedItems.map((item: any) => {
-  const product = products.find((p: any) => p.productId === item.productId);
-
-  return {
-    quantity: item.quantity,
-    discount: item.discount,
-    product: {
-      productID: item.productId,
-      name: product?.name || `Product #${item.productId}`,
-      unitPrice: Number(product?.unitPrice ?? 0),
-      vatPercentage: Number(product?.vatPercent ?? 0), // ✅ FIX
-    },
-  };
-});
-
-
-    setSelectedOrder(order);
-    setItems(mappedItems);
-    setOrderTotals(totals); // ✅
-  } catch (err) {
-    console.error("Failed to load order details:", err);
+    if (!employee) return;
     setItems([]);
     setOrderTotals(null);
-  }
-};
+    setSelectedOrder(order);
+
+    try {
+      const fetchedItems = await orderService.getOrderItems(order.orderId);
+      const products = await orderService.getProducts(employee.locationId);
+      const totals = await orderService.getTotals(order.orderId); // ✅
+
+      const mappedItems: OrderItem[] = fetchedItems.map((item: any) => {
+        const product = products.find((p: any) => p.productId === item.productId);
+
+        return {
+          quantity: item.quantity,
+          discount: item.discount,
+          product: {
+            productID: item.productId,
+            name: product?.name || `Product #${item.productId}`,
+            unitPrice: Number(product?.unitPrice ?? 0),
+            vatPercentage: Number(product?.vatPercent ?? 0), // ✅ FIX
+          },
+        };
+      });
+
+
+      setSelectedOrder(order);
+      setItems(mappedItems);
+      setOrderTotals(totals); // ✅
+    } catch (err) {
+      console.error("Failed to load order details:", err);
+      setItems([]);
+      setOrderTotals(null);
+    }
+  };
 
 
   const refundOrder = async () => {
-  if (!selectedOrder) return;
+    if (!selectedOrder) return;
 
-  try {
-    await orderService.updateOrder(selectedOrder.orderId, {
-      status: "Refunded",
-    });
+    try {
+      await orderService.updateOrder(selectedOrder.orderId, {
+        status: "Refunded",
+      });
 
-    setSelectedOrder((prev) =>
-      prev ? { ...prev, status: "Refunded" } : prev
-    );
+      setSelectedOrder((prev) =>
+        prev ? { ...prev, status: "Refunded" } : prev
+      );
 
-    setOrders((prev) =>
-      prev.map((o) =>
-        o.orderId === selectedOrder.orderId
-          ? { ...o, status: "Refunded" }
-          : o
-      )
-    );
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.orderId === selectedOrder.orderId
+            ? { ...o, status: "Refunded" }
+            : o
+        )
+      );
 
-  } catch (err) {
-    console.error("Failed to refund order:", err);
-    alert("Failed to refund order");
-  }
-};
+    } catch (err) {
+      console.error("Failed to refund order:", err);
+      alert("Failed to refund order");
+    }
+  };
 
   return (
     <div className="layout">
@@ -173,9 +173,8 @@ export default function Orders() {
               {filteredOrders.map((order) => (
                 <button
                   key={order.orderId}
-                  className={`order-row ${
-                    selectedOrder?.orderId === order.orderId ? "selected-button" : ""
-                  }`}
+                  className={`order-row ${selectedOrder?.orderId === order.orderId ? "selected-button" : ""
+                    }`}
                   onClick={() => handleSelectOrder(order)}
                 >
                   <span>#{order.orderId}</span>

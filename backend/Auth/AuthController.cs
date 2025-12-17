@@ -30,12 +30,12 @@ public class AuthController : ControllerBase
                 LocationId = response_details.LocationId,
                 Email = response_details.Email,
                 PhoneNumber = response_details.PhoneNumber
-            };  
-            
+            };
+
             return Ok(responseDTO);
         }
         catch (EmailAlreadyExistsException e)
-        {   
+        {
             return StatusCode(409, e.Message);
         }
 
@@ -64,11 +64,11 @@ public class AuthController : ControllerBase
             return Ok(serviceResponse.Employee);
         }
         catch (IncorrectLoginDetailsException e)
-        {   
+        {
             return StatusCode(401, e.Message);
         }
         catch (InactiveStatusException e)
-        {   
+        {
             return StatusCode(403, e.Message);
         }
 

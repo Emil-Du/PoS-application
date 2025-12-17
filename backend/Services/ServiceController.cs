@@ -1,10 +1,12 @@
 using backend.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Services
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager + "," + Roles.Roles.Employee)]
     public class ServiceController : ControllerBase
     {
         private readonly IServiceService _service;

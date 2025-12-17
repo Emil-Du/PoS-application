@@ -1,11 +1,12 @@
 using backend.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Orders
 {
     [ApiController]
     [Route("api/orders")]
-    // [Authorize]
+    [Authorize(Roles = Roles.Roles.SuperAdmin + "," + Roles.Roles.Manager + "," + Roles.Roles.Employee)]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _service;

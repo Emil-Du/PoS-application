@@ -312,7 +312,7 @@ export default function Home() {
                                 items.map(item => (
                                     <button
                                         key={item.productId}
-                                        className="list-button"
+                                        className="list-buttons"
                                         onClick={() => setSelectedItem(item)}
                                         disabled={!orderId}
                                     >
@@ -352,7 +352,7 @@ export default function Home() {
                                     )}
 
                                     {orderItems.map(item => (
-                                        <div key={item.itemId} className="order-row">
+                                        <div key={item.itemId} className="order-rows">
                                             <div className="order-row-name">{item.name}</div>
                                             <div className="order-row-quantity">x{item.quantity}</div>
                                             <div className="order-row-price">
